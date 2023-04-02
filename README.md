@@ -1,4 +1,4 @@
-# baby-care
+# nurture-nest
 This is the Final Project Repository for CS 554-A course at Stevens Institute of Technology
 
 { Add Description }

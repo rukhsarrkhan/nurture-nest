@@ -13,6 +13,35 @@
 	height: 80px;
 }
 
+body {
+	background: #838caf;
+	color: #fff;
+	font-size: 1.5em;
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", sans-serif;
+	font-weight: 100;
+	text-align: center;
+}
+
+.container {
+	background: #e3e9ff;
+	color: #495578;
+	display: inline-block;
+	padding: 0em 2em;
+	margin: 6em auto;
+	box-shadow: 0 50px 50px rgba(0, 0, 0, .2);
+}
+
+.formField {
+	color: #56689a;
+}
+
+
+.sign-form {
+	width: 600px;
+	text-align: left;
+	margin: 85px 0 0 0;
+}
+
 input {
 	border: 1px solid #080a33;
 }

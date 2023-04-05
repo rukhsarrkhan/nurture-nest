@@ -13,6 +13,7 @@ import NannyInfo from './components/NannyInfo';
 import MealList from './components/MealList';
 import VaccineList from './components/VaccineList';
 import AppointmentList from './components/AppointmentList';
+import CreateJob from './components/CreateJob';
 import Chat from './components/Chat';
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
@@ -33,6 +34,7 @@ const App = () => {
             <Route path='/children/:id' element={<ChildList />} />
             <Route path='/child/:id' element={<AddChild />} />
             <Route path='/dashboard/:childId' element={<Dashboard />} />
+            <Route path='/createJob' element={<CreateJob />} />
             <Route path='/jobs' element={<JobList />} />
             <Route path='/nannies' element={<NannyList />} />
             <Route path='/nanny/:id' element={<NannyInfo />} />

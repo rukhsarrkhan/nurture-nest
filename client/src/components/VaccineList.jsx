@@ -11,7 +11,10 @@ import Paper from '@mui/material/Paper';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import { TextField} from "@mui/material";
+import { connect } from 'react-redux';
+import { vaccineDataAPICall } from '../redux/vaccines/vaccineActions';
+
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -61,21 +64,49 @@ const rows = [
 ];
 
 
-const VaccineList = () => {
+const VaccineList = ({ vaccineData, vaccineDataAPICall} ) => {
+  
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [date, setDate] = useState('');
   const [doses, setDoses] = useState(0);
+  const [nameError, setnameError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+  const [dosesError, setDosesError] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const addVaccine = () =>{
+  
+  const addVaccine = (event) =>{
+    event.preventDefault();
     const newVaccine = createData(name,date,doses)
     rows.push(newVaccine);
     setOpen(false)
-  }
+    setnameError(false)
+    setDateError(false)
+    setDosesError(false)
 
+    if (name === '') {
+      setnameError(true);
+    }
+    if (date === '') {
+      setDateError(true);
+    }
+    if (doses === '') {
+      setDosesError(true);
+    }
+
+    if(name && date && doses){
+      const data = {
+        name: name,
+        date: date,
+        doses: doses
+      };
+      vaccineDataAPICall(data)
+    }
+  }
+  
 
   return (
     <div className="container" >
@@ -110,48 +141,75 @@ const VaccineList = () => {
 <Modal
   open={open}
   onClose={handleClose}
-  // aria-labelledby="modal-modal-title"
-  // aria-describedby="modal-modal-description"
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
 >
   <Box sx={style}>
-    <Typography >
+    <p >
       Add Vaccine
-    </Typography>
-
-    <Typography>
-          Name
-        </Typography>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-     <Typography >
-          Date
-        </Typography>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-          <Typography>
-          Doses
-        </Typography>
-        <input
-          type="number"
-          value={doses}
-          onChange={(e) => setDoses(e.target.value)}
-        />
-         <Button  onClick={addVaccine}>
+    </p>
+    <form autoComplete="off" onSubmit={addVaccine} className="sign-form">
+    <TextField
+            className="formField"
+            label="Name"
+            onChange={e => setName(e.target.value)}
+            required
+            variant="outlined"
+            color="secondary"
+            sx={{ mb: 1 }}
+            // fullWidth
+            value={name}
+            error={nameError}
+          />
+     <TextField
+            className="formField"
+            label="Date"
+            type='date'
+            onChange={e => setDate(e.target.value)}
+            required
+            variant="outlined"
+            color="secondary"
+            sx={{ mb: 3 }}
+            // fullWidth
+            value={date}
+            error={dateError}
+          />
+         <TextField
+            className="formField"
+            label="Doses"
+            onChange={e => setDoses(e.target.value)}
+            required
+            variant="outlined"
+            color="secondary"
+            sx={{ mb: 3 }}
+            // fullWidth
+            value={doses}
+            error={dosesError}
+          />
+         <Button variant="outlined" color="secondary" type="submit" onClick={addVaccine}>
           Add
         </Button>
         <Button  onClick={handleClose}>
           Close
         </Button>
+ </form>
   </Box>
 </Modal>
     </div>
 );
 };
+const mapStateToProps = state => {
+  return {
+    vaccineData: state
+  };
+};
 
-export default VaccineList; 
+const mapDispatchToProps = dispatch => {
+  return {
+    vaccineDataAPICall: (obj) => dispatch(vaccineDataAPICall(obj))
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(VaccineList);

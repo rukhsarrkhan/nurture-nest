@@ -37,4 +37,21 @@ router
             } catch (e) { return res.status(404).json({ error: e }); }
       });
 
+      router
+      .route("/vaccine/:childId")
+      .get(async (req, res) => {
+            try {
+                  const vaccineFound = await childCollection.getVaccines(req.params.childId);
+                  if (!vaccineFound) { throw "Child not found"; }
+                  return res.json(vaccineFound);
+            } catch (e) { return res.status(404).json({ error: e }); }
+      })
+      .post(async (req, res) => {
+            try {
+
+                  const vaccineAdded = await childCollection.addVaccine(req.body, req.params.childId);
+                  if (!vaccineAdded) { throw "Couldn't creatva"}
+                  return res.json(vaccineAdded);
+            } catch (e) { return res.status(404).json({ error: e }); }
+      });
 module.exports = router;

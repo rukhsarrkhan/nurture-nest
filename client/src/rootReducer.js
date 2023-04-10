@@ -5,7 +5,7 @@ import {jobReducer} from './redux/jobs/jobReducer';
 const rootReducer = combineReducers({
     users: userReducer,
     vaccines: vaccineReducer,
-    jobs: jobReducer
+    jobs: jobReducer,
 });
 
 export default rootReducer;

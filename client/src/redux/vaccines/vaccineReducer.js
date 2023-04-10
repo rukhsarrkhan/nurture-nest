@@ -1,35 +1,49 @@
+import { v4 as uuid } from "uuid";
 import {
- VACCINE_ADD_SUCCESS,
- VACCINE_ADD_FALIURE 
-} from "./vaccineActionTypes"
+  GET_VACCINE_SUCCESS,
+  GET_VACCINE_FAILURE,
+  SET_VACCINE_SUCCESS,
+  SET_VACCINE_FAILURE
+} from "./vaccineActionTypes";
 
 const initialState = {
-    vaccineAdded: false,
-    data: {},
-    error: "",
-    status: "",
-  };
+  loading: false,
+  data: [],
+  error: "",
+  status: "",
+};
 
-  export const vaccineReducer = (state = initialState, action) => {
-    const { type, payload } = action;
- console.log(action)
+export const vaccineReducer = (state = initialState, action) => {
+  const { type, payload } = action;
+
   switch (type) {
-    case VACCINE_ADD_SUCCESS:
+    case GET_VACCINE_SUCCESS:
       return {
         ...state,
-        vaccineAdded: true,
         data: payload,
         error: "",
         status: "OK",
       };
-    case  VACCINE_ADD_FALIURE :
+    case GET_VACCINE_FAILURE:
       return {
         ...state,
-        vaccineAdded : false,
         error: payload.response.data,
       };
+      case SET_VACCINE_SUCCESS:
+        return {
+          ...state,
+          data: payload,
+          error: "",
+          status: "OK",
+        };
+      case SET_VACCINE_FAILURE:
+        return {
+          ...state,
+          error: payload.response.data,
+        };
     default:
       return state;
   }
-  }
-  export default vaccineReducer;
+};
+
+export default vaccineReducer;

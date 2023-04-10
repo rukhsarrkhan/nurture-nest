@@ -1,46 +1,61 @@
 import axios from "axios";
 import {
-VACCINE_ADD,
- VACCINE_ADD_SUCCESS,
- VACCINE_ADD_FALIURE 
-} from "./vaccineActionTypes"
+  GET_VACCINE_SUCCESS,
+  GET_VACCINE_FAILURE,
+  SET_VACCINE_SUCCESS,
+  SET_VACCINE_FAILURE
+} from "./vaccineActionTypes";
 
-export const vaccineAdd = () => {
-    console.log("dispatched vaccine")
-    return {
-      type: VACCINE_ADD,
-    };
+export const getVaccinesSuccess = (vaccine) => {
+  return {
+    type: GET_VACCINE_SUCCESS,
+    payload: vaccine,
   };
+};
 
-export const vaccineAddSuccess = (vaccines) => {
-    return {
-      type: VACCINE_ADD_SUCCESS,
-      payload: vaccines,
-    };
+export const getVaccinesFailure = (error) => {
+  return {
+    type: GET_VACCINE_FAILURE,
+    payload: error,
   };
+};
 
-  export const vaccineAddFailure = (error) => {
-    return {
-      type: VACCINE_ADD_FALIURE,
-      payload: error,
-    };
+export const vaccinesSetSuccess = (vaccine) => {
+  return {
+    type: SET_VACCINE_SUCCESS,
+    payload: vaccine,
   };
+};
 
-
-  export const vaccineDataAPICall = (obj) => {
-    console.log("obj in vaccine api",obj)
-    return async (dispatch) => {
-      dispatch(vaccineAdd());
-      try {
-        let resp = await axios.post("http://localhost:3000/vaccine/1", obj);
-        console.log("resp in vaccine api call",resp)
-        dispatch(vaccineAddSuccess(resp.data));
-        // set token here
-        // localStorage.setItem("authToken", resp.data.token);
-      } catch (error) {
-        console.log("error",error)
-        dispatch(vaccineAddFailure(error));
-      }
-    };
+export const vaccinesSetFailure = (error) => {
+  return {
+    type: SET_VACCINE_FAILURE,
+    payload: error,
   };
-  
+};
+
+export const getVaccineAPICall = (childId) => {
+  return async (dispatch) => {
+    try {
+      let resp = await axios.get('http://localhost:3000/child/vaccine/'+childId);
+      // set token here
+      // sessionStorage.setItem("token", resp.data.token);
+      dispatch(getVaccinesSuccess(resp.data));
+    } catch (error) {
+      dispatch(getVaccinesFailure(error));
+    }
+  };
+};
+
+export const vaccineSetAPICall = (obj,childId) => {
+  return async (dispatch) => {
+    try {
+      let resp = await axios.post('http://localhost:3000/child/vaccine/'+childId, obj);
+      // set token here
+      // sessionStorage.setItem("token", resp.data.token);
+      dispatch(getVaccinesSuccess(resp.data));
+    } catch (error) {
+      dispatch(getVaccinesFailure(error));
+    }
+  };
+};

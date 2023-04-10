@@ -24,6 +24,7 @@ const createChild = async (
   };
   const childCollection = await childs();
   const insertedChild = await childCollection.insertOne(newChild);
+  if(age > 7 ) throw "Child cannot be more than 7 years old"
   if (!insertedChild.acknowledged || !insertedChild.insertedId)
     throw "Could not add User";
   const child = await getChildById(insertedChild.insertedId.toString());

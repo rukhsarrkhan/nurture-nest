@@ -1,4 +1,3 @@
-moment = require("moment");
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -48,7 +47,8 @@ const isAgeValid = async (age, fieldName) => {
     if (isNaN(age)) {
         throw { statusCode: 400, message: `${fieldName} should be a number` };
     } else {
-        if (age < 14) throw { statusCode: 400, message: ` user must be 14 or older` };
+        if (age < 18) throw { statusCode: 400, message: ` user must be 14 or older` };
+        if (age > 90) throw { statusCode: 400, message: ` user must be younger than 90` };
     }
 };
 

@@ -1,6 +1,8 @@
 const mongoCollections = require("../config/mongo-collections");
 const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
+const helper = require('../helpers')
+
 
 const createChild = async (
   name,
@@ -100,17 +102,17 @@ const addVaccine = async (
   vaccines,
   childId
 ) => {
-  // if (!recipeId) throw 'You must provide an recipeId to search for';
-  // if (typeof recipeId !== 'string') throw 'recipeId must be a string';
-  // if (recipeId.trim().length === 0)
-  //     throw 'recipeId cannot be an empty string or just spaces';
-  // recipeId = recipeId.trim();
-  // if (!ObjectId.isValid(recipeId)) throw 'invalid object ID';
+  if (!childId) throw 'You must provide a childId to add a vaccine';
+  if (typeof childId !== 'string') throw 'childId must be a string';
+  if (childId.trim().length === 0)
+      throw 'childId cannot be an empty string or just spaces';
+  childId = childId.trim();
+  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
 
 
   const childCollection = await childs();
   const tempChild = await getChildById(childId);
-      const likesList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: vaccines } })
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: vaccines } })
  
   const updatedChild = await getChildById(childId);
   return updatedChild.vaccine;
@@ -118,6 +120,23 @@ const addVaccine = async (
 }
 
 const getVaccines = async (childId) => {
+  if (typeof childId == "undefined")
+    throw "childId parameter not provchildIded";
+  if (typeof childId !== "string") throw "childId must be a string";
+  if (childId.trim().length === 0) {
+    throw "childId cannot be an empty string or just spaces";
+  }
+
+  childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object id";
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const childvaccines = childFound.vaccine
+  return childvaccines;
+};
+
+const getAppointments = async (childId) => {
   // if (typeof childId == "undefined")
   //   throw "childId parameter not provchildIded";
   // if (typeof childId !== "string") throw "childId must be a string";
@@ -130,9 +149,31 @@ const getVaccines = async (childId) => {
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
-  const childvaccines = childFound.vaccine
-  return childvaccines;
+  const childAppointments = childFound.appointments
+  return childAppointments;
 };
+
+
+const addAppointment = async (
+  appointment,
+  childId
+) => {
+  if (!childId) throw 'You must provide a childId to add a vaccine';
+  if (typeof childId !== 'string') throw 'childId must be a string';
+  if (childId.trim().length === 0)
+      throw 'childId cannot be an empty string or just spaces';
+  childId = childId.trim();
+  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+
+
+  const childCollection = await childs();
+  const tempChild = await getChildById(childId);
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: {appointments : appointment } })
+ 
+  const updatedChild = await getChildById(childId);
+  return updatedChild.appointments;
+
+}
 
 
 module.exports = {
@@ -141,5 +182,7 @@ module.exports = {
   updateChild,
   removeChild,
   addVaccine,
-  getVaccines
+  getVaccines,
+  getAppointments,
+  addAppointment
 };

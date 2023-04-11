@@ -53,9 +53,9 @@ export const vaccineSetAPICall = (obj,childId) => {
       let resp = await axios.post('http://localhost:3000/child/vaccine/'+childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(getVaccinesSuccess(resp.data));
+      dispatch(vaccinesSetSuccess(resp.data));
     } catch (error) {
-      dispatch(getVaccinesFailure(error));
+      dispatch(vaccinesSetFailure(error));
     }
   };
 };

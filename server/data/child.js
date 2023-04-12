@@ -96,9 +96,27 @@ const removeChild = async (childId) => {
   return `${deletedChild.value.name} has been successfully deleted!`;
 };
 
+const getVaccines = async (childId) => {
+  // if (typeof childId == "undefined")
+  //   throw "childId parameter not provchildIded";
+  // if (typeof childId !== "string") throw "childId must be a string";
+  // if (childId.trim().length === 0) {
+  //   throw "childId cannot be an empty string or just spaces";
+  // }
+
+  childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object id";
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const childvaccines = childFound.vaccine
+  return childvaccines;
+};
+
 module.exports = {
   createChild,
   getChildById,
   updateChild,
   removeChild,
+  getVaccines,
 };

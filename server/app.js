@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 const session = require('express-session');
 const configRoutes = require('./routes');
 const static = express.static(__dirname + '/public');
@@ -14,6 +15,7 @@ app.use(session({
   saveUninitialized: true
 }))
 
+app.use(cors());
 
 app.use(express.urlencoded({extended: true}));
 configRoutes(app);

@@ -3,12 +3,18 @@ const router = express.Router();
 const data = require("../data");
 const userCollection = data.users;
 
+
 router
       .route("/signup")
       .post(async (req, res) => {
-            let { username, password, email, type, age, photo, lctn } = req.body;
+            let { firstName, lastName, userName, profile, age } = req.body;
             try {
-                  const userCreated = await userCollection.createUser(username, password, email, type, age, photo, lctn);
+                 // input validation
+            } catch (e) { 
+                  return res.status(400).json({ error: e }); 
+            }
+            try {
+                  const userCreated = await userCollection.createUser(firstName, lastName, userName, profile, age );
                   if (!userCreated) { throw "Couldn't Create user"; }
                   return res.json(userCreated);
             } catch (e) { 

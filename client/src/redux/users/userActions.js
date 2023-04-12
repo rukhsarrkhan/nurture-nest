@@ -1,19 +1,11 @@
 import axios from "axios";
 import {
-  USER_LOGIN,
   USER_LOGOUT,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FALIURE,
   USER_REGISTER_SUCCESS,
-  USER_REGISTER,
   USER_REGISTER_FALIURE,
 } from "./userActionTypes";
-
-export const userLogin = () => {
-  return {
-    type: USER_LOGIN,
-  };
-};
 
 export const userLogout = () => {
   return {
@@ -35,12 +27,6 @@ export const userLoginFailure = (error) => {
   };
 };
 
-export const userRegister = () => {
-  return {
-    type: USER_REGISTER,
-  };
-};
-
 export const userRegisterSuccess = (user) => {
   return {
     type: USER_REGISTER_SUCCESS,
@@ -58,10 +44,9 @@ export const userRegisterFailure = (error) => {
 export const userRegistrationAPICall = (obj) => {
   console.log("obj",obj)
   return async (dispatch) => {
-    dispatch(userRegister());
     try {
       console.log("now")
-      let resp = await axios.post("http://localhost:3000/register", obj);
+      let resp = await axios.post("http://localhost:3000/users/signup", obj);
       console.log("resp",resp)
       dispatch(userRegisterSuccess(resp.data));
       // set token here
@@ -75,7 +60,6 @@ export const userRegistrationAPICall = (obj) => {
 
 export const userLoginAPICall = (obj) => {
   return async (dispatch) => {
-    dispatch(userLogin());
     try {
       let resp = await axios.post("http://localhost:3000/login", obj);
       // set token here

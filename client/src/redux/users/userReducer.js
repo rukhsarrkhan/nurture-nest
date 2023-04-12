@@ -46,6 +46,9 @@ export const userReducer = (state = initialState, action) => {
         ...initialState,
       };
     case USER_REGISTER_SUCCESS:
+      console.log("userData state",state)
+      console.log("userData payload",payload)
+
       return {
         ...state,
         data: payload,
@@ -53,6 +56,7 @@ export const userReducer = (state = initialState, action) => {
         status: "OK",
       };
     case USER_REGISTER_FALIURE:
+      console.log("userData loaded",payload)
       return {
         ...state,
         error: payload.response.data,

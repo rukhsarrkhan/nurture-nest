@@ -2,8 +2,8 @@ const mongoCollections = require("../config/mongo-collections");
 const users = mongoCollections.users;
 const {ObjectId} = require('mongodb');
 
-const createUser = async (username, password, email, type, age, photo, lctn) => {
-    let newUser = {username: username, password: password, email:email, type:type, age:age, photo:photo, lctn:lctn};
+const createUser = async (firstName, lastName, userName, profile, age) => {
+    let newUser = {firstName: firstName, lastName: lastName, userName: userName, profile: profile, age: age}
     const userCollection = await users();
     const insertedUser = await userCollection.insertOne(newUser);
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw "Could not add User";

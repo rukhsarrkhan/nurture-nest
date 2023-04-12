@@ -14,7 +14,7 @@
 }
 
 body {
-	background: #838caf;
+	background: rgb(197, 190, 219);
 	color: #fff;
 	font-size: 1.5em;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", sans-serif;
@@ -23,14 +23,28 @@ body {
 }
 
 .container {
-	background: #e3e9ff;
-	color: #495578;
+	background: white;
+	color: #56689a;
 	display: inline-block;
 	padding: 0em 2em;
-	margin: 6em auto;
+	margin: 2em auto;
 	box-shadow: 0 50px 50px rgba(0, 0, 0, .2);
 }
 
+.toolBar{
+	height: '10vh';
+	display: 'flex';
+	justify-content: 'space-between';
+	padding: '20px';
+	background-color: 'white';
+  }
+  .logo {
+	color: 'blue';
+	cursor: 'pointer'; 
+  }
+  .menuIcon{
+	color: '#000';
+  }
 .formField {
 	color: #56689a;
 }
@@ -40,6 +54,7 @@ body {
 	width: 600px;
 	text-align: left;
 	margin: 85px 0 0 0;
+	color: #56689a;
 }
 
 input {

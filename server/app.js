@@ -15,6 +15,13 @@ app.use(session({
   saveUninitialized: true
 }))
 
+//globals here
+//This file contains all global variables
+//Example: constants, variable names, etc.
+global.userTypeParent = "PARENT";
+global.userTypeNanny = "NANNY";
+global.userTypeChild = "CHILD";
+
 app.use(cors());
 
 app.use(express.urlencoded({extended: true}));

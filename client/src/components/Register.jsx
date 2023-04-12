@@ -10,12 +10,12 @@ import SocialSignIn from './SocialSignIn';
 
 const profiles = [
   {
-    value: 'Parent',
-    label: 'Parent',
+    value: 'PARENT',
+    label: 'PARENT',
   },
   {
-    value: 'Nanny',
-    label: 'Nanny',
+    value: 'NANNY',
+    label: 'NANNY',
   },
 ];
 
@@ -99,7 +99,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
         const data = {
           firstName: firstName,
           lastName: lastName,
-          userName: email,
+          email: email,
           profile: profile,
           age: age
         };
@@ -181,7 +181,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           />
           <TextField
             label="Profile"
-            defaultValue="Parent"
+            defaultValue="PARENT"
             helperText="Please select your profile"
             select
             required

@@ -6,6 +6,7 @@ import { userRegistrationAPICall } from '../redux/users/userActions';
 import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
 import SocialSignIn from './SocialSignIn';
+import helpers from '../helpers';
 
 
 const profiles = [
@@ -29,8 +30,9 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [profile, setProfile] = useState();
-  const [age, setAge] = useState();
+  const [profile, setProfile] = useState("");
+  const [age, setAge] = useState(1);
+
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -39,17 +41,23 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [profileError, setProfileError] = useState(false);
   const [ageError, setAgeError] = useState(false);
 
-  const [errorText, setErrorText] = useState(false);
+  const [errorText, setErrorText] = useState("");
 
-
-
+  
   useEffect(() => {
-    
-
   }, []);
 
+  const validation = async (field, valFunc) => {
+    let fieldVal = await helpers.execValdnAndTrim(field);
+    let check = await valFunc;
+    if (check && check.statusCode === 400){
+      return check.message;
+    } else {
+      return ""
+    }
+  }
+
   const handleSubmit = async (event) => {
-    console.log("event", event);
     event.preventDefault();
 
     setFirstNameError(false);
@@ -58,52 +66,84 @@ const Register = ({ userData, userRegistrationAPICall }) => {
     setPasswordError(false);
     setConfirmPasswordError(false);
     setProfileError(false);
+    setAgeError(false);
+    setErrorText("");
 
-    if (firstName === '') {
+    let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName,"FirstName"))
+    if (firstNameCheck !== "") {
       setFirstNameError(true);
+      setErrorText(firstNameCheck)
+      return;
     }
-    if (lastName === '') {
-      setLastNameError(true);
-    }
-    if (email === '') {
-      setEmailError(true);
-    }
-    if (password === '') {
-      setPasswordError(true);
-    }
-    if (confirmPassword === '') {
-      setConfirmPasswordError(true);
-    }
-    // if (profile === '') {
-    //   setProfileError(true);
-    // }
 
-    if (age === '') {
-      setAgeError(true);
+    let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName,"LastName"))
+    if (lastNameCheck !== "") {
+      setLastNameError(true);
+      setErrorText(lastNameCheck)
+      return;
+
+    }
+
+    let emailCheck = await validation(email, helpers.isEmailValid(email,"Email"))
+    if (emailCheck !== "") {
+      setEmailError(true);
+      setErrorText(emailCheck)
+      return;
+    }
+
+    let passwordCheck = await validation(password, helpers.isPasswordValid(password,"Password"))
+    if (passwordCheck !== "") {
+      setPasswordError(true);
+      setErrorText(passwordCheck)
+      return;
+    }
+
+    let confirmPasswordCheck = await validation(confirmPassword, helpers.isPasswordValid(confirmPassword,"Confirm Password"))
+    if (confirmPasswordCheck !== "") {
+      setConfirmPasswordError(true);
+      setErrorText(confirmPasswordCheck)
+      return;
     }
 
     if (password !== confirmPassword) {
       setPasswordError(true);
       setConfirmPasswordError(true);
+      setErrorText("Passwords should match")
       return;
     }
 
-    if (firstName && lastName && email && password) {
-      console.log("here");
+    // getting profile as undefined
+    let profileCheck = await validation(profile, helpers.isNameValid(profile,"Profile"))
+    if (profileCheck !== "" && profile !== "PARENT" && profile !== "NANNY") {
+      setProfileError(true);
+      setErrorText("Profile is invalid")
+      return;
+
+    }
+
+    let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age),"Age"))
+    if (ageCheck !== "") {
+      setAgeError(true);
+      setErrorText(ageCheck)
+      return;
+
+    }
+
+    if (firstName.trim() && lastName.trim() && email.trim() && password.trim() && errorText === "") {
       try {
-        await doCreateUserWithEmailAndPassword(
-          email,
-          password,
-          firstName
+        const resp = await doCreateUserWithEmailAndPassword(
+          email.trim(),
+          password.trim(),
+          firstName.trim()
         );
         const data = {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          profile: profile,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          profile: profile.trim(),
           age: age
         };
-        userRegistrationAPICall(data);
+        await userRegistrationAPICall(data);
       } catch (error) {
         alert(error);
       }
@@ -120,7 +160,6 @@ const Register = ({ userData, userRegistrationAPICall }) => {
         <form autoComplete="off" onSubmit={handleSubmit} className="sign-form">
           <h1>Register Form</h1>
           <TextField
-            // className="formField"
             label="FirstName"
             onChange={e => setFirstName(e.target.value)}
             required
@@ -129,6 +168,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             // inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
             sx={{ mb: 3  }}
             fullWidth
+            helperText={firstNameError && errorText}
             value={firstName}
             error={firstNameError}
           />
@@ -140,6 +180,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             color="secondary"
             sx={{ mb: 3 }}
             fullWidth
+            helperText={lastNameError && errorText}
             value={lastName}
             error={lastNameError}
           />
@@ -152,6 +193,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             type="email"
             sx={{ mb: 3 }}
             fullWidth
+            helperText={emailError && errorText}
             value={email}
             error={emailError}
           />
@@ -162,6 +204,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             variant="outlined"
             color="secondary"
             type="password"
+            helperText={passwordError && errorText}
             value={password}
             error={passwordError}
             fullWidth
@@ -174,6 +217,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             variant="outlined"
             color="secondary"
             type="password"
+            helperText={confirmPasswordError && errorText}
             value={confirmPassword}
             error={confirmPasswordError}
             fullWidth
@@ -182,12 +226,12 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           <TextField
             label="Profile"
             defaultValue="PARENT"
-            helperText="Please select your profile"
             select
             required
             onChange={e => setProfile(e.target.value)}
             variant="outlined"
             color="secondary"
+            helperText={profileError ? errorText : "Please select your profile"}
             value={profile}
             error={profileError}
             fullWidth
@@ -206,6 +250,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             variant="outlined"
             color="secondary"
             type="number"
+            helperText={ageError && errorText}
             value={age}
             error={ageError}
             fullWidth

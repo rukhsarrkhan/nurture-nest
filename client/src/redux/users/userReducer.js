@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+// import { v4 as uuid } from "uuid";
 import {
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FALIURE,
@@ -46,9 +46,6 @@ export const userReducer = (state = initialState, action) => {
         ...initialState,
       };
     case USER_REGISTER_SUCCESS:
-      console.log("userData state",state)
-      console.log("userData payload",payload)
-
       return {
         ...state,
         data: payload,
@@ -56,7 +53,6 @@ export const userReducer = (state = initialState, action) => {
         status: "OK",
       };
     case USER_REGISTER_FALIURE:
-      console.log("userData loaded",payload)
       return {
         ...state,
         error: payload.response.data,

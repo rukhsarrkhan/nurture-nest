@@ -42,17 +42,13 @@ export const userRegisterFailure = (error) => {
 };
 
 export const userRegistrationAPICall = (obj) => {
-  console.log("obj",obj)
   return async (dispatch) => {
     try {
-      console.log("now")
       let resp = await axios.post("http://localhost:3000/users/signup", obj);
-      console.log("resp",resp)
       dispatch(userRegisterSuccess(resp.data));
       // set token here
       // localStorage.setItem("authToken", resp.data.token);
     } catch (error) {
-      console.log("error",error)
       dispatch(userRegisterFailure(error));
     }
   };

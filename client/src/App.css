@@ -13,6 +13,14 @@
 	height: 80px;
 }
 
+.loading {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  padding: 250px 0;
+  align-items: center;
+ }
+
 body {
 	background: rgb(197, 190, 219);
 	color: #fff;

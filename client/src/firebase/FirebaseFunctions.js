@@ -38,7 +38,6 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
-  console.log("gere")
   await firebase.auth().signOut();
 }
 

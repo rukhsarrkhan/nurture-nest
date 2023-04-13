@@ -58,7 +58,7 @@ const isAgeValid = async (age, fieldName) => {
 };
 
 const isEmailValid = async (email) => {
-    let emailConstraints = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
+    let emailConstraints = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$$/;
     if (!email.match(emailConstraints)) throw { statusCode: 400, message: `Email is invalid. Please enter a valid Email` };
 };
 
@@ -70,7 +70,7 @@ const isUsernameValid = async (username) => {
 };
 
 const isPasswordValid = async (password) => {
-    let passwordCheck = /^(?=.[A-Z])(?=.\d)(?=.[#$@!%&?])[A-Za-z\d#$@!%&*?-]{6,}$/;
+    let passwordCheck = /^(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?-]{6,}$/;
     if (!password.match(passwordCheck))
         throw { statusCode: 400, message: `Password should have atleast 1 Uppercase letter, 1 number and 1 special character` };
     else if (/\s/.test(password)) throw { statusCode: 400, message: `Password should not contain empty spaces` };

@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
-import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE } from "./jobActionTypes";
+import { CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS , SHOW_ALL_APPLICANTS_FAILURE } from "./jobActionTypes";
 
 const initialState = {
   loading: false,
   data: {},
+  applicantsData:[],
   error: "",
   status: "",
 };
@@ -25,9 +26,23 @@ export const jobReducer = (state = initialState, action) => {
         ...state,
         error: payload.response.data,
       };
-    default:
-      return state;
-  }
+  case SHOW_ALL_APPLICANTS_SUCCESS:
+    console.log("payload", payload)
+    return {
+      ...state,
+      applicantsData: payload,
+      error: "",
+      status: "OK",
+    };
+  case SHOW_ALL_APPLICANTS_FAILURE:
+    console.log(payload)
+    return {
+      ...state,
+      error: payload.response.data,
+    };
+  default:
+    return state;
+}
 };
 
 export default jobReducer;

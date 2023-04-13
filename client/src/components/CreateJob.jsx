@@ -5,11 +5,17 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createJobAPICall } from "../redux/jobs/jobActions";
 import Modal from "@mui/material/Modal";
+import dayjs from 'dayjs';
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { SingleInputTimeRangeField } from "@mui/x-date-pickers-pro/SingleInputTimeRangeField";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from '@mui/material/Checkbox';
+import { pink } from '@mui/material/colors';
+
 
 const CreateJob = ({ jobData, userRegistrationAPICall }) => {
   const { job } = useSelector((state) => state.jobs);
@@ -19,13 +25,7 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   // Form vars
-  const [mondayShift, setMondayShift] = useState("");
-  const [tuesdayShift, setTuesdayShift] = useState("");
-  const [wednesdayShift, setWednesdayShift] = useState("");
-  const [thursdayShift, setThursdayShift] = useState("");
-  const [fridayShift, setFridayShift] = useState("");
-  const [saturdayShift, setSaturdayShift] = useState("");
-  const [sundayShift, setSundayShift] = useState("");
+
   // Non shift vars
   const [specialCare, setSpecialCare] = useState("");
   const [description, setDescription] = useState("");
@@ -35,9 +35,20 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
   const [descriptionError, setDescriptionError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [salaryError, setSalaryError] = useState(false);
+  const [value, setValue] = React.useState();
+  const [monday, setMonday] = React.useState(false);
+  const [tuesday, setTuesday] = React.useState(false);
+  const [wednesday, setWednesday] = React.useState(false);
+  const [thursday, setThursday] = React.useState(false);
+  const [friday, setFriday] = React.useState(false);
+  const [saturday, setSaturday] = React.useState(false);
+  const [sunday, setSunday] = React.useState(false);
+
+
+
 
   const handleSubmit = (event) => {
-    console.log("event mondayShift", mondayShift);
+    console.log(value.toLocaleString(),"halloooo")
     event.preventDefault();
 
     setSpecialCareError(false);
@@ -68,6 +79,8 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
       dispatch(createJobAPICall(data));
     }
   };
+
+  
 
   return (
     <React.Fragment>
@@ -102,42 +115,20 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
                 Create Job
               </Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DemoContainer components={["SingleInputTimeRangeField"]}>
-                  {/* <Typography
-                    id="modal-modal-description"
-                    variant="h5"
-                    sx={{ mt: 2, color: "text.primary" }}
-                  >
-                    {" "}
-                    Monday{" "}
-                  </Typography>
-                  <SingleInputTimeRangeField
-                    label="From - To"
-                    onChange={(e) =>
-                      e[0] && e[0].$H && e[1] && e[1].$H
-                        ? setMondayShift({
-                            startHr: e[0].$H,
-                            startMin: e[0].$m,
-                            endHr: e[1].$H,
-                            endMin: e[1].$m,
-                          })
-                        : ""
-                    }
-                  /> */}
-                  {/* <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Tuesday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setTuesdayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} />
-            <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Wednesday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setWednesdayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} />
-            <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Thursday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setThursdayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} />
-            <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Friday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setFridayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} />
-            <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Saturday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setSaturdayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} />
-            <Typography id="modal-modal-description" variant="h5" sx={{ mt: 2,color: 'text.primary' }}> Sunday </Typography>
-            <SingleInputTimeRangeField label="From - To" onChange={e => setSundayShift({startHr:e[0].$H,startMin:e[0].$m,endHr:e[1].$H,endMin:e[1].$m})} /> */}
-                </DemoContainer>
+                  <DemoContainer components={['SingleInputTimeRangeField', 'SingleInputTimeRangeField']} >
+                    <SingleInputTimeRangeField required color="secondary" label="Shift Timing" value={value} onChange={(newValue) => setValue(newValue)} />
+                  </DemoContainer>
               </LocalizationProvider>
+              <br />
+              <FormGroup>
+                <FormControlLabel control={<Checkbox color="secondary" checked={monday} onChange={(event) => setMonday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Monday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={tuesday} onChange={(event) => setTuesday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Tuesday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={wednesday} onChange={(event) => setWednesday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Wednesday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={thursday} onChange={(event) => setThursday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Thursdy" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={friday} onChange={(event) => setFriday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Friday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={saturday} onChange={(event) => setSaturday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Saturday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+                <FormControlLabel control={<Checkbox color="secondary" checked={sunday} onChange={(event) => setSunday(event.target.checked)} inputProps={{ "aria-label": "controlled" }} />} label="Sunday" sx={{color: pink[800], '&.Mui-checked': {color: pink[600],},}} />
+              </FormGroup>
               <br />
               <TextField
                 className="formField"

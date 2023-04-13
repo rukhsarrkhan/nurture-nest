@@ -1,6 +1,9 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { AuthProvider } from './firebase/Auth';
+
+import Landing from './components/Landing';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
@@ -18,15 +21,17 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 const App = () => {
   return (
+    <AuthProvider>
     <Router>
       <div className='App'>
-        <header className='App-header'>
+        {/* <header className='App-header'>
           <Link to='/'>
             <img src={logo} className='App-logo' alt='logo' />
           </Link>
-        </header>
+        </header> */}
         <div className='App-body'>
           <Routes>
+            <Route path='/' element={<Landing />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register />} />
             <Route path='/profile/:id' element={<Profile />} />
@@ -44,6 +49,8 @@ const App = () => {
         </div>
       </div>
     </Router>
+    </AuthProvider>
+
   );
 };
 

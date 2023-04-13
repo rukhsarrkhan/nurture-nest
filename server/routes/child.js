@@ -36,14 +36,5 @@ router
                   res.json({ Awesome: `child with id: ${req.params.childId} deleted successfully` });
             } catch (e) { return res.status(404).json({ error: e }); }
       });
-      
-router
-      .route("/vaccine/:childId")
-      .get(async (req, res) => {
-            try {
-                  const vaccineFound = await childCollection.getVaccines(req.params.childId);
-                  if (!vaccineFound) { throw "Child not found"; }
-                  return res.json(vaccineFound);
-            } catch (e) { return res.status(404).json({ error: e }); }
-      })
+
 module.exports = router;

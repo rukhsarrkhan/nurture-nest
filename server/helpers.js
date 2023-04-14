@@ -1,3 +1,5 @@
+//moment = require("moment");
+const { ObjectId } = require("mongodb");
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -47,8 +49,7 @@ const isAgeValid = async (age, fieldName) => {
     if (isNaN(age)) {
         throw { statusCode: 400, message: `${fieldName} should be a number` };
     } else {
-        if (age < 18) throw { statusCode: 400, message: ` user must be 14 or older` };
-        if (age > 90) throw { statusCode: 400, message: ` user must be younger than 90` };
+        if (age < 14) throw { statusCode: 400, message: ` user must be 14 or older` };
     }
 };
 
@@ -72,10 +73,45 @@ const isPasswordValid = async (password) => {
     else if (password.trim().length < 6) throw { statusCode: 400, message: `Password should have more than 6 characters` };
 };
 
+const onlyNumbers = (str, fieldName) => {
+   let numberCheck = /^[0-9]*$/
+   if(!str.match(numberCheck)) 
+   throw {statusCode : 400, message:  `${fieldName} should only be numbers`}
+    // return /^[0-9]*$/.test(str);
+};
+
+const onlyLettersNumbersAndSpaces = (str,fieldName) => {
+    let numLetCheck = /^[a-zA-Z0-9 ]*$/ 
+    if(!str.match(numLetCheck))
+    throw {statusCode : 400, message:  `${fieldName} should only be numbers and letters`}
+    // return /^[a-zA-Z0-9 ]*$/.test(str);
+};
+
+const onlyLettersAndSpaces = (str,fieldName) => {
+    let letCheck = /^[a-zA-Z ]*$/
+    if(!str.match(letCheck))
+    throw {statusCode : 400, message:  `${fieldName} should only be letters`}
+    // return /^[a-zA-Z ]*$/.test(str);
+};
+
+const isIdValid = (id,fieldName) => {
+    if(!ObjectId.isValid(id))
+    throw {statusCode : 400, message: 'invalid object id'}
+    // return /^[a-zA-Z ]*$/.test(str);
+};
+
+const onlyLettersSpacesAndPunctuation = (str) => {
+    return /^[a-zA-Z .,"'-]*$/.test(str);
+};
+
+const onlyNumbersAndSlashes = (str) => {
+    return /^[0-9/]*$/.test(str);
+};
+
 module.exports = {
     description: "This is the helper function",
-    execValdnAndTrim,
     validateInput,
+    execValdnAndTrim,
     validateStringLength,
     checkIfNum,
     execValdnForArr,
@@ -86,4 +122,8 @@ module.exports = {
     isEmailValid,
     isUsernameValid,
     isPasswordValid,
+    onlyNumbers,
+    onlyLettersNumbersAndSpaces,
+    onlyLettersAndSpaces,
+    isIdValid
 };

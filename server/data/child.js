@@ -1,6 +1,8 @@
 const mongoCollections = require("../config/mongo-collections");
 const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
+const helper = require('../helpers')
+
 
 const createChild = async (
   name,
@@ -97,9 +99,91 @@ const removeChild = async (childId) => {
   return `${deletedChild.value.name} has been successfully deleted!`;
 };
 
+const addVaccine = async (
+  vaccines,
+  childId
+) => {
+  if (!childId) throw 'You must provide a childId to add a vaccine';
+  if (typeof childId !== 'string') throw 'childId must be a string';
+  if (childId.trim().length === 0)
+      throw 'childId cannot be an empty string or just spaces';
+  childId = childId.trim();
+  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+
+
+  const childCollection = await childs();
+  const tempChild = await getChildById(childId);
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: vaccines } })
+ 
+  const updatedChild = await getChildById(childId);
+  return updatedChild.vaccine;
+
+}
+
+const getVaccines = async (childId) => {
+  if (typeof childId == "undefined")
+    throw "childId parameter not provchildIded";
+  if (typeof childId !== "string") throw "childId must be a string";
+  if (childId.trim().length === 0) {
+    throw "childId cannot be an empty string or just spaces";
+  }
+
+  childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object id";
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const childvaccines = childFound.vaccine
+  return childvaccines;
+};
+
+const getAppointments = async (childId) => {
+  // if (typeof childId == "undefined")
+  //   throw "childId parameter not provchildIded";
+  // if (typeof childId !== "string") throw "childId must be a string";
+  // if (childId.trim().length === 0) {
+  //   throw "childId cannot be an empty string or just spaces";
+  // }
+
+  childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object id";
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const childAppointments = childFound.appointments
+  return childAppointments;
+};
+
+
+const addAppointment = async (
+  appointment,
+  childId
+) => {
+  if (!childId) throw 'You must provide a childId to add a vaccine';
+  if (typeof childId !== 'string') throw 'childId must be a string';
+  if (childId.trim().length === 0)
+      throw 'childId cannot be an empty string or just spaces';
+  childId = childId.trim();
+  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+
+
+  const childCollection = await childs();
+  const tempChild = await getChildById(childId);
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: {appointments : appointment } })
+ 
+  const updatedChild = await getChildById(childId);
+  return updatedChild.appointments;
+
+}
+
+
 module.exports = {
   createChild,
   getChildById,
   updateChild,
   removeChild,
+  addVaccine,
+  getVaccines,
+  getAppointments,
+  addAppointment
 };

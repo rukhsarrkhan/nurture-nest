@@ -1,18 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const data = require("../data");
+const helper = require("../helpers");
 const userCollection = data.users;
+
 
 router
       .route("/signup")
       .post(async (req, res) => {
-            let { username, password, email, type, age, photo, lctn } = req.body;
+            let { firstName, lastName, email, profile, age } = req.body;
             try {
-                  const userCreated = await userCollection.createUser(username, password, email, type, age, photo, lctn);
-                  if (!userCreated) { throw "Couldn't Create user"; }
+                  firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+                  await helper.isNameValid(firstName, "FirstName");
+                  lastName = await helper.execValdnAndTrim(lastName, "LastName");
+                  await helper.isNameValid(lastName, "LastName");
+                  email = await helper.execValdnAndTrim(email, "Email");
+                  await helper.isEmailValid(email, "Email");
+                  profile = await helper.execValdnAndTrim(profile, "Profile");
+                  await helper.isProfileValid(profile, "Profile");
+                  age = await helper.execValdnAndTrim(age, "Age");
+                  await helper.isAgeValid(parseInt(age), "Age");
+            } catch (e) {
+                  return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            }
+            try {
+                  const userCreated = await userCollection.createUser(firstName, lastName, email, profile, age);
+                  if (!userCreated) { throw { statusCode: 500, message: `Couldn't Create user` }; };
                   return res.json(userCreated);
-            } catch (e) { 
-                  return res.status(400).json({ error: e }); 
+            } catch (e) {
+                  return res.status(e.statusCode).json({ title: "Error", message: e.message });
             }
       });
 router

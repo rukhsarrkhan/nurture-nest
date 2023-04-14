@@ -96,9 +96,10 @@ const removeChild = async (childId) => {
   return `${deletedChild.value.name} has been successfully deleted!`;
 };
 
+
 module.exports = {
   createChild,
   getChildById,
   updateChild,
-  removeChild,
+  removeChild
 };

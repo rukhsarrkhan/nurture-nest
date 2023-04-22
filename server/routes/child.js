@@ -63,10 +63,11 @@ router
       })
       .post(async (req, res) => {
             childId = req.params.childId
+            const postVaccine = req.body;
             try {
-                  helper.validateInput(childId,"child Id")
-                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  helper.isIdValid(childId)
+                  // helper.validateInput(childId,"child Id")
+                  // helper.onlyLettersNumbersAndSpaces(childId, "child Id")
+                  // helper.isIdValid(childId)
                   
                 } catch (e) {
                   console.log(e)
@@ -74,7 +75,8 @@ router
                 }
 
             try {
-                  const vaccineAdded = await childCollection.addVaccine(req.body, childId);
+                  const { name,date,doses } = postVaccine;
+                  const vaccineAdded = await childCollection.addVaccine(name,date,doses, childId);
                   if (!vaccineAdded) { throw "Couldn't creatva"}
                   return res.json(vaccineAdded);
             } catch (e) { return res.status(404).json({ error: e }); }
@@ -106,10 +108,13 @@ router
       })
       .post(async (req, res) => {
             childId = req.params.childId
+            postAppointment = req.body
             try {
                   helper.validateInput(childId,"child Id")
                   helper.onlyLettersNumbersAndSpaces(childId, "child Id")
                   helper.isIdValid(childId)
+                   await helper.isDateValid(appointment.date, "date")
+                  // await helper.isTimeValid(appointment.time, "time")
                   
                 } catch (e) {
                   console.log(e)
@@ -117,12 +122,27 @@ router
                 }
 
             try {
-                  const appointmentAdded = await childCollection.addAppointment(req.body, childId);
+                  const { doctor,hospital,date,time } = postAppointment;
+                  const appointmentAdded = await childCollection.addAppointment(doctor,hospital,date,time, childId);
                   if (!appointmentAdded) { throw "Couldn't create"}
                   return res.json(appointmentAdded);
             } catch (e) {
                   console.log(e)
                    return res.status(404).json({ error: e }); }
       });
+
+      router
+      .route("/vaccine/:vaccineId")
+      .delete(async (req, res) => {
+            const vaccId = req.params.vaccineId
+            try {
+                  const removedVaccine = await childCollection.removeVaccine(vaccId)
+                  return res.status(200).json(removedVaccine);
+                } catch (e) {
+                  console.log("e", e)
+                  return res.status(500).json({error: e});
+                }
+                //code here for DELETE
+      })
 
 module.exports = router;

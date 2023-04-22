@@ -1,4 +1,4 @@
-//moment = require("moment");
+moment = require("moment");
 const { ObjectId } = require("mongodb");
 
 const validateInput = async (str, fieldName) => {
@@ -32,8 +32,17 @@ const execValdnForArr = async (arr, fieldName) => {
 
 const isDateValid = async (str, fieldName) => {
     if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-        throw { statusCode: 400, message: `${fieldName} is an invalid date.` };
+        throw { statusCode: 400, message: `${fieldName} is invalid.` };
 };
+
+// const isTimeValid = async (str, fieldName) => {
+//     console.log(str)
+//     let timeCheck = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(str)
+//     console.log(timeCheck, 'this is time check')
+//     if(!timeCheck)
+//     throw {statusCode : 400, message:  `${fieldName} not the correct format`}
+// };
+
 
 const isUserLoggedIn = async (req) => {
     if (req.session.user) return true;
@@ -125,5 +134,6 @@ module.exports = {
     onlyNumbers,
     onlyLettersNumbersAndSpaces,
     onlyLettersAndSpaces,
-    isIdValid
+    isIdValid,
+    //isTimeValid
 };

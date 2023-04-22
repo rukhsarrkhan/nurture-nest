@@ -1,4 +1,4 @@
-import React, { useEffect, useState }from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getAppointmentAPICall } from '../redux/appointments/appointmentActions';
@@ -18,14 +18,14 @@ import '../App.css';
 import { appointmentSetAPICall } from '../redux/appointments/appointmentActions';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -49,8 +49,31 @@ const style = {
   p: 4,
 };
 
-const AppointmentList = ({ getAppointmentAPICall,appointmentSetAPICall, appointmentData }) => {
+const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData }) => {
   let { childId } = useParams();
+
+  const formatDate = (showdate) => {
+    var year = showdate.substring(0, 4);
+    var month = showdate.substring(5, 7);
+    var day = showdate.substring(8, 10);
+    return month + '/' + day + '/' + year;
+  };
+
+  const tConvert = (time) => {
+    // Check correct time format and split into components
+    time = time
+      .toString()
+      .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+    if (time.length > 1) {
+      // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
+  };
+
 
   const [open, setOpen] = useState(false);
   const [doctor, setDoctor] = useState('');
@@ -95,8 +118,8 @@ const AppointmentList = ({ getAppointmentAPICall,appointmentSetAPICall, appointm
       const data = {
         doctor: doctor,
         hospital: hospital,
-        date: date,
-        time: time
+        date: formatDate(date),
+        time: tConvert(time)
       };
       await appointmentSetAPICall(data, childId)
     }
@@ -156,7 +179,7 @@ const AppointmentList = ({ getAppointmentAPICall,appointmentSetAPICall, appointm
               value={doctor}
               error={doctorError}
             />
-             <TextField
+            <TextField
               className="formField"
               label="Name"
               onChange={e => setHospital(e.target.value)}
@@ -184,6 +207,7 @@ const AppointmentList = ({ getAppointmentAPICall,appointmentSetAPICall, appointm
             <TextField
               className="formField"
               label="Doses"
+              type='time'
               onChange={e => setTime(e.target.value)}
               required
               variant="outlined"
@@ -202,6 +226,7 @@ const AppointmentList = ({ getAppointmentAPICall,appointmentSetAPICall, appointm
           </form>
         </Box>
       </Modal>
+
     </div>
   );
 };
@@ -216,7 +241,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     getAppointmentAPICall: (childId) => dispatch(getAppointmentAPICall(childId)),
-    appointmentSetAPICall: (obj,childId) => dispatch(appointmentSetAPICall(obj,childId))
+    appointmentSetAPICall: (obj, childId) => dispatch(appointmentSetAPICall(obj, childId))
   };
 };
 

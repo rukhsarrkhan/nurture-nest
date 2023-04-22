@@ -3,7 +3,9 @@ import {
   GET_VACCINE_SUCCESS,
   GET_VACCINE_FAILURE,
   SET_VACCINE_SUCCESS,
-  SET_VACCINE_FAILURE
+  SET_VACCINE_FAILURE,
+  VACCINE_DELETE_SUCCESS,
+  VACCINE_DELETE_FAILURE
 } from "./vaccineActionTypes";
 
 export const getVaccinesSuccess = (vaccine) => {
@@ -34,6 +36,20 @@ export const vaccinesSetFailure = (error) => {
   };
 };
 
+export const vaccineDeleteSuccess = (vaccine) => {
+  return {
+    type:  VACCINE_DELETE_SUCCESS,
+    payload: vaccine,
+  };
+};
+
+export const vaccinesDeleteFailure = (error) => {
+  return {
+    type:  VACCINE_DELETE_FAILURE,
+    payload: error,
+  };
+};
+
 export const getVaccineAPICall = (childId) => {
   return async (dispatch) => {
     try {
@@ -56,6 +72,19 @@ export const vaccineSetAPICall = (obj,childId) => {
       dispatch(vaccinesSetSuccess(resp.data));
     } catch (error) {
       dispatch(vaccinesSetFailure(error));
+    }
+  };
+};
+
+export const delVaccineAPICall = (vaccineId) => {
+  return async (dispatch) => {
+    try {
+      let resp = await axios.delete('http://localhost:3000/child/vaccine/'+vaccineId);
+      // set token here
+      // sessionStorage.setItem("token", resp.data.token);
+      // dispatch(getVaccinesSuccess(resp.data));
+    } catch (error) {
+      // dispatch(getVaccinesFailure(error));
     }
   };
 };

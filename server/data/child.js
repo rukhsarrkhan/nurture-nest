@@ -33,8 +33,8 @@ const createChild = async (
 };
 
 const getChildById = async (childId) => {
-  if (typeof childId == "undefined")
-    throw "childId parameter not provchildIded";
+  // if (typeof childId == "undefined")
+  //   throw "childId parameter not provchildIded";
   if (typeof childId !== "string") throw "childId must be a string";
   if (childId.trim().length === 0) {
     throw "childId cannot be an empty string or just spaces";
@@ -99,20 +99,31 @@ const removeChild = async (childId) => {
 };
 
 const addVaccine = async (
-  vaccines,
+  name,
+  date,
+  doses,
   childId
 ) => {
-  if (!childId) throw 'You must provide a childId to add a vaccine';
-  if (typeof childId !== 'string') throw 'childId must be a string';
-  if (childId.trim().length === 0)
-      throw 'childId cannot be an empty string or just spaces';
-  childId = childId.trim();
-  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+  // if (!childId) throw 'You must provide a childId to add a vaccine';
+  // if (typeof childId !== 'string') throw 'childId must be a string';
+  // if (childId.trim().length === 0)
+  //     throw 'childId cannot be an empty string or just spaces';
+  // childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw 'invalid object ID';
 
+  let vaccineId = new ObjectId();
+
+  let newVaccine = {
+    _id: vaccineId,
+  name: name, 
+  date: date,
+  doses: doses,
+  
+  }
 
   const childCollection = await childs();
   const tempChild = await getChildById(childId);
-      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: vaccines } })
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: newVaccine } })
  
   const updatedChild = await getChildById(childId);
   return updatedChild.vaccine;
@@ -155,25 +166,59 @@ const getAppointments = async (childId) => {
 
 
 const addAppointment = async (
-  appointment,
+  doctor,
+  hospital,
+  date,
+  time,
   childId
 ) => {
-  if (!childId) throw 'You must provide a childId to add a vaccine';
-  if (typeof childId !== 'string') throw 'childId must be a string';
-  if (childId.trim().length === 0)
-      throw 'childId cannot be an empty string or just spaces';
-  childId = childId.trim();
-  if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+  helper.validateInput(childId,"child Id")
+  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
+  helper.isIdValid(childId)
+  helper.onlyLettersNumbersAndSpaces(appointment.doctor, "Doctor")
+  helper.onlyLettersNumbersAndSpaces(appointment.hospital, "Doctor")
+   await helper.isDateValid(appointment.date, "date")
+// await helper.isTimeValid(appointment.time)
 
-
+let appointmentId = ObjectId();
+let newAppointment = {
+  _id: appointmentId,
+doctor: doctor, 
+hospital: hospital,
+date: date,
+time: time
+}
   const childCollection = await childs();
   const tempChild = await getChildById(childId);
-      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: {appointments : appointment } })
+      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: {appointments : newAppointment } })
  
   const updatedChild = await getChildById(childId);
   return updatedChild.appointments;
 
 }
+const removeVaccine = async (vaccineId) => {
+  // if (typeof childId == "undefined") throw "Id parameter not provided";
+  // if (typeof childId !== "string") throw "Id must be a string";
+  // if (childId.trim().length === 0)
+  //   throw "id cannot be an empty string or just spaces";
+  // childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object ID";
+
+   const childCollection = await childs();
+   const vaccine = await childCollection.findOne({ vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, },
+   { projection: { _id: 1, vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, }, }
+ );
+ console.log("vaccine",vaccine)
+ if (vaccine !== null){
+  const postVaccine= vaccine._id
+  const remVaccine = await childCollection.updateOne({ _id: postVaccine }, { $pull: { vaccine: { _id: ObjectId(vaccineId) } } });
+  return remVaccine
+ } else {
+  return null
+ }
+
+
+};
 
 
 module.exports = {
@@ -184,5 +229,6 @@ module.exports = {
   addVaccine,
   getVaccines,
   getAppointments,
-  addAppointment
+  addAppointment,
+  removeVaccine
 };

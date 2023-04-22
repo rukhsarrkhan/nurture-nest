@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const data = require("../data");
+const userData = require("../data/users");
 const helper = require("../helpers");
-const userCollection = data.users;
+const { ObjectId } = require("mongodb");
 
 router.route("/signup").post(async (req, res) => {
     let { firstName, lastName, email, profile, age } = req.body;
@@ -21,7 +21,7 @@ router.route("/signup").post(async (req, res) => {
         return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
     try {
-        const userCreated = await userCollection.createUser(firstName, lastName, email, profile, age);
+        const userCreated = await userData.createUser(firstName, lastName, email, profile, age);
         if (!userCreated) {
             throw { statusCode: 500, message: `Couldn't Create user` };
         }
@@ -35,11 +35,11 @@ router
     .get(async (req, res) => {
         let userId = req.params.userId;
         try {
-            userId = await helperFunc.execValdnAndTrim(userId, "userId");
+            userId = await helper.execValdnAndTrim(userId, "userId");
             if (!ObjectId.isValid(userId)) {
-                throw { statusCode: 400, message: "parentId is not valid" };
+                throw { statusCode: 400, message: "userId is not valid" };
             }
-            const userObj = await userdata.getUserById(userId);
+            const userObj = await userData.getUserById(userId);
             if (!userObj || userObj === null || userObj === undefined) throw { statusCode: 404, message: `No user exists with that id` };
             return res.json(userObj);
         } catch (e) {
@@ -49,7 +49,7 @@ router
     .put(async (req, res) => {
         let { username, password, email, type, age, photo, lctn } = req.body;
         try {
-            const updatedUser = await userdata.updateUser(req.params.userId, username, password, email, type, age, photo, lctn);
+            const updatedUser = await userData.updateUser(req.params.userId, username, password, email, type, age, photo, lctn);
             if (!updatedUser) {
                 throw "Couldn't update user";
             }
@@ -60,7 +60,7 @@ router
     })
     .delete(async (req, res) => {
         try {
-            const userDeleted = await userdata.removeUser(req.params.userId);
+            const userDeleted = await userData.removeUser(req.params.userId);
             res.json({ Awesome: `user with id: ${req.params.userId} deleted successfully` });
         } catch (e) {
             return res.status(404).json({ error: e });

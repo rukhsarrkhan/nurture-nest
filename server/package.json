@@ -1,27 +1,27 @@
 {
-  "name": "new-folder",
-  "version": "1.0.0",
-  "description": "CS554-Nurture-Nest",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rukhsarrkhan/baby-care.git"
-  },
-  "author": "Status 418",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rukhsarrkhan/baby-care/issues"
-  },
-  "homepage": "https://github.com/rukhsarrkhan/baby-care#readme",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "express-session": "^1.17.0",
-    "moment": "^2.29.4",
-    "mongodb": "^4.12.0"
-  }
+    "name": "new-folder",
+    "version": "1.0.0",
+    "description": "CS554-Nurture-Nest",
+    "main": "app.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rukhsarrkhan/baby-care.git"
+    },
+    "author": "Status 418",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/rukhsarrkhan/baby-care/issues"
+    },
+    "homepage": "https://github.com/rukhsarrkhan/baby-care#readme",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "express-session": "^1.17.0",
+        "moment": "^2.29.4",
+        "mongodb": "^4.12.0"
+    }
 }

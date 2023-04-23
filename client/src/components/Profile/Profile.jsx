@@ -36,7 +36,6 @@ const Profile = (props) => {
         }
         if (userId && userId !== undefined) fetchData();
     }, [userId]);
-
     if (loading) {
         return (
             <div>
@@ -51,7 +50,55 @@ const Profile = (props) => {
                 </Link>
             );
         } else {
-            console.log(userData);
+            const commonFields = (
+                <Box component="ul">
+                    <li>Name: {userData.firstName + " " + userData.lastName}</li>
+                    <li>Age: {userData.age}</li>
+                    <li>Email: {userData.email}</li>
+                    <li>Address: {userData.address}</li>
+                    <li>Date of Birth: {userData.DOB}</li>
+                    <li>Phone: {userData.phone}</li>
+                </Box>
+            );
+            const nannyFields = (
+                <Box component="ul">
+                    <li>Years of experience: {userData.n_yearsOfExperience}</li>
+                    <li>Educational Qualifications: {userData.n_qualifications}</li>
+                    <li>Certifications: {userData.n_certifications}</li>
+                    <li>Skills: {userData.n_skills}</li>
+                    <div>
+                        <h4>Children:</h4>
+                        {userData.n_childIds?.map((child) => (
+                            <Card key={child.id} sx={{ mt: 2 }}>
+                                <CardHeader title={child.name} />
+                                <CardContent>
+                                    <Typography variant="body2" color="text.secondary">
+                                        <Link to={`/child/${child.id}`}>View child profile</Link>
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </Box>
+            );
+            const parentFields = (
+                <Box component="ul">
+                    <div>
+                        <h4>Children:</h4>
+                        {userData.p_childIds?.map((child) => (
+                            <Card key={child.id} sx={{ mt: 2 }}>
+                                <CardHeader title={child.name} />
+                                <CardContent>
+                                    <Typography variant="body2" color="text.secondary">
+                                        <Link to={`/child/${child.id}`}>View child profile</Link>
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </Box>
+            );
+
             return (
                 <div className="profile">
                     <Grid container spacing={3}>
@@ -69,10 +116,9 @@ const Profile = (props) => {
                         <Grid item xs={12} md={8}>
                             <Paper sx={{ p: 2 }}>
                                 <Box component="ul">
-                                    <li>Name: {userData.firstName + " " + userData.lastName}</li>
-                                    <li>Age: {userData.age}</li>
-                                    <li>Email: {userData.email}</li>
-                                    <li>Address: {userData.address}</li>
+                                    {commonFields}
+                                    {userData.profile === "NANNY" && nannyFields}
+                                    {userData.profile === "PARENT" && parentFields}
                                 </Box>
                             </Paper>
                         </Grid>

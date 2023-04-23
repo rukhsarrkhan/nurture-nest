@@ -113,7 +113,7 @@ router
                   helper.validateInput(childId,"child Id")
                   helper.onlyLettersNumbersAndSpaces(childId, "child Id")
                   helper.isIdValid(childId)
-                   await helper.isDateValid(appointment.date, "date")
+                   await helper.isDateValid(postAppointment.date, "date")
                   // await helper.isTimeValid(appointment.time, "time")
                   
                 } catch (e) {
@@ -139,7 +139,20 @@ router
                   const removedVaccine = await childCollection.removeVaccine(vaccId)
                   return res.status(200).json(removedVaccine);
                 } catch (e) {
-                  console.log("e", e)
+                  return res.status(500).json({error: e});
+                }
+                //code here for DELETE
+      })
+
+      router
+      .route("/appointment/:appointmentId")
+      .delete(async (req, res) => {
+            const appointmentId = req.params.appointmentId
+            try {
+                  const removedAppointment = await childCollection.removeAppointment(appointmentId)
+                  return res.status(200).json(removedAppointment);
+                } catch (e) {
+                  console.log(e,'e')
                   return res.status(500).json({error: e});
                 }
                 //code here for DELETE

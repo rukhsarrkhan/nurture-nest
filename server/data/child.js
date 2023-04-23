@@ -175,12 +175,12 @@ const addAppointment = async (
   helper.validateInput(childId,"child Id")
   helper.onlyLettersNumbersAndSpaces(childId, "child Id")
   helper.isIdValid(childId)
-  helper.onlyLettersNumbersAndSpaces(appointment.doctor, "Doctor")
-  helper.onlyLettersNumbersAndSpaces(appointment.hospital, "Doctor")
-   await helper.isDateValid(appointment.date, "date")
+  helper.onlyLettersNumbersAndSpaces(doctor, "Doctor")
+  helper.onlyLettersNumbersAndSpaces(hospital, "Doctor")
+   await helper.isDateValid(date, "date")
 // await helper.isTimeValid(appointment.time)
 
-let appointmentId = ObjectId();
+let appointmentId = new ObjectId();
 let newAppointment = {
   _id: appointmentId,
 doctor: doctor, 
@@ -220,6 +220,30 @@ const removeVaccine = async (vaccineId) => {
 
 };
 
+const removeAppointment = async (appointmentId) => {
+  // if (typeof childId == "undefined") throw "Id parameter not provided";
+  // if (typeof childId !== "string") throw "Id must be a string";
+  // if (childId.trim().length === 0)
+  //   throw "id cannot be an empty string or just spaces";
+  // childId = childId.trim();
+  // if (!ObjectId.isValid(childId)) throw "invalid object ID";
+
+   const childCollection = await childs();
+   const appointment = await childCollection.findOne({ appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, },
+   { projection: { _id: 1, appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, }, }
+ );
+
+ if (appointment !== null){
+  const postAppointment= appointment._id
+  const remAppointment = await childCollection.updateOne({ _id: postAppointment }, { $pull: { appointments: { _id: ObjectId(appointmentId) } } });
+  return remAppointment
+ } else {
+  return null
+ }
+
+
+};
+
 
 module.exports = {
   createChild,
@@ -230,5 +254,6 @@ module.exports = {
   getVaccines,
   getAppointments,
   addAppointment,
-  removeVaccine
+  removeVaccine,
+  removeAppointment
 };

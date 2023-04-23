@@ -45,17 +45,20 @@ const isNameValid = async (name, fieldName) => {
     if (!/^[a-zA-Z ,.'-]+$/.test(name)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
+const isProfileValid = async (profile, fieldName) => {
+    if (profile.trim() != "PARENT" && profile.trim() != "NANNY" ) throw { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
+};
+
 const isAgeValid = async (age, fieldName) => {
     if (isNaN(age)) {
         throw { statusCode: 400, message: `${fieldName} should be a number` };
     } else {
-        if (age < 18) throw { statusCode: 400, message: ` user must be 14 or older` };
-        if (age > 90) throw { statusCode: 400, message: ` user must be younger than 90` };
+        if (age < 14) throw { statusCode: 400, message: `User must be 14 or older` };
     }
 };
 
 const isEmailValid = async (email) => {
-    let emailConstraints = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
+    let emailConstraints = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$$/;
     if (!email.match(emailConstraints)) throw { statusCode: 400, message: `Email is invalid. Please enter a valid Email` };
 };
 
@@ -91,7 +94,7 @@ const onlyLettersNumbersAndSpaces = (str,fieldName) => {
 const onlyLettersAndSpaces = (str,fieldName) => {
     let letCheck = /^[a-zA-Z ]*$/
     if(!str.match(letCheck))
-    throw {statusCode : 400, message:  `${fieldName} should only be letters`}
+    throw {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
@@ -119,6 +122,7 @@ module.exports = {
     isDateValid,
     isUserLoggedIn,
     isNameValid,
+    isProfileValid,
     isAgeValid,
     isEmailValid,
     isUsernameValid,

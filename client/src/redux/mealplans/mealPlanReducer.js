@@ -3,8 +3,8 @@ import {
     GET_MEALPLAN_FAILURE,
     SET_MEALPLAN_SUCCESS,
     SET_MEALPLAN_FAILURE
-  } from "./appointmentActionTypes";
-  
+  } from "./mealPlanActionTypes"
+    
   const initialState = {
     loading: false,
     data: [],

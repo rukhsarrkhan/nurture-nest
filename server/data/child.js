@@ -158,6 +158,17 @@ const getAppointments = async (childId) => {
   return childAppointments;
 };
 
+const getMealPlans = async (childId) => {
+
+  childId = childId.trim();
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const mealDetails = childFound.mealRequirements
+  return mealDetails;
+
+}
+
 
 const addAppointment = async (
   appointment,
@@ -181,13 +192,14 @@ const addAppointment = async (
 }
 
 
+
 module.exports = {
   createChild,
   getChildById,
   updateChild,
   removeChild,
-  addVaccine,
   getVaccines,
   getAppointments,
+  getMealPlans,
   addAppointment
 };

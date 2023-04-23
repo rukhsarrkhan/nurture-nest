@@ -1,86 +1,158 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import { userRegistrationAPICall } from '../redux/users/userActions';
+import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions';
+import { AuthContext } from '../firebase/Auth';
+import SocialSignIn from './SocialSignIn';
+import helpers from '../helpers';
+
 
 const profiles = [
   {
-    value: 'Parent',
-    label: 'Parent',
+    value: 'PARENT',
+    label: 'PARENT',
   },
   {
-    value: 'Nanny',
-    label: 'Nanny',
+    value: 'NANNY',
+    label: 'NANNY',
   },
 ];
 
 const Register = ({ userData, userRegistrationAPICall }) => {
+  const { currentUser } = useContext(AuthContext);
+  console.log("currentUser here", currentUser);
+  console.log("userData here", userData);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState("");
+  const [age, setAge] = useState(1);
+
   const [firstNameError, setFirstNameError] = useState(false);
   const [lastNameError, setLastNameError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [profileError, setProfileError] = useState(false);
-  const [errorText, setErrorText] = useState(false);
+  const [ageError, setAgeError] = useState(false);
 
+  const [errorText, setErrorText] = useState("");
 
-
-  const handleSubmit = (event) => {
-    console.log("event",event)
-    event.preventDefault();
   
+  useEffect(() => {
+  }, []);
+
+  const validation = async (field, valFunc) => {
+    let fieldVal = await helpers.execValdnAndTrim(field);
+    let check = await valFunc;
+    if (check && check.statusCode === 400){
+      return check.message;
+    } else {
+      return ""
+    }
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     setFirstNameError(false);
     setLastNameError(false);
     setEmailError(false);
     setPasswordError(false);
     setConfirmPasswordError(false);
     setProfileError(false);
+    setAgeError(false);
+    setErrorText("");
 
-    if (firstName === '') {
+    let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName,"FirstName"))
+    if (firstNameCheck !== "") {
       setFirstNameError(true);
+      setErrorText(firstNameCheck)
+      return;
     }
-    if (lastName === '') {
+
+    let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName,"LastName"))
+    if (lastNameCheck !== "") {
       setLastNameError(true);
+      setErrorText(lastNameCheck)
+      return;
+
     }
-    if (email === '') {
+
+    let emailCheck = await validation(email, helpers.isEmailValid(email,"Email"))
+    if (emailCheck !== "") {
       setEmailError(true);
+      setErrorText(emailCheck)
+      return;
     }
-    if (password === '') {
+
+    let passwordCheck = await validation(password, helpers.isPasswordValid(password,"Password"))
+    if (passwordCheck !== "") {
       setPasswordError(true);
+      setErrorText(passwordCheck)
+      return;
     }
-    if (confirmPassword === '') {
+
+    let confirmPasswordCheck = await validation(confirmPassword, helpers.isPasswordValid(confirmPassword,"Confirm Password"))
+    if (confirmPasswordCheck !== "") {
       setConfirmPasswordError(true);
+      setErrorText(confirmPasswordCheck)
+      return;
     }
-    // if (profile === '') {
-    //   setProfileError(true);
-    // }
 
     if (password !== confirmPassword) {
       setPasswordError(true);
       setConfirmPasswordError(true);
+      setErrorText("Passwords should match")
       return;
     }
 
-    if (firstName && lastName && email && password) {
-      console.log("here")
-      // make API call
-      const data = {
-        firstName: firstName,
-        lastName: lastName,
-        userName: email,
-        password: password,
-        profile: profile
-      };
-      userRegistrationAPICall(data);
+    // getting profile as undefined
+    let profileCheck = await validation(profile, helpers.isNameValid(profile,"Profile"))
+    if (profileCheck !== "" && profile !== "PARENT" && profile !== "NANNY") {
+      setProfileError(true);
+      setErrorText("Profile is invalid")
+      return;
+
+    }
+
+    let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age),"Age"))
+    if (ageCheck !== "") {
+      setAgeError(true);
+      setErrorText(ageCheck)
+      return;
+
+    }
+
+    if (firstName.trim() && lastName.trim() && email.trim() && password.trim() && errorText === "") {
+      try {
+        const resp = await doCreateUserWithEmailAndPassword(
+          email.trim(),
+          password.trim(),
+          firstName.trim()
+        );
+        const data = {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          profile: profile.trim(),
+          age: age
+        };
+        await userRegistrationAPICall(data);
+      } catch (error) {
+        alert(error);
+      }
     }
   };
+
+  if (currentUser) {
+    return <Navigate to='/' />;
+  }
 
   return (
     <React.Fragment>
@@ -88,14 +160,15 @@ const Register = ({ userData, userRegistrationAPICall }) => {
         <form autoComplete="off" onSubmit={handleSubmit} className="sign-form">
           <h1>Register Form</h1>
           <TextField
-            className="formField"
             label="FirstName"
             onChange={e => setFirstName(e.target.value)}
             required
             variant="outlined"
             color="secondary"
-            sx={{ mb: 3 }}
+            // inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+            sx={{ mb: 3  }}
             fullWidth
+            helperText={firstNameError && errorText}
             value={firstName}
             error={firstNameError}
           />
@@ -107,6 +180,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             color="secondary"
             sx={{ mb: 3 }}
             fullWidth
+            helperText={lastNameError && errorText}
             value={lastName}
             error={lastNameError}
           />
@@ -119,6 +193,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             type="email"
             sx={{ mb: 3 }}
             fullWidth
+            helperText={emailError && errorText}
             value={email}
             error={emailError}
           />
@@ -129,6 +204,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             variant="outlined"
             color="secondary"
             type="password"
+            helperText={passwordError && errorText}
             value={password}
             error={passwordError}
             fullWidth
@@ -141,6 +217,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             variant="outlined"
             color="secondary"
             type="password"
+            helperText={confirmPasswordError && errorText}
             value={confirmPassword}
             error={confirmPasswordError}
             fullWidth
@@ -148,13 +225,13 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           />
           <TextField
             label="Profile"
-            defaultValue="Parent"
-            helperText="Please select your profile"
+            defaultValue="PARENT"
             select
             required
             onChange={e => setProfile(e.target.value)}
             variant="outlined"
             color="secondary"
+            helperText={profileError ? errorText : "Please select your profile"}
             value={profile}
             error={profileError}
             fullWidth
@@ -166,10 +243,25 @@ const Register = ({ userData, userRegistrationAPICall }) => {
               </MenuItem>
             ))}
           </TextField>
+          <TextField
+            label="Age"
+            onChange={e => setAge(e.target.value)}
+            required
+            variant="outlined"
+            color="secondary"
+            type="number"
+            helperText={ageError && errorText}
+            value={age}
+            error={ageError}
+            fullWidth
+            sx={{ mb: 3 }}
+          />
           <Button variant="outlined" color="secondary" type="submit">Register</Button>
 
         </form>
         <small>Already have an account? <Link to="/login">Login here</Link></small>
+        <br />
+        <SocialSignIn />
       </div>
 
     </React.Fragment>
@@ -178,7 +270,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state
+    userData: state.users
   };
 };
 

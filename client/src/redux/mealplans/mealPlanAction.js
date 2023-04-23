@@ -4,7 +4,7 @@ import {
   GET_MEALPLAN_FAILURE,
   SET_MEALPLAN_SUCCESS,
   SET_MEALPLAN_FAILURE
-} from "./vaccineActionTypes";
+} from "./mealPlanActionTypes";
 
 export const getMealPlanSuccess = (vaccine) => {
   return {
@@ -37,7 +37,7 @@ export const mealPlanSetFailure = (error) => {
 export const getMealPlanAPICall = (childId) => {
   return async (dispatch) => {
     try {
-      let resp = await axios.get('http://localhost:3000/child/mealplan/'+childId);
+      let resp = await axios.get(`http://localhost:3000/child/mealplan/${childId}`);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
       dispatch(getMealPlanSuccess(resp.data));

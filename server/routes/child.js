@@ -125,4 +125,21 @@ router
                    return res.status(404).json({ error: e }); }
       });
 
+      router
+      .route("/mealplan/:childId")
+      .get(async (req, res) => {
+            childId = req.params.childId
+            try {
+                  helper.validateInput(childId,"child Id")
+                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
+                  helper.isIdValid(childId)
+                  const mealsFound = await childCollection.getMealPlans(childId);
+                  if (!mealsFound) { throw "Meals not found"; }
+                  return res.json(mealsFound);
+                } catch (e) {
+                  console.log(e)
+                  return res.status(400).json({ error: e }); 
+                }
+      })
+
 module.exports = router;

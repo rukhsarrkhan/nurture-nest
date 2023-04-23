@@ -12,8 +12,10 @@ router
     .get(async (req, res) => {
         try{
             const nannyDetails = await nannyData.getNannyById(req.params.nannyId);
-            const childDetails = await childData.getChildById(nannyDetails.childId)
-            const dashboardData = {"nannyId": req.params.nannyId ,"childName": childDetails.name, "childId": nannyDetails.childId, "childAge": childDetails.age, "sex" : childDetails.sex, "vaccineDetails" : childDetails.vaccine, "appointmentDetails": childDetails.appointments, "mealRequirements":childDetails.mealRequirements}
+            console.log("in between")
+            const childDetails = await childData.getChildById(nannyDetails.n_childIds[0])
+            console.log(childDetails, "....................")
+            const dashboardData = {"nannyId": req.params.nannyId ,"childName": childDetails.name, "childId": nannyDetails.n_childIds[0], "childAge": childDetails.age, "sex" : childDetails.sex, "vaccineDetails" : childDetails.vaccine,"appointmentDetails": childDetails.appointments, "mealRequirements":childDetails.mealRequirements}
             return res.status(200).json(dashboardData);
         }catch(e){
             throw e

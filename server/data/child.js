@@ -34,6 +34,7 @@ const createChild = async (
 };
 
 const getChildById = async (childId) => {
+  try{
   if (typeof childId == "undefined")
     throw "childId parameter not provchildIded";
   if (typeof childId !== "string") throw "childId must be a string";
@@ -47,6 +48,9 @@ const getChildById = async (childId) => {
   if (childFound === null) throw "No child with that Id";
   childFound._id = childFound._id.toString();
   return childFound;
+}catch(e){
+  throw e
+}
 };
 
 const updateChild = async (

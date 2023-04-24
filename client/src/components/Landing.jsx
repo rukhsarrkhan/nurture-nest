@@ -1,27 +1,18 @@
-import React from 'react';
+import React, { useState, useContext, useEffect } from "react";
 import '../App.css';
-import {
-  AppBar,
-  Typography,
-  Link,
-  Box,
-  Toolbar,
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Drawer,
-} from '@mui/material';
-
-import Logout from './Logout';
+import Toolbar from "./ToolBar";
+import { AuthContext } from '../firebase/Auth';
+import { Link, Navigate } from "react-router-dom";
 
 const Landing = () => {
+  const { currentUser } = useContext(AuthContext);
+  // if (currentUser) {
+  //   return <Navigate to='/' />;
+  // }
   return (
-    <><header className='App-header'>
-      <Link to='/'>
-        {/* <img src={logo} className='App-logo' alt='logo' /> */}
-      </Link>
-    </header><Logout /></>
+    <div>
+      <Toolbar />
+    </div>
   );
 };
 

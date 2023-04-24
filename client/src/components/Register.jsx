@@ -7,6 +7,7 @@ import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions'
 import { AuthContext } from '../firebase/Auth';
 import SocialSignIn from './SocialSignIn';
 import helpers from '../helpers';
+import Toolbar from '../components/ToolBar';
 
 
 const profiles = [
@@ -22,8 +23,7 @@ const profiles = [
 
 const Register = ({ userData, userRegistrationAPICall }) => {
   const { currentUser } = useContext(AuthContext);
-  console.log("currentUser here", currentUser);
-  console.log("userData here", userData);
+  console.log("register");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -40,22 +40,17 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [profileError, setProfileError] = useState(false);
   const [ageError, setAgeError] = useState(false);
-
   const [errorText, setErrorText] = useState("");
-
-  
-  useEffect(() => {
-  }, []);
 
   const validation = async (field, valFunc) => {
     let fieldVal = await helpers.execValdnAndTrim(field);
     let check = await valFunc;
-    if (check && check.statusCode === 400){
+    if (check && check.statusCode === 400) {
       return check.message;
     } else {
-      return ""
+      return "";
     }
-  }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -69,62 +64,60 @@ const Register = ({ userData, userRegistrationAPICall }) => {
     setAgeError(false);
     setErrorText("");
 
-    let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName,"FirstName"))
+    let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName, "FirstName"));
     if (firstNameCheck !== "") {
       setFirstNameError(true);
-      setErrorText(firstNameCheck)
+      setErrorText(firstNameCheck);
       return;
     }
 
-    let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName,"LastName"))
+    let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName, "LastName"));
     if (lastNameCheck !== "") {
       setLastNameError(true);
-      setErrorText(lastNameCheck)
+      setErrorText(lastNameCheck);
       return;
 
     }
 
-    let emailCheck = await validation(email, helpers.isEmailValid(email,"Email"))
+    let emailCheck = await validation(email, helpers.isEmailValid(email, "Email"));
     if (emailCheck !== "") {
       setEmailError(true);
-      setErrorText(emailCheck)
+      setErrorText(emailCheck);
       return;
     }
 
-    let passwordCheck = await validation(password, helpers.isPasswordValid(password,"Password"))
+    let passwordCheck = await validation(password, helpers.isPasswordValid(password, "Password"));
     if (passwordCheck !== "") {
       setPasswordError(true);
-      setErrorText(passwordCheck)
+      setErrorText(passwordCheck);
       return;
     }
 
-    let confirmPasswordCheck = await validation(confirmPassword, helpers.isPasswordValid(confirmPassword,"Confirm Password"))
+    let confirmPasswordCheck = await validation(confirmPassword, helpers.isPasswordValid(confirmPassword, "Confirm Password"));
     if (confirmPasswordCheck !== "") {
       setConfirmPasswordError(true);
-      setErrorText(confirmPasswordCheck)
+      setErrorText(confirmPasswordCheck);
       return;
     }
 
     if (password !== confirmPassword) {
       setPasswordError(true);
       setConfirmPasswordError(true);
-      setErrorText("Passwords should match")
+      setErrorText("Passwords should match");
       return;
     }
 
-    // getting profile as undefined
-    let profileCheck = await validation(profile, helpers.isNameValid(profile,"Profile"))
+    let profileCheck = await validation(profile, helpers.isNameValid(profile, "Profile"));
     if (profileCheck !== "" && profile !== "PARENT" && profile !== "NANNY") {
       setProfileError(true);
-      setErrorText("Profile is invalid")
+      setErrorText("Profile is invalid");
       return;
-
     }
 
-    let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age),"Age"))
+    let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age), "Age"));
     if (ageCheck !== "") {
       setAgeError(true);
-      setErrorText(ageCheck)
+      setErrorText(ageCheck);
       return;
 
     }
@@ -136,6 +129,11 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           password.trim(),
           firstName.trim()
         );
+      } catch (error) {
+        alert(error);
+      }
+
+      try {
         const data = {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
@@ -147,6 +145,8 @@ const Register = ({ userData, userRegistrationAPICall }) => {
       } catch (error) {
         alert(error);
       }
+
+      return <Navigate to='/login' />;
     }
   };
 
@@ -156,17 +156,18 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
   return (
     <React.Fragment>
+      <Toolbar />
       <div className="container">
+
         <form autoComplete="off" onSubmit={handleSubmit} className="sign-form">
           <h1>Register Form</h1>
           <TextField
             label="FirstName"
             onChange={e => setFirstName(e.target.value)}
             required
-            variant="outlined"
+            variant="filled"
             color="secondary"
-            // inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-            sx={{ mb: 3  }}
+            sx={{ mb: 3 }}
             fullWidth
             helperText={firstNameError && errorText}
             value={firstName}
@@ -176,7 +177,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             label="LastName"
             onChange={e => setLastName(e.target.value)}
             required
-            variant="outlined"
+            variant="filled"
             color="secondary"
             sx={{ mb: 3 }}
             fullWidth
@@ -188,8 +189,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             label="Email"
             onChange={e => setEmail(e.target.value)}
             required
-            variant="outlined"
-            color="secondary"
+            variant="filled" color="secondary"
             type="email"
             sx={{ mb: 3 }}
             fullWidth
@@ -201,8 +201,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             label="Password"
             onChange={e => setPassword(e.target.value)}
             required
-            variant="outlined"
-            color="secondary"
+            variant="filled" color="secondary"
             type="password"
             helperText={passwordError && errorText}
             value={password}
@@ -214,8 +213,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             label="ConfirmPassword"
             onChange={e => setConfirmPassword(e.target.value)}
             required
-            variant="outlined"
-            color="secondary"
+            variant="filled" color="secondary"
             type="password"
             helperText={confirmPasswordError && errorText}
             value={confirmPassword}
@@ -229,8 +227,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             select
             required
             onChange={e => setProfile(e.target.value)}
-            variant="outlined"
-            color="secondary"
+            variant="filled" color="secondary"
             helperText={profileError ? errorText : "Please select your profile"}
             value={profile}
             error={profileError}
@@ -247,8 +244,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             label="Age"
             onChange={e => setAge(e.target.value)}
             required
-            variant="outlined"
-            color="secondary"
+            variant="filled" color="secondary"
             type="number"
             helperText={ageError && errorText}
             value={age}
@@ -256,7 +252,10 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             fullWidth
             sx={{ mb: 3 }}
           />
-          <Button variant="outlined" color="secondary" type="submit">Register</Button>
+          <br />
+          <br />
+
+          <Button variant="outlined" color="secondary" type="submit" className="center">Register</Button>
 
         </form>
         <small>Already have an account? <Link to="/login">Login here</Link></small>

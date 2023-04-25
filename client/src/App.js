@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { AuthProvider } from './firebase/Auth';
+// import { AuthProvider } from './firebase/Auth';
 
 import Landing from './components/Landing';
 import Login from './components/Login';
@@ -18,19 +18,20 @@ import VaccineList from './components/VaccineList';
 import AppointmentList from './components/AppointmentList';
 import CreateJob from './components/CreateJob';
 import Chat from './components/Chat';
+import Navbar from './components/Navbar'
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 const App = () => {
   return (
-    <AuthProvider>
+    // <AuthProvider>
+
     <Router>
-      <div className='App'>
-        {/* <header className='App-header'>
-          <Link to='/'>
-            <img src={logo} className='App-logo' alt='logo' />
-          </Link>
-        </header> */}
-        <div className='App-body'>
+      <div>
+        <header>
+          <Navbar></Navbar>
+        </header>
+      </div>
+      <br></br>
           <Routes>
             <Route path='/' element={<Landing />} />
             <Route path='/login' element={<Login />} />
@@ -48,10 +49,9 @@ const App = () => {
             <Route path='/appointment/:childId' element={<AppointmentList />} />
             <Route path='/chat/:chatid' element={<Chat />} />
           </Routes>
-        </div>
-      </div>
     </Router>
-    </AuthProvider>
+   
+    // </AuthProvider>
 
   );
 };

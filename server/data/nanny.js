@@ -17,7 +17,7 @@ const removeNanny = async () => {
   const deletionInfo = await moviesCollection.deleteOne({_id: ObjectId(movieId)});
 
   if (deletionInfo.deletedCount === 0) {
-    throw `Could not delete movie with id of ${id}`;
+    throw `Could not delete nanny with id of ${id}`;
   }
   return deleted["title"] + " has been successfully deleted!" ;
 };

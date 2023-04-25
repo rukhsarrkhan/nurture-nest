@@ -20,7 +20,7 @@ import image from '../img/appointmentImage.png'
 import AddAppointmentModal from './modals/AddAppointmentModal';
 import { delAppointmentAPICall } from '../redux/appointments/appointmentActions';
 
-const submitButton= {
+const submitButton = {
     position: 'absolute',
     right: '5%',
     top: '95%',
@@ -29,48 +29,38 @@ const submitButton= {
     borderRadius: 10,
 }
 
-const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData , delAppointmentAPICall}) => {
+const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall }) => {
     let card = null
     let { childId } = useParams();
-
-
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errorPage, setErrorPage] = useState(false)
     const [deleteId, setDeleteId] = useState('')
 
-
-    const handleOpen = () => {setOpen(true)};
+    const handleOpen = () => { setOpen(true) };
     const handleClose = () => setOpen(false);
 
     const handleOpen2 = (id) => {
-
         setDeleteId(id)
-
         setOpen2(true)
     };
     const handleClose2 = () => setOpen2(false);
 
-
     useEffect(() => {
-      getAppointmentAPICall(childId);
-      setLoading(false);
+        getAppointmentAPICall(childId);
+        setLoading(false);
     }, [childId]);
-  
-
 
     const addAppointment = async (obj) => {
-            await appointmentSetAPICall(obj, childId)
-            handleClose();
-        }
-    
+        await appointmentSetAPICall(obj, childId)
+        handleClose();
+    }
 
     const deleteAppointment = async (appointmentId) => {
         await delAppointmentAPICall(appointmentId);
         setOpen2(false);
         await getAppointmentAPICall(childId);
-
     }
 
     const buildCard = (appointments) => {
@@ -84,7 +74,6 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         marginLeft: 'auto',
                         marginRight: 'auto',
                         borderRadius: 5,
-                        // border: '1px solid #080a33',
                         boxShadow:
                             '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
                     }}>
@@ -98,16 +87,10 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         image={image}
                     />
                     <CardActions disableSpacing>
-
-                        {/* <IconButton onClick={() => handleOpen} color='error' aria-label="Add Vaccine">
-                            <FavoriteIcon />
-                        </IconButton> */}
                         <IconButton onClick={() => handleOpen2(appointments && appointments._id)} color='textSecondary' aria-label="Delete Appointment">
                             <DeleteIcon />
                         </IconButton>
-
                     </CardActions>
-
                 </Card>
             </Grid >
 
@@ -143,12 +126,11 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
             <div>
                 <div>
                     <br />
-                    <Button  variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                     Add Appointment
-                     </Button>
-                     <br />
-                     <br />
-
+                    <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
+                        Add Appointment
+                    </Button>
+                    <br />
+                    <br />
                     <Grid
                         container
                         spacing={2}
@@ -158,7 +140,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         }}
                     >
                         {card}
-                        
+
                     </Grid>
 
                     {open2 && <DeleteAppointmentModal
@@ -169,7 +151,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     />}
-                     {open && <AddAppointmentModal
+                    {open && <AddAppointmentModal
                         open={open}
                         onClose={handleClose}
                         addAppointment={addAppointment}
@@ -179,7 +161,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                 </div>
                 <br />
                 <br />
-              
+
             </div>
 
         );
@@ -196,8 +178,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-      getAppointmentAPICall: (childId) => dispatch(getAppointmentAPICall(childId)),
-      appointmentSetAPICall: (obj, childId) => dispatch(appointmentSetAPICall(obj, childId)),
+        getAppointmentAPICall: (childId) => dispatch(getAppointmentAPICall(childId)),
+        appointmentSetAPICall: (obj, childId) => dispatch(appointmentSetAPICall(obj, childId)),
         delAppointmentAPICall: (appointmentId) => dispatch(delAppointmentAPICall(appointmentId))
     };
 };

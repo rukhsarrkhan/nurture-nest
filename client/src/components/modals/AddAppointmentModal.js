@@ -31,17 +31,17 @@ const AddAppointmentModal = (props) => {
     const tConvert = (time) => {
         // Check correct time format and split into components
         time = time
-          .toString()
-          .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-    
+            .toString()
+            .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
         if (time.length > 1) {
-          // If time format correct
-          time = time.slice(1); // Remove full string match value
-          time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
-          time[0] = +time[0] % 12 || 12; // Adjust hours
+            // If time format correct
+            time = time.slice(1); // Remove full string match value
+            time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+            time[0] = +time[0] % 12 || 12; // Adjust hours
         }
         return time.join(''); // return adjusted time or original string
-      };
+    };
 
     const [doctor, setDoctor] = useState('');
     const [hospital, setHospital] = useState('');
@@ -60,21 +60,19 @@ const AddAppointmentModal = (props) => {
         setDateError(false);
         setErrorText("")
 
-
-
-        let doctorCheck = await helpers.isNameValid(doctor,"Doctor")
+        let doctorCheck = await helpers.isNameValid(doctor, "Doctor")
         if (doctorCheck !== undefined) {
             setDoctorError(true);
             setErrorText(doctorCheck.message)
             return
         }
-        let hospitalCheck = await helpers.isNameValid(hospital,"Hospital")
+        let hospitalCheck = await helpers.isNameValid(hospital, "Hospital")
         if (hospitalCheck !== undefined) {
             setHospitalError(true);
             setErrorText(hospitalCheck.message)
             return
         }
-        let dateCheck = await helpers.isDateValid(date,"date")
+        let dateCheck = await helpers.isDateValid(date, "date")
         if (dateCheck !== undefined) {
             setDateError(true);
             setErrorText(dateCheck.message)
@@ -84,17 +82,17 @@ const AddAppointmentModal = (props) => {
             setTimeError(true);
         }
         if (doctor.trim() && hospital.trim() && date.trim() && time.trim() && errorText === "") {
-            try{
-            const data = {
-              doctor: doctor,
-              hospital: hospital,
-              date: formatDate(date),
-              time: tConvert(time)
-            };
-            await props.addAppointment(data)
-        } catch(error){
-            alert(error)
-        }
+            try {
+                const data = {
+                    doctor: doctor,
+                    hospital: hospital,
+                    date: formatDate(date),
+                    time: tConvert(time)
+                };
+                await props.addAppointment(data)
+            } catch (error) {
+                alert(error)
+            }
         }
     }
 
@@ -106,71 +104,71 @@ const AddAppointmentModal = (props) => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-            <Container  maxWidth="sm">
-                <Box className='appointmentForm'  sx={style} >
-                    <form className="sign-form" autoComplete="off" onSubmit={handleSubmit}>
-                    <p className='P-title-home' >
-                        Add Appointment
-                    </p>
-                    
-                    <TextField
-                        className="formField"
-                        label="Doctor"
-                        onChange={e => setDoctor(e.target.value)}
-                        required
-                        variant="filled"
-                        color="secondary"
-                        sx={{ mb: 3 }}
-                        helperText={doctorError && errorText}
-                        value={doctor}
-                        error={doctorError}
-                    />
-                    <TextField
-                        className="formField"
-                        label="Hopital"
-                        onChange={e => setHospital(e.target.value)}
-                        required
-                        variant="filled"
-                        color="secondary"
-                        sx={{ mb: 3 }}
-                        helperText={hospitalErorr && errorText}
-                        value={hospital}
-                        error={hospitalErorr}
-                    />
-                    <TextField
-                        className="formField"
-                        label="Date"
-                        type='date'
-                        onChange={e => setDate(e.target.value)}
-                        required
-                        variant="filled"
-                        color="secondary"
-                        sx={{ mb: 3 }}
-                        helperText={dateError && errorText}
-                        value={date}
-                        error={dateError}
-                    />
-                    <TextField
-                        className="formField"
-                        label="Doses"
-                        type='time'
-                        onChange={e => setTime(e.target.value)}
-                        required
-                        variant="filled"
-                        color="secondary"
-                        sx={{ mb: 3 }}
-                        // fullWidth
-                        value={time}
-                        error={timeError}
-                    />
-                    <Button variant="outlined" color="secondary" type="submit" >
-                        Add
-                    </Button>
-                    <Button onClick={props.onClose}>
-                        Close
-                    </Button>
-                    </form>
-                </Box>
+                <Container maxWidth="sm">
+                    <Box className='appointmentForm' sx={style} >
+                        <form className="sign-form" autoComplete="off" onSubmit={handleSubmit}>
+                            <p className='P-title-home' >
+                                Add Appointment
+                            </p>
+
+                            <TextField
+                                className="formField"
+                                label="Doctor"
+                                onChange={e => setDoctor(e.target.value)}
+                                required
+                                variant="filled"
+                                color="secondary"
+                                sx={{ mb: 3 }}
+                                helperText={doctorError && errorText}
+                                value={doctor}
+                                error={doctorError}
+                            />
+                            <TextField
+                                className="formField"
+                                label="Hopital"
+                                onChange={e => setHospital(e.target.value)}
+                                required
+                                variant="filled"
+                                color="secondary"
+                                sx={{ mb: 3 }}
+                                helperText={hospitalErorr && errorText}
+                                value={hospital}
+                                error={hospitalErorr}
+                            />
+                            <TextField
+                                className="formField"
+                                label="Date"
+                                type='date'
+                                onChange={e => setDate(e.target.value)}
+                                required
+                                variant="filled"
+                                color="secondary"
+                                sx={{ mb: 3 }}
+                                helperText={dateError && errorText}
+                                value={date}
+                                error={dateError}
+                            />
+                            <TextField
+                                className="formField"
+                                label="Doses"
+                                type='time'
+                                onChange={e => setTime(e.target.value)}
+                                required
+                                variant="filled"
+                                color="secondary"
+                                sx={{ mb: 3 }}
+                                // fullWidth
+                                value={time}
+                                error={timeError}
+                            />
+                            <Button variant="outlined" color="secondary" type="submit" >
+                                Add
+                            </Button>
+                            <Button onClick={props.onClose}>
+                                Close
+                            </Button>
+                        </form>
+                    </Box>
                 </Container>
             </Modal>
         </div>

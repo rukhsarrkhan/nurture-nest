@@ -6,7 +6,6 @@ import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import DeleteIcon from "@mui/icons-material/Delete"
 import { Grid } from '@mui/material';
 import '../App.css';
@@ -16,11 +15,10 @@ import { delVaccineAPICall } from '../redux/vaccines/vaccineActions'
 import AddIcon from '@mui/icons-material/Add';
 import DeleteModal from './modals/DeleteVaccineModal';
 import Button from '@mui/material/Button';
-
 import image from '../img/vaccineimage.png'
 import AddModal from './modals/AddVaccineModal';
 
-const submitButton= {
+const submitButton = {
     position: 'absolute',
     right: '5%',
     top: '95%',
@@ -39,33 +37,28 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     const [errorPage, setErrorPage] = useState(false)
     const [deleteId, setDeleteId] = useState('')
 
-
-    const handleOpen = () => {setOpen(true)};
+    const handleOpen = () => { setOpen(true) };
     const handleClose = () => setOpen(false);
 
     const handleOpen2 = (id) => {
-
         setDeleteId(id)
-
         setOpen2(true)
     };
     const handleClose2 = () => setOpen2(false);
-
 
     useEffect(() => {
         getVaccineAPICall(childId);
         setLoading(false)
     }, [childId]);
 
-
     const addVaccine = async (obj) => {
-            await vaccineSetAPICall(obj, childId)
-            handleClose();
-        }
-    
+        await vaccineSetAPICall(obj, childId)
+        handleClose();
+    }
+
 
     const deleteVaccine = async (vaccineId) => {
-      await delVaccineAPICall(vaccineId);
+        await delVaccineAPICall(vaccineId);
         setOpen2(false);
         await getVaccineAPICall(childId);
     }
@@ -81,7 +74,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         marginLeft: 'auto',
                         marginRight: 'auto',
                         borderRadius: 5,
-                        // border: '1px solid #080a33',
                         boxShadow:
                             '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
                     }}>
@@ -95,16 +87,10 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         image={image}
                     />
                     <CardActions disableSpacing>
-
-                        {/* <IconButton onClick={() => handleOpen} color='error' aria-label="Add Vaccine">
-                            <FavoriteIcon />
-                        </IconButton> */}
                         <IconButton onClick={() => handleOpen2(vaccines && vaccines._id)} color='textSecondary' aria-label="Delete Vaccine">
                             <DeleteIcon />
                         </IconButton>
-
                     </CardActions>
-
                 </Card>
             </Grid >
 
@@ -140,11 +126,11 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
             <div>
                 <div>
                     <br />
-                    <Button  variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                     Add Vaccine
-                     </Button>
-                     <br />
-                     <br />
+                    <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
+                        Add Vaccine
+                    </Button>
+                    <br />
+                    <br />
 
                     <Grid
                         container
@@ -155,7 +141,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         }}
                     >
                         {card}
-                        
+
                     </Grid>
 
                     {open2 && <DeleteModal
@@ -166,10 +152,10 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     />}
-                     {open && <AddModal
+                    {open && <AddModal
                         open={open}
                         onClose={handleClose}
-                        childId = {childId}
+                        childId={childId}
                         addVaccine={addVaccine}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
@@ -177,7 +163,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                 </div>
                 <br />
                 <br />
-              
             </div>
 
         );

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const style = {
@@ -46,36 +46,36 @@ const AddModal = (props) => {
         setDosesError(false);
         setErrorText("")
 
-        let nameCheck = await helpers.onlyLettersNumbersAndSpaces(name,"name")
+        let nameCheck = await helpers.onlyLettersNumbersAndSpaces(name, "name")
         if (nameCheck !== undefined) {
             setnameError(true);
             setErrorText(nameCheck.message)
             return;
         }
-        let dateCheck = await helpers.isDateValid(date,"date")
+        let dateCheck = await helpers.isDateValid(date, "date")
         if (dateCheck !== undefined) {
             setDateError(true);
             setErrorText(dateCheck.message)
             return
         }
-        let dosesCheck = await helpers.onlyNumbers(doses,"doses")
-        if (dosesCheck !==undefined) {
+        let dosesCheck = await helpers.onlyNumbers(doses, "doses")
+        if (dosesCheck !== undefined) {
             setDosesError(true);
             setErrorText(dosesCheck.message)
             return
         }
 
         if (name.trim() && date.trim() && doses.trim() && errorText === "") {
-            try{
-            const data = {
-                name: name,
-                date: formatDate(date),
-                doses: doses
-            };
-            await props.addVaccine(data)
-        } catch (error){
-            alert(error)
-        }
+            try {
+                const data = {
+                    name: name,
+                    date: formatDate(date),
+                    doses: doses
+                };
+                await props.addVaccine(data)
+            } catch (error) {
+                alert(error)
+            }
         }
         navigate(`/vaccine/${props.childId}`)
     }

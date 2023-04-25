@@ -44,9 +44,11 @@ router
       .get(async (req, res) => {
             childId = req.params.childId
             try {
-                  helper.validateInput(childId, "child Id")
-                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  helper.isIdValid(childId)
+                 await helper.validateInput(childId, "child Id")
+                  await helper.onlyLettersNumbersAndSpaces(childId, "child Id")
+                  if (!ObjectId.isValid(childId)) {
+                        throw { statusCode: 400, message: "Child Id is not valid" };
+                  }
 
             } catch (e) {
                   console.log(e)
@@ -70,11 +72,11 @@ router
                         throw { statusCode: 400, message: "Child Id is not valid" };
                   }
                   await helper.execValdnAndTrim(postVaccine.name, "name")
-                  helper.onlyLettersNumbersAndSpaces(postVaccine.name, "name")
+                  await helper.onlyLettersNumbersAndSpaces(postVaccine.name, "name")
                   await helper.execValdnAndTrim(postVaccine.date, 'date')
                   await helper.isDateValid(postVaccine.date, "Date")
                   await helper.execValdnAndTrim(postVaccine.doses, 'Doses')
-                  helper.onlyNumbers(postVaccine.doses, 'doses')
+                  await helper.onlyNumbers(postVaccine.doses, 'doses')
 
             } catch (e) {
                   console.log(e)

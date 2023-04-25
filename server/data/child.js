@@ -32,11 +32,9 @@ const createChild = async (
 };
 
 const getChildById = async (childId) => {
-  // if (typeof childId == "undefined")
-  //   throw "childId parameter not provchildIded";
-  if (typeof childId !== "string") throw "childId must be a string";
-  if (childId.trim().length === 0) {
-    throw "childId cannot be an empty string or just spaces";
+  childId = await helper.execValdnAndTrim(childId, "Child Id");
+  if (!ObjectId.isValid(childId)) {
+    throw { statusCode: 400, message: "Child Id is not valid" };
   }
   childId = childId.trim();
   if (!ObjectId.isValid(childId)) throw "invalid object id";

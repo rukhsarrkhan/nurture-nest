@@ -2,7 +2,8 @@ import {
     GET_APPOINTMENT_SUCCESS,
     GET_APPOINTMENT_FAILURE,
     SET_APPOINTMENT_SUCCESS,
-    SET_APPOINTMENT_FAILURE
+    SET_APPOINTMENT_FAILURE,    
+    SET_APPOINTMENT_TRIGGER
   } from "./appointmentActionTypes";
   
   const initialState = {
@@ -16,6 +17,11 @@ import {
     const { type, payload } = action;
   
     switch (type) {
+      case SET_APPOINTMENT_TRIGGER:
+        return {
+          ...state,
+          data: []
+        };
       case GET_APPOINTMENT_SUCCESS:
         return {
           ...state,

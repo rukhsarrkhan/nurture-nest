@@ -5,8 +5,15 @@ import {
   SET_APPOINTMENT_SUCCESS,
   SET_APPOINTMENT_FAILURE,
   APPOINTMENT_DELETE_SUCCESS,
-  APPOINTMENT_DELETE_FAILURE
+  APPOINTMENT_DELETE_FAILURE,
+  SET_APPOINTMENT_TRIGGER
 } from "./appointmentActionTypes";
+
+export const appointmentSetTrigger = () => {
+  return {
+    type: SET_APPOINTMENT_TRIGGER
+  };
+};
 
 export const getAppointmentSuccess = (appointment) => {
   return {
@@ -66,6 +73,7 @@ export const getAppointmentAPICall = (childId) => {
 export const appointmentSetAPICall = (obj,childId) => {
   return async (dispatch) => {
     try {
+      dispatch(appointmentSetTrigger());
       let resp = await axios.post('http://localhost:3000/child/appointment/'+childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
@@ -79,6 +87,7 @@ export const appointmentSetAPICall = (obj,childId) => {
 export const delAppointmentAPICall = (appointmentId) => {
   return async (dispatch) => {
     try {
+      dispatch(appointmentSetTrigger());
       let resp = await axios.delete('http://localhost:3000/child/appointment/'+appointmentId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);

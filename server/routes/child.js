@@ -65,9 +65,16 @@ router
             childId = req.params.childId
             const postVaccine = req.body;
             try {
-                  // helper.validateInput(childId,"child Id")
-                  // helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  // helper.isIdValid(childId)
+                  childId = await helper.execValdnAndTrim(childId, "Child Id");
+                  if (!ObjectId.isValid(childId)) {
+                    throw { statusCode: 400, message: "Child Id is not valid" };
+                }
+                  await helper.execValdnAndTrim(postVaccine.name,"name")
+                   helper.onlyLettersNumbersAndSpaces(postVaccine.name,"name")
+                  await helper.execValdnAndTrim(postVaccine.date,'date')
+                  await helper.isDateValid(postVaccine.date,"Date")
+                  await helper.execValdnAndTrim(postVaccine.doses,'Doses')
+                   helper.onlyNumbers(postVaccine.doses,'doses')
                   
                 } catch (e) {
                   console.log(e)
@@ -79,7 +86,9 @@ router
                   const vaccineAdded = await childCollection.addVaccine(name,date,doses, childId);
                   if (!vaccineAdded) { throw "Couldn't creatva"}
                   return res.json(vaccineAdded);
-            } catch (e) { return res.status(404).json({ error: e }); }
+            } catch (e) {
+                  console.log(e) 
+                  return res.status(404).json({ error: e }); }
       });
 
       router
@@ -87,9 +96,10 @@ router
       .get(async (req, res) => {
             childId = req.params.childId
             try {
-                  helper.validateInput(childId,"child Id")
-                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  helper.isIdValid(childId)
+                  childId = await helper.execValdnAndTrim(childId, "Child Id");
+                  if (!ObjectId.isValid(childId)) {
+                    throw { statusCode: 400, message: "Child Id is not valid" };
+                }
                   
                 } catch (e) {
                   console.log(e)
@@ -108,13 +118,21 @@ router
       })
       .post(async (req, res) => {
             childId = req.params.childId
-            postAppointment = req.body
+           const  postAppointment = req.body
             try {
-                  helper.validateInput(childId,"child Id")
-                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  helper.isIdValid(childId)
-                   await helper.isDateValid(postAppointment.date, "date")
-                  // await helper.isTimeValid(appointment.time, "time")
+                  childId = await helper.execValdnAndTrim(childId, "Child Id");
+                  if (!ObjectId.isValid(childId)) {
+                    throw { statusCode: 400, message: "Child Id is not valid" };
+                }
+                postAppointment.doctor = await helper.execValdnAndTrim(postAppointment.doctor, "doctor")
+                await helper.onlyLettersNumbersAndSpaces(postAppointment.doctor, "doctor")
+              
+                postAppointment.hospital = await helper.execValdnAndTrim(postAppointment.hospital, "hospital")
+               await helper.onlyLettersNumbersAndSpaces(postAppointment.hospital, "hospital")
+              
+               postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, 'date')
+                await helper.isDateValid(postAppointment.date, "Date")
+
                   
                 } catch (e) {
                   console.log(e)
@@ -136,6 +154,17 @@ router
       .delete(async (req, res) => {
             const vaccId = req.params.vaccineId
             try {
+                   await helper.execValdnAndTrim(vaccId, "Vaccine Id");
+                  if (!ObjectId.isValid(vaccId)) {
+                    throw { statusCode: 400, message: "Vaccine Id is not valid" };
+                }
+                } catch (e) {
+                  console.log(e)
+                  return res.status(400).json({ error: e }); 
+                }
+
+
+            try {
                   const removedVaccine = await childCollection.removeVaccine(vaccId)
                   return res.status(200).json(removedVaccine);
                 } catch (e) {
@@ -148,6 +177,14 @@ router
       .route("/appointment/:appointmentId")
       .delete(async (req, res) => {
             const appointmentId = req.params.appointmentId
+            try {
+                   await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
+                  if (!ObjectId.isValid(appointmentId)) {
+                    throw { statusCode: 400, message: "Appointment Id is not valid" };
+                }
+                } catch (e) {
+                  return res.status(400).json({ error: e }); 
+                }
             try {
                   const removedAppointment = await childCollection.removeAppointment(appointmentId)
                   return res.status(200).json(removedAppointment);

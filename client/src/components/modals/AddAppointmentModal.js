@@ -3,18 +3,21 @@ import { TextField } from "@mui/material";
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
+import helpers from '../../helpers';
+import { Container } from '@mui/system';
 
 const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 600,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
+
 
 const AddAppointmentModal = (props) => {
 
@@ -43,27 +46,45 @@ const AddAppointmentModal = (props) => {
     const [doctor, setDoctor] = useState('');
     const [hospital, setHospital] = useState('');
     const [date, setDate] = useState('');
-    const [time, setTime] = useState(0);
+    const [time, setTime] = useState('');
     const [doctorError, setDoctorError] = useState(false);
     const [dateError, setDateError] = useState(false);
     const [timeError, setTimeError] = useState(false);
     const [hospitalErorr, setHospitalError] = useState(false);
+    const [errorText, setErrorText] = useState("");
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+        event.preventDefault()
+        setDoctorError(false);
+        setHospitalError(false);
+        setDateError(false);
+        setErrorText("")
 
-        if (doctor === '') {
+
+
+        let doctorCheck = await helpers.isNameValid(doctor,"Doctor")
+        if (doctorCheck !== undefined) {
             setDoctorError(true);
+            setErrorText(doctorCheck.message)
+            return
         }
-        if (hospital === '') {
+        let hospitalCheck = await helpers.isNameValid(hospital,"Hospital")
+        if (hospitalCheck !== undefined) {
             setHospitalError(true);
+            setErrorText(hospitalCheck.message)
+            return
         }
-        if (date === '') {
+        let dateCheck = await helpers.isDateValid(date,"date")
+        if (dateCheck !== undefined) {
             setDateError(true);
+            setErrorText(dateCheck.message)
+            return
         }
         if (time === '') {
             setTimeError(true);
         }
-        if (doctor && hospital && date && time) {
+        if (doctor.trim() && hospital.trim() && date.trim() && time.trim() && errorText === "") {
+            try{
             const data = {
               doctor: doctor,
               hospital: hospital,
@@ -71,42 +92,48 @@ const AddAppointmentModal = (props) => {
               time: tConvert(time)
             };
             await props.addAppointment(data)
+        } catch(error){
+            alert(error)
+        }
         }
     }
 
     return (
-        <div>
+        <div >
             <Modal
                 open={props.open}
                 onClose={props.onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-                    <p >
-                        Add Vaccine
+            <Container  maxWidth="sm">
+                <Box className='appointmentForm'  sx={style} >
+                    <form className="sign-form" autoComplete="off" onSubmit={handleSubmit}>
+                    <p className='P-title-home' >
+                        Add Appointment
                     </p>
+                    
                     <TextField
                         className="formField"
-                        label="Name"
+                        label="Doctor"
                         onChange={e => setDoctor(e.target.value)}
                         required
-                        variant="outlined"
+                        variant="filled"
                         color="secondary"
-                        sx={{ mb: 1 }}
-                        // fullWidth
+                        sx={{ mb: 3 }}
+                        helperText={doctorError && errorText}
                         value={doctor}
                         error={doctorError}
                     />
                     <TextField
                         className="formField"
-                        label="Name"
+                        label="Hopital"
                         onChange={e => setHospital(e.target.value)}
                         required
-                        variant="outlined"
+                        variant="filled"
                         color="secondary"
-                        sx={{ mb: 1 }}
-                        // fullWidth
+                        sx={{ mb: 3 }}
+                        helperText={hospitalErorr && errorText}
                         value={hospital}
                         error={hospitalErorr}
                     />
@@ -116,10 +143,10 @@ const AddAppointmentModal = (props) => {
                         type='date'
                         onChange={e => setDate(e.target.value)}
                         required
-                        variant="outlined"
+                        variant="filled"
                         color="secondary"
                         sx={{ mb: 3 }}
-                        // fullWidth
+                        helperText={dateError && errorText}
                         value={date}
                         error={dateError}
                     />
@@ -129,20 +156,22 @@ const AddAppointmentModal = (props) => {
                         type='time'
                         onChange={e => setTime(e.target.value)}
                         required
-                        variant="outlined"
+                        variant="filled"
                         color="secondary"
                         sx={{ mb: 3 }}
                         // fullWidth
                         value={time}
                         error={timeError}
                     />
-                    <Button variant="outlined" color="secondary" type="submit" onClick={() => handleSubmit()}>
+                    <Button variant="outlined" color="secondary" type="submit" >
                         Add
                     </Button>
                     <Button onClick={props.onClose}>
                         Close
                     </Button>
+                    </form>
                 </Box>
+                </Container>
             </Modal>
         </div>
     );

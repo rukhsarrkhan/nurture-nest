@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteAppointmentModal from './modals/DeleteAppointmentModal';
 import Button from '@mui/material/Button';
 
-import image from '../img/appointmentImage.jpeg'
+import image from '../img/appointmentImage.png'
 import AddAppointmentModal from './modals/AddAppointmentModal';
 import { delAppointmentAPICall } from '../redux/appointments/appointmentActions';
 
@@ -33,20 +33,6 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     let card = null
     let { childId } = useParams();
 
-    //    const tConvert = (time) => {
-    //     // Check correct time format and split into components
-    //     time = time
-    //       .toString()
-    //       .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-    //     if (time.length > 1) {
-    //       // If time format correct
-    //       time = time.slice(1); // Remove full string match value
-    //       time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
-    //       time[0] = +time[0] % 12 || 12; // Adjust hours
-    //     }
-    //     return time.join(''); // return adjusted time or original string
-    //   };
 
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
@@ -76,12 +62,15 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
     const addAppointment = async (obj) => {
             await appointmentSetAPICall(obj, childId)
+            handleClose();
         }
     
 
     const deleteAppointment = async (appointmentId) => {
-        delAppointmentAPICall(appointmentId)
-        handleClose2()
+        await delAppointmentAPICall(appointmentId);
+        setOpen2(false);
+        await getAppointmentAPICall(childId);
+
     }
 
     const buildCard = (appointments) => {

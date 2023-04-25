@@ -3,7 +3,8 @@ import {
   GET_VACCINE_SUCCESS,
   GET_VACCINE_FAILURE,
   SET_VACCINE_SUCCESS,
-  SET_VACCINE_FAILURE
+  SET_VACCINE_FAILURE,
+  SET_VACCINE_TRIGGER
 } from "./vaccineActionTypes";
 
 const initialState = {
@@ -17,6 +18,11 @@ export const vaccineReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case SET_VACCINE_TRIGGER:
+      return {
+        ...state,
+        data: []
+      };
     case GET_VACCINE_SUCCESS:
       return {
         ...state,

@@ -104,42 +104,44 @@ const addVaccine = async (
   doses,
   childId
 ) => {
-  // if (!childId) throw 'You must provide a childId to add a vaccine';
-  // if (typeof childId !== 'string') throw 'childId must be a string';
-  // if (childId.trim().length === 0)
-  //     throw 'childId cannot be an empty string or just spaces';
-  // childId = childId.trim();
-  // if (!ObjectId.isValid(childId)) throw 'invalid object ID';
+  childId = await helper.execValdnAndTrim(childId, "Child Id");
+  if (!ObjectId.isValid(childId)) {
+    throw { statusCode: 400, message: "Child Id is not valid" };
+  }
+  name = await helper.execValdnAndTrim(name, "name")
+  await helper.onlyLettersNumbersAndSpaces(name, "name")
+
+  date = await helper.execValdnAndTrim(date, 'date')
+  await helper.isDateValid(date, "Date")
+  doses = await helper.execValdnAndTrim(doses, 'Doses')
+ await helper.onlyNumbers(doses, 'doses')
+
 
   let vaccineId = new ObjectId();
 
   let newVaccine = {
     _id: vaccineId,
-  name: name, 
-  date: date,
-  doses: doses,
-  
+    name: name,
+    date: date,
+    doses: doses,
+
   }
 
   const childCollection = await childs();
-  const tempChild = await getChildById(childId);
-      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: newVaccine } })
- 
+  const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: newVaccine } })
+  if (!vaccineList.acknowledged || vaccineList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add vaccine" };
+
+
   const updatedChild = await getChildById(childId);
   return updatedChild.vaccine;
 
 }
 
 const getVaccines = async (childId) => {
-  if (typeof childId == "undefined")
-    throw "childId parameter not provchildIded";
-  if (typeof childId !== "string") throw "childId must be a string";
-  if (childId.trim().length === 0) {
-    throw "childId cannot be an empty string or just spaces";
+  childId = await helper.execValdnAndTrim(childId, "Child Id");
+  if (!ObjectId.isValid(childId)) {
+    throw { statusCode: 400, message: "Child Id is not valid" };
   }
-
-  childId = childId.trim();
-  // if (!ObjectId.isValid(childId)) throw "invalid object id";
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
@@ -148,15 +150,11 @@ const getVaccines = async (childId) => {
 };
 
 const getAppointments = async (childId) => {
-  // if (typeof childId == "undefined")
-  //   throw "childId parameter not provchildIded";
-  // if (typeof childId !== "string") throw "childId must be a string";
-  // if (childId.trim().length === 0) {
-  //   throw "childId cannot be an empty string or just spaces";
-  // }
+  childId = await helper.execValdnAndTrim(childId, "Child Id");
+  if (!ObjectId.isValid(childId)) {
+    throw { statusCode: 400, message: "Child Id is not valid" };
+  }
 
-  childId = childId.trim();
-  // if (!ObjectId.isValid(childId)) throw "invalid object id";
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
@@ -172,74 +170,77 @@ const addAppointment = async (
   time,
   childId
 ) => {
-  helper.validateInput(childId,"child Id")
-  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-  helper.isIdValid(childId)
-  helper.onlyLettersNumbersAndSpaces(doctor, "Doctor")
-  helper.onlyLettersNumbersAndSpaces(hospital, "Doctor")
-   await helper.isDateValid(date, "date")
-// await helper.isTimeValid(appointment.time)
+  childId = await helper.execValdnAndTrim(childId, "Child Id");
+  if (!ObjectId.isValid(childId)) {
+    throw { statusCode: 400, message: "Child Id is not valid" };
+  }
+  doctor = await helper.execValdnAndTrim(doctor, "doctor")
+  await helper.onlyLettersNumbersAndSpaces(doctor, "doctor")
 
-let appointmentId = new ObjectId();
-let newAppointment = {
-  _id: appointmentId,
-doctor: doctor, 
-hospital: hospital,
-date: date,
-time: time
-}
+  hospital = await helper.execValdnAndTrim(hospital, "hospital")
+ await helper.onlyLettersNumbersAndSpaces(hospital, "hospital")
+
+  date = await helper.execValdnAndTrim(date, 'date')
+  await helper.isDateValid(date, "Date")
+
+
+  let appointmentId = new ObjectId();
+  let newAppointment = {
+    _id: appointmentId,
+    doctor: doctor,
+    hospital: hospital,
+    date: date,
+    time: time
+  }
   const childCollection = await childs();
-  const tempChild = await getChildById(childId);
-      const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: {appointments : newAppointment } })
- 
+  const appointmentList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { appointments: newAppointment } })
+  if (!appointmentList.acknowledged || appointmentList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add appointment" };
+
   const updatedChild = await getChildById(childId);
   return updatedChild.appointments;
 
 }
 const removeVaccine = async (vaccineId) => {
-  // if (typeof childId == "undefined") throw "Id parameter not provided";
-  // if (typeof childId !== "string") throw "Id must be a string";
-  // if (childId.trim().length === 0)
-  //   throw "id cannot be an empty string or just spaces";
-  // childId = childId.trim();
-  // if (!ObjectId.isValid(childId)) throw "invalid object ID";
+  vaccineId = await helper.execValdnAndTrim(vaccineId, "Child Id");
+  if (!ObjectId.isValid(vaccineId)) {
+    throw { statusCode: 400, message: "Vaccine Id is not valid" };
+  }
 
-   const childCollection = await childs();
-   const vaccine = await childCollection.findOne({ vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, },
-   { projection: { _id: 1, vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, }, }
- );
- console.log("vaccine",vaccine)
- if (vaccine !== null){
-  const postVaccine= vaccine._id
-  const remVaccine = await childCollection.updateOne({ _id: postVaccine }, { $pull: { vaccine: { _id: ObjectId(vaccineId) } } });
-  return remVaccine
- } else {
-  return null
- }
+  const childCollection = await childs();
+  const vaccine = await childCollection.findOne({ vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, },
+    { projection: { _id: 1, vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, }, }
+  );
+
+  if (vaccine !== null) {
+    const postVaccine = vaccine._id
+    const remVaccine = await childCollection.updateOne({ _id: postVaccine }, { $pull: { vaccine: { _id: ObjectId(vaccineId) } } });
+    return remVaccine
+  } else {
+    throw 'Vaccine does not exist'
+  }
 
 
 };
 
 const removeAppointment = async (appointmentId) => {
-  // if (typeof childId == "undefined") throw "Id parameter not provided";
-  // if (typeof childId !== "string") throw "Id must be a string";
-  // if (childId.trim().length === 0)
-  //   throw "id cannot be an empty string or just spaces";
-  // childId = childId.trim();
-  // if (!ObjectId.isValid(childId)) throw "invalid object ID";
+  appointmentId = await helper.execValdnAndTrim(appointmentId, "Child Id");
+  if (!ObjectId.isValid(appointmentId)) {
+    throw { statusCode: 400, message: "Appointment Id is not valid" };
+  }
 
-   const childCollection = await childs();
-   const appointment = await childCollection.findOne({ appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, },
-   { projection: { _id: 1, appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, }, }
- );
 
- if (appointment !== null){
-  const postAppointment= appointment._id
-  const remAppointment = await childCollection.updateOne({ _id: postAppointment }, { $pull: { appointments: { _id: ObjectId(appointmentId) } } });
-  return remAppointment
- } else {
-  return null
- }
+  const childCollection = await childs();
+  const appointment = await childCollection.findOne({ appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, },
+    { projection: { _id: 1, appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, }, }
+  );
+
+  if (appointment !== null) {
+    const postAppointment = appointment._id
+    const remAppointment = await childCollection.updateOne({ _id: postAppointment }, { $pull: { appointments: { _id: ObjectId(appointmentId) } } });
+    return remAppointment
+  } else {
+    throw 'Appointment does not exist'
+  }
 
 
 };

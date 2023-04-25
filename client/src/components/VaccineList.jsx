@@ -33,21 +33,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     let card = null
     let { childId } = useParams();
 
-    //    const tConvert = (time) => {
-    //     // Check correct time format and split into components
-    //     time = time
-    //       .toString()
-    //       .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
-
-    //     if (time.length > 1) {
-    //       // If time format correct
-    //       time = time.slice(1); // Remove full string match value
-    //       time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
-    //       time[0] = +time[0] % 12 || 12; // Adjust hours
-    //     }
-    //     return time.join(''); // return adjusted time or original string
-    //   };
-
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -75,12 +60,14 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
 
     const addVaccine = async (obj) => {
             await vaccineSetAPICall(obj, childId)
+            handleClose();
         }
     
 
     const deleteVaccine = async (vaccineId) => {
-        delVaccineAPICall(vaccineId)
-        handleClose2()
+      await delVaccineAPICall(vaccineId);
+        setOpen2(false);
+        await getVaccineAPICall(childId);
     }
 
     const buildCard = (vaccines) => {
@@ -182,6 +169,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                      {open && <AddModal
                         open={open}
                         onClose={handleClose}
+                        childId = {childId}
                         addVaccine={addVaccine}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"

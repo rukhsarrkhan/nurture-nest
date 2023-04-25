@@ -78,19 +78,19 @@ const isPasswordValid = async (password) => {
     else if (password.trim().length < 6) return { statusCode: 400, message: `Password should have more than 6 characters` };
 };
 
-const onlyNumbers = (str, fieldName) => {
+const onlyNumbers = async(str, fieldName) => {
    let numberCheck = /^[0-9]*$/
    if(!str.match(numberCheck)) 
    return {statusCode : 400, message:  `${fieldName} should only be numbers`}
 };
 
-const onlyLettersNumbersAndSpaces = (str,fieldName) => {
+const onlyLettersNumbersAndSpaces = async(str,fieldName) => {
     let numLetCheck = /^[a-zA-Z0-9 ]*$/ 
     if(!str.match(numLetCheck))
     return {statusCode : 400, message:  `${fieldName} should only be numbers and letters`}
 };
 
-const onlyLettersAndSpaces = (str,fieldName) => {
+const onlyLettersAndSpaces = async(str,fieldName) => {
     let letCheck = /^[a-zA-Z ]*$/
     if(!str.match(letCheck))
     return {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}

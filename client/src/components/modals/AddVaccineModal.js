@@ -3,6 +3,8 @@ import { TextField } from "@mui/material";
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
+import helpers from '../../helpers';
+import {useNavigate} from 'react-router-dom';
 
 
 const style = {
@@ -10,7 +12,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 600,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -28,33 +30,54 @@ const AddModal = (props) => {
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
-    const [doses, setDoses] = useState(0);
+    const [doses, setDoses] = useState('');
     const [nameError, setnameError] = useState(false);
     const [dateError, setDateError] = useState(false);
     const [dosesError, setDosesError] = useState(false);
+    const [errorText, setErrorText] = useState("");
+    let navigate = useNavigate()
 
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
+        setnameError(false);
+        setDateError(false);
+        setDosesError(false);
+        setErrorText("")
 
-    const handleSubmit = async () => {
-        if (name === '') {
+        let nameCheck = await helpers.onlyLettersNumbersAndSpaces(name,"name")
+        if (nameCheck !== undefined) {
             setnameError(true);
+            setErrorText(nameCheck.message)
+            return;
         }
-        if (date === '') {
+        let dateCheck = await helpers.isDateValid(date,"date")
+        if (dateCheck !== undefined) {
             setDateError(true);
+            setErrorText(dateCheck.message)
+            return
         }
-        if (doses === '') {
+        let dosesCheck = await helpers.onlyNumbers(doses,"doses")
+        if (dosesCheck !==undefined) {
             setDosesError(true);
+            setErrorText(dosesCheck.message)
+            return
         }
 
-        if (name && date && doses) {
+        if (name.trim() && date.trim() && doses.trim() && errorText === "") {
+            try{
             const data = {
                 name: name,
                 date: formatDate(date),
                 doses: doses
             };
             await props.addVaccine(data)
+        } catch (error){
+            alert(error)
         }
+        }
+        navigate(`/vaccine/${props.childId}`)
     }
 
 
@@ -67,10 +90,10 @@ const AddModal = (props) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <p >
+                    <p className='P-title-home' >
                         Add Vaccine
                     </p>
-                    <form autoComplete="off" className="sign-form">
+                    <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
                         <TextField
                             className="formField"
                             label="Name"
@@ -79,7 +102,7 @@ const AddModal = (props) => {
                             variant="outlined"
                             color="secondary"
                             sx={{ mb: 1 }}
-                            // fullWidth
+                            helperText={nameError && errorText}
                             value={name}
                             error={nameError}
                         />
@@ -92,7 +115,7 @@ const AddModal = (props) => {
                             variant="outlined"
                             color="secondary"
                             sx={{ mb: 3 }}
-                            // fullWidth
+                            helperText={dateError && errorText}
                             value={date}
                             error={dateError}
                         />
@@ -104,11 +127,11 @@ const AddModal = (props) => {
                             variant="outlined"
                             color="secondary"
                             sx={{ mb: 3 }}
-                            // fullWidth
+                            helperText={dosesError && errorText}
                             value={doses}
                             error={dosesError}
                         />
-                        <Button variant="outlined" color="secondary" type="submit" onClick={() => handleSubmit()}>
+                        <Button variant="outlined" color="secondary" type="submit">
                             Add
                         </Button>
                         <Button onClick={props.onClose}>

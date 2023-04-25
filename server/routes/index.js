@@ -1,6 +1,7 @@
 const users = require('./users');
 const child = require('./child');
 
+
 const constructorMethod = (app) => {
   app.use('/users', users);
   app.use('/child', child);

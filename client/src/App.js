@@ -23,13 +23,12 @@ const App = () => {
   return (
     <AuthProvider>
     <Router>
-      <div className='App'>
-        {/* <header className='App-header'>
-          <Link to='/'>
-            <img src={logo} className='App-logo' alt='logo' />
-          </Link>
-        </header> */}
-        <div className='App-body'>
+    <div>
+        <header>
+          <Navbar></Navbar>
+        </header>
+      </div>
+      <br></br>
           <Routes>
             <Route path='/' element={<Landing />} />
             <Route path='/login' element={<Login />} />

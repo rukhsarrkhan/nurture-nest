@@ -22,7 +22,7 @@ import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 const App = () => {
   return (
-    // <AuthProvider>
+     <AuthProvider>
 
     <Router>
       <div>
@@ -49,7 +49,7 @@ const App = () => {
           </Routes>
     </Router>
    
-    // </AuthProvider>
+     </AuthProvider>
 
   );
 };

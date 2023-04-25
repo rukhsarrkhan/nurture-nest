@@ -14,7 +14,7 @@ import {
   Grid,
   Typography
 } from '@mui/material';
-import { getMealPlanAPICall } from '../redux/mealplans/mealPlanAction';
+import { getMealPlanAPICall } from '../redux/mealplans/mealPlanActions'
 
 const MealList = ({getMealPlanAPICall, mealData}) => {
   const regex = /(<([^>]+)>)/gi;

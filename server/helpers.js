@@ -1,4 +1,4 @@
-moment = require("moment");
+//moment = require("moment");
 const { ObjectId } = require("mongodb");
 
 const validateInput = async (str, fieldName) => {
@@ -32,17 +32,8 @@ const execValdnForArr = async (arr, fieldName) => {
 
 const isDateValid = async (str, fieldName) => {
     if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-        throw { statusCode: 400, message: `${fieldName} is invalid.` };
+        throw { statusCode: 400, message: `${fieldName} is an invalid date.` };
 };
-
-// const isTimeValid = async (str, fieldName) => {
-//     console.log(str)
-//     let timeCheck = /^([0-1][0-9]|2[0-3]):([0-5][0-9])$/.test(str)
-//     console.log(timeCheck, 'this is time check')
-//     if(!timeCheck)
-//     throw {statusCode : 400, message:  `${fieldName} not the correct format`}
-// };
-
 
 const isUserLoggedIn = async (req) => {
     if (req.session.user) return true;
@@ -54,16 +45,20 @@ const isNameValid = async (name, fieldName) => {
     if (!/^[a-zA-Z ,.'-]+$/.test(name)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
+const isProfileValid = async (profile, fieldName) => {
+    if (profile.trim() != "PARENT" && profile.trim() != "NANNY" ) throw { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
+};
+
 const isAgeValid = async (age, fieldName) => {
     if (isNaN(age)) {
         throw { statusCode: 400, message: `${fieldName} should be a number` };
     } else {
-        if (age < 14) throw { statusCode: 400, message: ` user must be 14 or older` };
+        if (age < 14) throw { statusCode: 400, message: `User must be 14 or older` };
     }
 };
 
 const isEmailValid = async (email) => {
-    let emailConstraints = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/;
+    let emailConstraints = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$$/;
     if (!email.match(emailConstraints)) throw { statusCode: 400, message: `Email is invalid. Please enter a valid Email` };
 };
 
@@ -99,7 +94,7 @@ const onlyLettersNumbersAndSpaces = (str,fieldName) => {
 const onlyLettersAndSpaces = (str,fieldName) => {
     let letCheck = /^[a-zA-Z ]*$/
     if(!str.match(letCheck))
-    throw {statusCode : 400, message:  `${fieldName} should only be letters`}
+    throw {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
@@ -127,6 +122,7 @@ module.exports = {
     isDateValid,
     isUserLoggedIn,
     isNameValid,
+    isProfileValid,
     isAgeValid,
     isEmailValid,
     isUsernameValid,
@@ -134,6 +130,5 @@ module.exports = {
     onlyNumbers,
     onlyLettersNumbersAndSpaces,
     onlyLettersAndSpaces,
-    isIdValid,
-    //isTimeValid
+    isIdValid
 };

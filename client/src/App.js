@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-// import { AuthProvider } from './firebase/Auth';
+import { AuthProvider } from './firebase/Auth';
 
 import Landing from './components/Landing';
 import Login from './components/Login';

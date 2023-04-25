@@ -39,27 +39,27 @@ router
             } catch (e) { return res.status(404).json({ error: e }); }
       });
 
-      router
+router
       .route("/vaccine/:childId")
       .get(async (req, res) => {
             childId = req.params.childId
             try {
-                  helper.validateInput(childId,"child Id")
+                  helper.validateInput(childId, "child Id")
                   helper.onlyLettersNumbersAndSpaces(childId, "child Id")
                   helper.isIdValid(childId)
-                  
-                } catch (e) {
+
+            } catch (e) {
                   console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
-                try {
+                  return res.status(400).json({ error: e });
+            }
+            try {
                   const vaccineFound = await childCollection.getVaccines(childId);
                   if (!vaccineFound) { throw "Child not found"; }
                   return res.json(vaccineFound);
             } catch (e) {
-                  console.log(e) 
+                  console.log(e)
                   return res.status(404).json({ error: e });
-             }
+            }
       })
       .post(async (req, res) => {
             childId = req.params.childId
@@ -67,132 +67,134 @@ router
             try {
                   childId = await helper.execValdnAndTrim(childId, "Child Id");
                   if (!ObjectId.isValid(childId)) {
-                    throw { statusCode: 400, message: "Child Id is not valid" };
-                }
-                  await helper.execValdnAndTrim(postVaccine.name,"name")
-                   helper.onlyLettersNumbersAndSpaces(postVaccine.name,"name")
-                  await helper.execValdnAndTrim(postVaccine.date,'date')
-                  await helper.isDateValid(postVaccine.date,"Date")
-                  await helper.execValdnAndTrim(postVaccine.doses,'Doses')
-                   helper.onlyNumbers(postVaccine.doses,'doses')
-                  
-                } catch (e) {
+                        throw { statusCode: 400, message: "Child Id is not valid" };
+                  }
+                  await helper.execValdnAndTrim(postVaccine.name, "name")
+                  helper.onlyLettersNumbersAndSpaces(postVaccine.name, "name")
+                  await helper.execValdnAndTrim(postVaccine.date, 'date')
+                  await helper.isDateValid(postVaccine.date, "Date")
+                  await helper.execValdnAndTrim(postVaccine.doses, 'Doses')
+                  helper.onlyNumbers(postVaccine.doses, 'doses')
+
+            } catch (e) {
                   console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
+                  return res.status(400).json({ error: e });
+            }
 
             try {
-                  const { name,date,doses } = postVaccine;
-                  const vaccineAdded = await childCollection.addVaccine(name,date,doses, childId);
-                  if (!vaccineAdded) { throw "Couldn't creatva"}
+                  const { name, date, doses } = postVaccine;
+                  const vaccineAdded = await childCollection.addVaccine(name, date, doses, childId);
+                  if (!vaccineAdded) { throw "Couldn't creatva" }
                   return res.json(vaccineAdded);
             } catch (e) {
-                  console.log(e) 
-                  return res.status(404).json({ error: e }); }
+                  console.log(e)
+                  return res.status(404).json({ error: e });
+            }
       });
 
-      router
+router
       .route("/appointment/:childId")
       .get(async (req, res) => {
             childId = req.params.childId
             try {
                   childId = await helper.execValdnAndTrim(childId, "Child Id");
                   if (!ObjectId.isValid(childId)) {
-                    throw { statusCode: 400, message: "Child Id is not valid" };
-                }
-                  
-                } catch (e) {
-                  console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
+                        throw { statusCode: 400, message: "Child Id is not valid" };
+                  }
 
-            
+            } catch (e) {
+                  console.log(e)
+                  return res.status(400).json({ error: e });
+            }
+
+
             try {
                   const appointmentFound = await childCollection.getAppointments(childId);
                   if (!appointmentFound) { throw "appointment not found"; }
                   return res.json(appointmentFound);
             } catch (e) {
-                  console.log(e) 
+                  console.log(e)
                   return res.status(404).json({ error: e });
-             }
+            }
       })
       .post(async (req, res) => {
             childId = req.params.childId
-           const  postAppointment = req.body
+            const postAppointment = req.body
             try {
                   childId = await helper.execValdnAndTrim(childId, "Child Id");
                   if (!ObjectId.isValid(childId)) {
-                    throw { statusCode: 400, message: "Child Id is not valid" };
-                }
-                postAppointment.doctor = await helper.execValdnAndTrim(postAppointment.doctor, "doctor")
-                await helper.onlyLettersNumbersAndSpaces(postAppointment.doctor, "doctor")
-              
-                postAppointment.hospital = await helper.execValdnAndTrim(postAppointment.hospital, "hospital")
-               await helper.onlyLettersNumbersAndSpaces(postAppointment.hospital, "hospital")
-              
-               postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, 'date')
-                await helper.isDateValid(postAppointment.date, "Date")
+                        throw { statusCode: 400, message: "Child Id is not valid" };
+                  }
+                  postAppointment.doctor = await helper.execValdnAndTrim(postAppointment.doctor, "doctor")
+                  await helper.onlyLettersNumbersAndSpaces(postAppointment.doctor, "doctor")
 
-                  
-                } catch (e) {
+                  postAppointment.hospital = await helper.execValdnAndTrim(postAppointment.hospital, "hospital")
+                  await helper.onlyLettersNumbersAndSpaces(postAppointment.hospital, "hospital")
+
+                  postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, 'date')
+                  await helper.isDateValid(postAppointment.date, "Date")
+
+
+            } catch (e) {
                   console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
+                  return res.status(400).json({ error: e });
+            }
 
             try {
-                  const { doctor,hospital,date,time } = postAppointment;
-                  const appointmentAdded = await childCollection.addAppointment(doctor,hospital,date,time, childId);
-                  if (!appointmentAdded) { throw "Couldn't create"}
+                  const { doctor, hospital, date, time } = postAppointment;
+                  const appointmentAdded = await childCollection.addAppointment(doctor, hospital, date, time, childId);
+                  if (!appointmentAdded) { throw "Couldn't create" }
                   return res.json(appointmentAdded);
             } catch (e) {
                   console.log(e)
-                   return res.status(404).json({ error: e }); }
+                  return res.status(404).json({ error: e });
+            }
       });
 
-      router
+router
       .route("/vaccine/:vaccineId")
       .delete(async (req, res) => {
             const vaccId = req.params.vaccineId
             try {
-                   await helper.execValdnAndTrim(vaccId, "Vaccine Id");
+                  await helper.execValdnAndTrim(vaccId, "Vaccine Id");
                   if (!ObjectId.isValid(vaccId)) {
-                    throw { statusCode: 400, message: "Vaccine Id is not valid" };
-                }
-                } catch (e) {
+                        throw { statusCode: 400, message: "Vaccine Id is not valid" };
+                  }
+            } catch (e) {
                   console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
+                  return res.status(400).json({ error: e });
+            }
 
 
             try {
                   const removedVaccine = await childCollection.removeVaccine(vaccId)
                   return res.status(200).json(removedVaccine);
-                } catch (e) {
-                  return res.status(500).json({error: e});
-                }
-                //code here for DELETE
+            } catch (e) {
+                  return res.status(500).json({ error: e });
+            }
+            //code here for DELETE
       })
 
-      router
+router
       .route("/appointment/:appointmentId")
       .delete(async (req, res) => {
             const appointmentId = req.params.appointmentId
             try {
-                   await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
+                  await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
                   if (!ObjectId.isValid(appointmentId)) {
-                    throw { statusCode: 400, message: "Appointment Id is not valid" };
-                }
-                } catch (e) {
-                  return res.status(400).json({ error: e }); 
-                }
+                        throw { statusCode: 400, message: "Appointment Id is not valid" };
+                  }
+            } catch (e) {
+                  return res.status(400).json({ error: e });
+            }
             try {
                   const removedAppointment = await childCollection.removeAppointment(appointmentId)
                   return res.status(200).json(removedAppointment);
-                } catch (e) {
-                  console.log(e,'e')
-                  return res.status(500).json({error: e});
-                }
-                //code here for DELETE
+            } catch (e) {
+                  console.log(e, 'e')
+                  return res.status(500).json({ error: e });
+            }
+            //code here for DELETE
       })
 
 module.exports = router;

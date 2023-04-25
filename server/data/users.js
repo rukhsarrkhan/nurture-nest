@@ -26,8 +26,14 @@ const createUser = async (firstName, lastName, email, profile, age) => {
     address: "",
   };
   const userCollection = await users();
-  const userMatch = await userCollection.findOne({ email: email.toLowerCase() });
-  if (userMatch !== null) throw { statusCode: 400, message: "User already exists with given username" };
+  const userMatch = await userCollection.findOne({
+    email: email.toLowerCase(),
+  });
+  if (userMatch !== null)
+    throw {
+      statusCode: 400,
+      message: "User already exists with given username",
+    };
   const insertedUser = await userCollection.insertOne(newUser);
   if (!insertedUser.acknowledged || !insertedUser.insertedId)
     throw { statusCode: 500, message: `Couldn't Create user` };
@@ -36,16 +42,23 @@ const createUser = async (firstName, lastName, email, profile, age) => {
 };
 
 const getUserById = async (id) => {
-  if (typeof id == "undefined") throw { statusCode: 400, message: "Id parameter not provided" };
-  if (typeof id !== "string") throw { statusCode: 400, message: "Id must be a string" };
+  if (typeof id == "undefined")
+    throw { statusCode: 400, message: "Id parameter not provided" };
+  if (typeof id !== "string")
+    throw { statusCode: 400, message: "Id must be a string" };
   if (id.trim().length === 0) {
-    throw { statusCode: 400, message: "Id cannot be an empty string or just spaces" };
+    throw {
+      statusCode: 400,
+      message: "Id cannot be an empty string or just spaces",
+    };
   }
   id = id.trim();
-  if (!ObjectId.isValid(id)) throw { statusCode: 400, message: "Invalid object ID" };
+  if (!ObjectId.isValid(id))
+    throw { statusCode: 400, message: "Invalid object ID" };
   const userCollection = await users();
   const userFound = await userCollection.findOne({ _id: ObjectId(id) });
-  if (userFound === null) throw { statusCode: 500, message: "No user with that id" };
+  if (userFound === null)
+    throw { statusCode: 500, message: "No user with that id" };
   userFound._id = userFound._id.toString();
   return userFound;
 };
@@ -74,7 +87,8 @@ const updateUser = async (
     { _id: ObjectId(userId) },
     editedUser
   );
-  if (!updatedUser.acknowledged || updatedUser.modifiedCount == 0) throw "Couldn't update child";
+  if (!updatedUser.acknowledged || updatedUser.modifiedCount == 0)
+    throw "Couldn't update child";
   const user = await getUserById(userId);
   return user;
 };

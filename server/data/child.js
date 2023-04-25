@@ -1,8 +1,7 @@
 const mongoCollections = require("../config/mongo-collections");
 const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
-const helper = require('../helpers')
-
+const helper = require("../helpers");
 
 const createChild = async (
   name,
@@ -98,24 +97,18 @@ const removeChild = async (childId) => {
   return `${deletedChild.value.name} has been successfully deleted!`;
 };
 
-const addVaccine = async (
-  name,
-  date,
-  doses,
-  childId
-) => {
+const addVaccine = async (name, date, doses, childId) => {
   childId = await helper.execValdnAndTrim(childId, "Child Id");
   if (!ObjectId.isValid(childId)) {
     throw { statusCode: 400, message: "Child Id is not valid" };
   }
-  name = await helper.execValdnAndTrim(name, "name")
-  await helper.onlyLettersNumbersAndSpaces(name, "name")
+  name = await helper.execValdnAndTrim(name, "name");
+  await helper.onlyLettersNumbersAndSpaces(name, "name");
 
-  date = await helper.execValdnAndTrim(date, 'date')
-  await helper.isDateValid(date, "Date")
-  doses = await helper.execValdnAndTrim(doses, 'Doses')
- await helper.onlyNumbers(doses, 'doses')
-
+  date = await helper.execValdnAndTrim(date, "date");
+  await helper.isDateValid(date, "Date");
+  doses = await helper.execValdnAndTrim(doses, "Doses");
+  await helper.onlyNumbers(doses, "doses");
 
   let vaccineId = new ObjectId();
 
@@ -124,18 +117,19 @@ const addVaccine = async (
     name: name,
     date: date,
     doses: doses,
-
-  }
+  };
 
   const childCollection = await childs();
-  const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: newVaccine } })
-  if (!vaccineList.acknowledged || vaccineList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add vaccine" };
-
+  const vaccineList = await childCollection.updateOne(
+    { _id: ObjectId(childId) },
+    { $push: { vaccine: newVaccine } }
+  );
+  if (!vaccineList.acknowledged || vaccineList.modifiedCount !== 1)
+    throw { statusCode: 500, message: "Could not add vaccine" };
 
   const updatedChild = await getChildById(childId);
   return updatedChild.vaccine;
-
-}
+};
 
 const getVaccines = async (childId) => {
   childId = await helper.execValdnAndTrim(childId, "Child Id");
@@ -145,7 +139,7 @@ const getVaccines = async (childId) => {
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
-  const childvaccines = childFound.vaccine
+  const childvaccines = childFound.vaccine;
   return childvaccines;
 };
 
@@ -158,31 +152,23 @@ const getAppointments = async (childId) => {
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
-  const childAppointments = childFound.appointments
+  const childAppointments = childFound.appointments;
   return childAppointments;
 };
 
-
-const addAppointment = async (
-  doctor,
-  hospital,
-  date,
-  time,
-  childId
-) => {
+const addAppointment = async (doctor, hospital, date, time, childId) => {
   childId = await helper.execValdnAndTrim(childId, "Child Id");
   if (!ObjectId.isValid(childId)) {
     throw { statusCode: 400, message: "Child Id is not valid" };
   }
-  doctor = await helper.execValdnAndTrim(doctor, "doctor")
-  await helper.onlyLettersNumbersAndSpaces(doctor, "doctor")
+  doctor = await helper.execValdnAndTrim(doctor, "doctor");
+  await helper.onlyLettersNumbersAndSpaces(doctor, "doctor");
 
-  hospital = await helper.execValdnAndTrim(hospital, "hospital")
- await helper.onlyLettersNumbersAndSpaces(hospital, "hospital")
+  hospital = await helper.execValdnAndTrim(hospital, "hospital");
+  await helper.onlyLettersNumbersAndSpaces(hospital, "hospital");
 
-  date = await helper.execValdnAndTrim(date, 'date')
-  await helper.isDateValid(date, "Date")
-
+  date = await helper.execValdnAndTrim(date, "date");
+  await helper.isDateValid(date, "Date");
 
   let appointmentId = new ObjectId();
   let newAppointment = {
@@ -190,16 +176,19 @@ const addAppointment = async (
     doctor: doctor,
     hospital: hospital,
     date: date,
-    time: time
-  }
+    time: time,
+  };
   const childCollection = await childs();
-  const appointmentList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { appointments: newAppointment } })
-  if (!appointmentList.acknowledged || appointmentList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add appointment" };
+  const appointmentList = await childCollection.updateOne(
+    { _id: ObjectId(childId) },
+    { $push: { appointments: newAppointment } }
+  );
+  if (!appointmentList.acknowledged || appointmentList.modifiedCount !== 1)
+    throw { statusCode: 500, message: "Could not add appointment" };
 
   const updatedChild = await getChildById(childId);
   return updatedChild.appointments;
-
-}
+};
 const removeVaccine = async (vaccineId) => {
   vaccineId = await helper.execValdnAndTrim(vaccineId, "Child Id");
   if (!ObjectId.isValid(vaccineId)) {
@@ -207,19 +196,26 @@ const removeVaccine = async (vaccineId) => {
   }
 
   const childCollection = await childs();
-  const vaccine = await childCollection.findOne({ vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, },
-    { projection: { _id: 1, vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } }, }, }
+  const vaccine = await childCollection.findOne(
+    { vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } } },
+    {
+      projection: {
+        _id: 1,
+        vaccine: { $elemMatch: { _id: ObjectId(vaccineId) } },
+      },
+    }
   );
 
   if (vaccine !== null) {
-    const postVaccine = vaccine._id
-    const remVaccine = await childCollection.updateOne({ _id: postVaccine }, { $pull: { vaccine: { _id: ObjectId(vaccineId) } } });
-    return remVaccine
+    const postVaccine = vaccine._id;
+    const remVaccine = await childCollection.updateOne(
+      { _id: postVaccine },
+      { $pull: { vaccine: { _id: ObjectId(vaccineId) } } }
+    );
+    return remVaccine;
   } else {
-    throw 'Vaccine does not exist'
+    throw "Vaccine does not exist";
   }
-
-
 };
 
 const removeAppointment = async (appointmentId) => {
@@ -228,23 +224,28 @@ const removeAppointment = async (appointmentId) => {
     throw { statusCode: 400, message: "Appointment Id is not valid" };
   }
 
-
   const childCollection = await childs();
-  const appointment = await childCollection.findOne({ appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, },
-    { projection: { _id: 1, appointments: { $elemMatch: { _id: ObjectId(appointmentId) } }, }, }
+  const appointment = await childCollection.findOne(
+    { appointments: { $elemMatch: { _id: ObjectId(appointmentId) } } },
+    {
+      projection: {
+        _id: 1,
+        appointments: { $elemMatch: { _id: ObjectId(appointmentId) } },
+      },
+    }
   );
 
   if (appointment !== null) {
-    const postAppointment = appointment._id
-    const remAppointment = await childCollection.updateOne({ _id: postAppointment }, { $pull: { appointments: { _id: ObjectId(appointmentId) } } });
-    return remAppointment
+    const postAppointment = appointment._id;
+    const remAppointment = await childCollection.updateOne(
+      { _id: postAppointment },
+      { $pull: { appointments: { _id: ObjectId(appointmentId) } } }
+    );
+    return remAppointment;
   } else {
-    throw 'Appointment does not exist'
+    throw "Appointment does not exist";
   }
-
-
 };
-
 
 module.exports = {
   createChild,
@@ -256,5 +257,5 @@ module.exports = {
   getAppointments,
   addAppointment,
   removeVaccine,
-  removeAppointment
+  removeAppointment,
 };

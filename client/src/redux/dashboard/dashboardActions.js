@@ -39,7 +39,7 @@ export const dashboardSetFailure = (error) => {
     return async (dispatch) => {
       try {
         let resp = await axios.get(`http://localhost:3000/nanny/dashboard/${nannyId}`);
-        console.log(resp,"got resp here:")
+        console.log(resp.data,"got resp data here:")
         // set token here
 
         // sessionStorage.setItem("token", resp.data.token);

@@ -7,16 +7,18 @@ import {
 
 const initialState = {
     loading: false,
-    data: [],
+    data: {},
     error: "",
     status: "",
   };
 
   export const dashboardReducer = (state = initialState, action) => {
     const { type, payload } = action;
+    console.log("action",action)
   
     switch (type) {
       case GET_DASHBOARD_SUCCESS:
+        console.log("payload",payload);
         console.log(state,"state is here")
         return {
           ...state,

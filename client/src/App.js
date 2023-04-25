@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { AuthProvider } from './firebase/Auth';
+// import { AuthProvider } from './firebase/Auth';
 
 import Landing from './components/Landing';
 import Login from './components/Login';
@@ -16,14 +16,17 @@ import NannyInfo from './components/NannyInfo';
 import MealList from './components/MealList';
 import VaccineList from './components/VaccineList';
 import AppointmentList from './components/AppointmentList';
+import CreateJob from './components/CreateJob';
 import Chat from './components/Chat';
+import Navbar from './components/Navbar'
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 
 const App = () => {
   return (
-    <AuthProvider>
+    // <AuthProvider>
+
     <Router>
-    <div>
+      <div>
         <header>
           <Navbar></Navbar>
         </header>
@@ -36,7 +39,8 @@ const App = () => {
             <Route path='/profile/:id' element={<Profile />} />
             <Route path='/children/:id' element={<ChildList />} />
             <Route path='/child/:id' element={<AddChild />} />
-            <Route path='/dashboard/:childId' element={<Dashboard />} />
+            <Route path='/dashboard/:nannyId' element={<Dashboard /> } />
+            <Route path='/createJob' element={<CreateJob />} />
             <Route path='/jobs' element={<JobList />} />
             <Route path='/nannies' element={<NannyList />} />
             <Route path='/nanny/:id' element={<NannyInfo />} />
@@ -45,10 +49,9 @@ const App = () => {
             <Route path='/appointment/:childId' element={<AppointmentList />} />
             <Route path='/chat/:chatid' element={<Chat />} />
           </Routes>
-        </div>
-      </div>
     </Router>
-    </AuthProvider>
+   
+    // </AuthProvider>
 
   );
 };

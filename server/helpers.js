@@ -98,7 +98,7 @@ const onlyLettersAndSpaces = async(str,fieldName) => {
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
-const isIdValid = (id,fieldName) => {
+const isIdValid = async (id,fieldName) => {
     if(!ObjectId.isValid(id))
     throw {statusCode : 400, message: 'invalid object id'}
     // return /^[a-zA-Z ]*$/.test(str);

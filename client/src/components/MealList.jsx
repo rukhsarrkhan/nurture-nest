@@ -15,6 +15,7 @@ import {
   Typography
 } from '@mui/material';
 import { getMealPlanAPICall } from '../redux/mealplans/mealPlanActions'
+import mealPlanImage from '../img/MealPlan.jpg'
 
 const MealList = ({getMealPlanAPICall, mealData}) => {
   const regex = /(<([^>]+)>)/gi;
@@ -62,7 +63,7 @@ const MealList = ({getMealPlanAPICall, mealData}) => {
                 <CardMedia
                     component="img"
                     height="194"
-                    image={""}
+                    image={mealPlanImage}
                 />
                 <CardActions disableSpacing>
 

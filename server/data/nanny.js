@@ -131,8 +131,8 @@ const removeNanny = async (nannyId) => {
 };
 
 module.exports = {
-    createNanny,
-    getNannyById,
-    updateNanny,
-    removeNanny
+  createNanny,
+  getNannyById,
+  updateNanny,
+  removeNanny,
 };

@@ -59,7 +59,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
 
           >
             <CardActionArea>
-              <Link to={`/meal/${dashboardData.data.childId}`}>
+              <Link to={`/meal/${dashboardData && dashboardData.data && dashboardData.data.childId}`}>
                 <CardMedia
                   sx={{
                     height: '100%',
@@ -82,7 +82,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   >
                   </Typography>
                   <Typography variant='body2' color='textSecondary' component='p'>
-                    {dashboardData.data && dashboardData.data.mealRequirements && dashboardData.data.mealRequirements[0]
+                    {dashboardData && dashboardData.data && dashboardData.data.mealRequirements && dashboardData.data.mealRequirements[0]
                       ? dashboardData.data.mealRequirements[0]
                       : 'No data to display'}
                   </Typography>
@@ -99,7 +99,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
 
           >
             <CardActionArea>
-              <Link to={`/vaccine/${dashboardData.data.childId}`}>
+              <Link to={`/vaccine/${dashboardData && dashboardData.data && dashboardData.data.childId}`}>
                 <CardMedia
                   sx={{
                     height: '100%',
@@ -120,10 +120,10 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                     variant='h6'
                     component='h2'
                   >
-                    {dashboardData.data && dashboardData.data.vaccineDetails && dashboardData.data.vaccineDetails[0].name}
+                    {dashboardData && dashboardData.data && dashboardData.data.vaccineDetails && dashboardData.data.vaccineDetails[0].name}
                   </Typography>
                   <Typography variant='body2' color='textSecondary' component='p'>
-                    {dashboardData.data.vaccines && dashboardData.data.vaccineDetails[0] && dashboardData.data.vaccineDetails[0].name
+                    {dashboardData && dashboardData.data && dashboardData.data.vaccines && dashboardData.data.vaccineDetails[0] && dashboardData.data.vaccineDetails[0].name
                       ? dashboardData.data.vaccineDetails[0].name
                       : 'No data to display'}
                   </Typography>

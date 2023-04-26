@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -17,16 +17,15 @@ import {
 import { getMealPlanAPICall } from '../redux/mealplans/mealPlanActions'
 import mealPlanImage from '../img/MealPlan.jpg'
 
-const MealList = ({getMealPlanAPICall, mealData}) => {
+const MealList = ({ getMealPlanAPICall, mealData }) => {
   const regex = /(<([^>]+)>)/gi;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [data,setData] = useState([])
+  const [data, setData] = useState([])
   let { childId } = useParams();
   let card = null;
 
   useEffect(() => {
-    console.log('on load use effect');
     async function fetchData() {
       try {
         getMealPlanAPICall(childId)
@@ -38,56 +37,56 @@ const MealList = ({getMealPlanAPICall, mealData}) => {
         console.log(e);
       }
     }
-    if(childId != undefined) { fetchData()}
+    if (childId != undefined) { fetchData() }
   }, [childId]);
 
   const buildCard = (meal) => {
     return (
-        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={meal}>
-            <Card
-                variant='outlined'
-                sx={{
-                    maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    borderRadius: 5,
-                    // border: '1px solid #080a33',
-                    boxShadow:
-                        '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
-                }}>
-                <CardHeader
-                    title={meal}
-             //     subheader={vaccines.date}
-                />
-                <CardMedia
-                    component="img"
-                    height="194"
-                    image={mealPlanImage}
-                />
-                <CardActions disableSpacing>
+      <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={meal}>
+        <Card
+          variant='outlined'
+          sx={{
+            maxWidth: 345,
+            height: 'auto',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            borderRadius: 5,
+            // border: '1px solid #080a33',
+            boxShadow:
+              '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+          }}>
+          <CardHeader
+            title={meal}
+          //     subheader={vaccines.date}
+          />
+          <CardMedia
+            component="img"
+            height="194"
+            image={mealPlanImage}
+          />
+          <CardActions disableSpacing>
 
-                    {/* <IconButton onClick={() => handleOpen} color='error' aria-label="Add Vaccine">
+            {/* <IconButton onClick={() => handleOpen} color='error' aria-label="Add Vaccine">
                         <FavoriteIcon />
                     </IconButton> */}
 
-                </CardActions>
+          </CardActions>
 
-            </Card>
-        </Grid >
+        </Card>
+      </Grid >
 
     );
-};
+  };
 
 
-card =
-mealData &&
-mealData.data &&
-mealData.data.map((meal) => {
-    if (meal !== null) {
+  card =
+    mealData &&
+    mealData.data &&
+    mealData.data.map((meal) => {
+      if (meal !== null) {
         return buildCard(meal);
-    }
-});
+      }
+    });
 
   if (loading) {
     return (
@@ -96,45 +95,44 @@ mealData.data.map((meal) => {
       </div>
     );
   } else if (error) {
-      return (<div>
-              Error here
-      </div>
+    return (<div>
+      Error here
+    </div>
     );
-    }else{
-      console.log(data)
-      return (
-  <div>
-     <Grid
-                        container
-                        spacing={2}
-                        sx={{
-                            flexGrow: 1,
-                            flexDirection: 'row'
-                        }}
-                    >
-                        {card}
-                        
-                    </Grid>
-  </div>
+  } else {
+    console.log(data)
+    return (
+      <div>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            flexGrow: 1,
+            flexDirection: 'row'
+          }}
+        >
+          {card}
+
+        </Grid>
+      </div>
     )
   };
-    
-  };
 
-  const mapStateToProps = state => {
-    return {
-        mealData: state.meals
-    };
+};
+
+const mapStateToProps = state => {
+  return {
+    mealData: state.meals
+  };
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        getMealPlanAPICall: (childId) => dispatch(getMealPlanAPICall(childId)),
-    };
+  return {
+    getMealPlanAPICall: (childId) => dispatch(getMealPlanAPICall(childId)),
+  };
 };
 
 export default connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(MealList);
- 

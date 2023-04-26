@@ -39,12 +39,12 @@ router
             } catch (e) { return res.status(404).json({ error: e }); }
       });
 
-      router
+router
       .route("/vaccine/:childId")
       .get(async (req, res) => {
             childId = req.params.childId
             try {
-                 await helper.validateInput(childId, "child Id")
+                  await helper.validateInput(childId, "child Id")
                   await helper.onlyLettersNumbersAndSpaces(childId, "child Id")
                   if (!ObjectId.isValid(childId)) {
                         throw { statusCode: 400, message: "Child Id is not valid" };
@@ -196,24 +196,23 @@ router
                   console.log(e, 'e')
                   return res.status(500).json({ error: e });
             }
-            //code here for DELETE
       })
 
-      router
+router
       .route("/mealplan/:childId")
       .get(async (req, res) => {
             childId = req.params.childId
             try {
-                  helper.validateInput(childId,"child Id")
-                  helper.onlyLettersNumbersAndSpaces(childId, "child Id")
-                  helper.isIdValid(childId)
+                  await helper.validateInput(childId, "child Id")
+                  await helper.onlyLettersNumbersAndSpaces(childId, "child Id")
+                  await helper.isIdValid(childId)
                   const mealsFound = await childCollection.getMealPlans(childId);
                   if (!mealsFound) { throw "Meals not found"; }
                   return res.json(mealsFound);
-                } catch (e) {
+            } catch (e) {
                   console.log(e)
-                  return res.status(400).json({ error: e }); 
-                }
+                  return res.status(400).json({ error: e });
+            }
       })
 
 module.exports = router;

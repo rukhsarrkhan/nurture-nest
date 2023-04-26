@@ -36,10 +36,6 @@ const createChild = async (
 const getChildById = async (childId) => {
   try {
     childId = await helper.execValdnAndTrim(childId, "Child Id");
-    if (!ObjectId.isValid(childId)) {
-      throw { statusCode: 400, message: "Child Id is not valid" };
-    }
-    childId = childId.trim();
     if (!ObjectId.isValid(childId)) throw "invalid object id";
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
@@ -253,13 +249,13 @@ const removeAppointment = async (appointmentId) => {
 
 const getMealPlans = async (childId) => {
 
-  childId = childId.trim();
+  await helper.isIdValid(childId, "childId")
+  await helper.execValdnAndTrim(childId, "childId")
   const childCollection = await childs();
   const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
   if (childFound === null) throw "No child with that Id";
   const mealDetails = childFound.mealRequirements
   return mealDetails;
-
 }
 
 module.exports = {

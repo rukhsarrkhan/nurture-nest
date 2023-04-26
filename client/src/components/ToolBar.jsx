@@ -10,8 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import { Link, Navigate } from "react-router-dom";
 import { AuthContext } from '../firebase/Auth';
 import { doSignOut } from '../firebase/FirebaseFunctions';
-
+// import logo_nurture from '../../public/logo_nurture.png';
 import Logout from "./Logout";
+// import logo from './img/tvm-header-logo.png';
 
 const ToolBar = () => {
   const { currentUser } = useContext(AuthContext);
@@ -38,7 +39,7 @@ const ToolBar = () => {
           aria-label="menu"
           sx={{ mr: 2 }}
         >
-          {/* <MenuIcon /> */}
+          {/* <img src={logo_nurture} alt="seat map" /> */}
         </IconButton>
         {!currentUser && <Button color="inherit" onClick={handleLoginButton}>Login</Button>}
         {!currentUser && <Button color="inherit" onClick={handleRegisterButton}>Register</Button>}

@@ -1,11 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import {Link, useParams} from 'react-router-dom';
-import SearchShows from './SearchApplicants';
+import SearchApplicants from './SearchApplicants';
 import {Card, CardActionArea, CardContent, CardMedia, Grid, Typography} from '@mui/material';
 import { useDispatch, useSelector } from "react-redux";
 import { showAllApplicantsAPICall } from '../redux/jobs/jobActions';
-// import '../App.css';
+import CardHeader from "@mui/material/CardHeader";
+import CardActions from "@mui/material/CardActions";
+import Avatar from "@mui/material/Avatar";
+import Button from '@mui/material/Button';
+import { purple } from '@mui/material/colors';
+import Container from '@mui/material/Container';
+import '../App.css';
 
 let noImage = "noImage"
 
@@ -63,26 +69,68 @@ useEffect(() => {
   const searchValue = async (value) => { setSearchTerm(value) };
 
   const buildCard = (show) => {
+    const date = new Date(show.applyDate.toLocaleString("en-US",{ timeZone: "America/New_York", hour: "numeric", minute: "numeric" }));
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+    const formattedDate = date.toLocaleString('en-US', options);
+    console.log(show)
     return (
-      <Grid item xs={12} key={show.id}>
-        <Card variant='outlined' sx={{maxWidth:1300,height: 'auto',marginLeft: 'auto',marginRight: 'auto',borderRadius: 5,border: '1px solid #1e8678',boxShadow:'0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'}}>
-          <CardActionArea>
-            <Link to={`/events/${show.id}`}>
-              <CardMedia sx={{ height: '100%', width: '100%'}} component='img' image={show.images && show.images[0].url? show.images[0].url: noImage} title='show image' />
-              <CardContent>
-                <Typography sx={{ borderBottom: '1px solid #1e8678', fontWeight: 'bold'}} gutterBottom variant='h6' component='h2' >
-                  {show.name}
-                </Typography>
-                <Typography variant='body2' color='textSecondary' component='p'>
-                  {show && show.nannyName ? 'Name: '+show.nannyName:'No name'}<br/>
-                  {show && show.expectedSalary ? 'Expected Salary: '+show.expectedSalary :'Not Disclosed'}<br/>
-                  <span>More Info</span>
-                </Typography>
-              </CardContent>
-            </Link>
-          </CardActionArea>
-        </Card>
+      // <Container fixed maxWidth="70%">
+<Grid item xs={12} key={show.id} sx={{justifyContent:'center'}}>
+  <Card sx={{ maxWidth: "70%", maxHeight: 300, paddingRight: 0, marginLeft:"15%", marginRight:"15%", position: "relative" }}>
+    <Grid container spacing={0}>
+      <Grid item xs={12} sm={4}>
+        <CardMedia
+          component="img"
+          height="100%"
+          width={100}
+          image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
+          alt="Paella dish"
+        />
       </Grid>
+      <Grid item xs={12} sm={8} sx={{ paddingLeft: "20px" }}>
+        <CardContent>
+          <div style={{ display: "flex", alignItems: "flex-start" }}>
+            <CardHeader
+              avatar={<Avatar sx={{ bgcolor: purple[700] }} aria-label="recipe">{show.nannyName[0]}</Avatar>}
+              title={show.nannyName}
+              subheader={`Applied to job on ${formattedDate}`}
+            />
+          </div>
+          <div style={{ display: "flex" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontWeight="bold"
+              sx={{ paddingRight: "10px" }}
+            >
+              Why me:
+            </Typography>
+            <Typography paragraph>
+              {show.whySelect}
+            </Typography>
+          </div>
+          <div style={{ display: "flex" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontWeight="bold"
+              sx={{ paddingRight: "10px" }}
+            >
+              Experience:
+            </Typography>
+            <Typography>
+              {show.experience.length>200? show.experience.substring(0,200)+" ...":show.experience}
+            </Typography>
+          </div>
+        </CardContent>
+        <CardActions disableSpacing style={{ position: "absolute", bottom: 0, right: 0 }}>
+          <Button variant="contained" sx={{ bgcolor: purple[700] }} >Select</Button>
+        </CardActions>
+      </Grid>
+    </Grid>
+  </Card>
+</Grid>
+// </Container>
     );
   };
 
@@ -97,7 +145,7 @@ useEffect(() => {
   } else{
     return (
       <div>
-        <SearchShows searchValue={searchValue} /><br /><br />
+        <SearchApplicants searchValue={searchValue} /><br /><br />
         <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: 'row'}} >
           {card}
         </Grid><br/><br/>

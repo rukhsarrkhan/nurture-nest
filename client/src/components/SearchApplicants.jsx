@@ -1,27 +1,28 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
+import { Typography } from '@mui/material';
 
 const SearchApplicants = (props) => {
+  const [searchInput, setSearchInput] = React.useState("");
+
   const handleChange = (e) => {
+    setSearchInput(e.target.value)
     props.searchValue(e.target.value);
   };
   return (
     <form method='POST ' onSubmit={(e) => {e.preventDefault();}} name='formName' className='center' >
-      <label>
-        <span>Search Nannies: </span>
+      <label><br />
         <TextField
                 className="formField"
-                label="searchTerm"
+                label="Search Nannies"
                 onChange={handleChange}
-                // required
-                variant="outlined"
+                variant="filled"
                 color="secondary"
                 sx={{ mb: 3 }}
                 fullWidth
-                // value={address}
-                // error={addressError}
+                value={searchInput}
               />
-        <input autoComplete='off' type='text' name='searchTerm' onChange={handleChange} />
+        {/* <input autoComplete='off' type='text' name='searchTerm' onChange={handleChange} /> */}
       </label>
     </form>
   );

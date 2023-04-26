@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE ,SHOW_ALL_APPLICANTS_SUCCESS , SHOW_ALL_APPLICANTS_FAILURE,GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
+import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE,SHOW_ALL_APPLICANTS_SUCCESS , SHOW_ALL_APPLICANTS_FAILURE,GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
 
   export const createJobSuccess = (job) => {
     return {
@@ -11,6 +11,20 @@ import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE ,SHOW_ALL_APPLICANTS
   export const createJobFailure = (error) => {
     return {
       type: CREATE_JOB_FALIURE,
+      payload: error,
+    };
+  };
+
+  export const deleteJobSuccess = (job) => {
+    return {
+      type: DELETE_JOB_SUCCESS,
+      payload: job,
+    };
+  };
+  
+  export const deleteJobFailure = (error) => {
+    return {
+      type: DELETE_JOB_FALIURE,
       payload: error,
     };
   };
@@ -46,17 +60,32 @@ import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE ,SHOW_ALL_APPLICANTS
   };
   
 
-  export const createJobAPICall = (obj) => {
-    console.log("obj in API call",obj)
+  export const createJobAPICall = (obj,parentId,childId) => {
+    console.log("obj in API call",obj,parentId,childId)
     return async (dispatch) => {
       try {
         console.log("now")
-        let resp = await axios.post("http://localhost:3000/job/createJob", obj);
+        let resp = await axios.post(`http://localhost:3000/job/${parentId}/${childId}/createJob`, obj);
         console.log("resp",resp)
         dispatch(createJobSuccess(resp.data));
       } catch (error) {
         console.log("error",error)
         dispatch(createJobFailure(error));
+      }
+    };
+  };
+
+  export const deleteJobAPICall = (jobId) => {
+    console.log("obj in API call",jobId)
+    return async (dispatch) => {
+      try {
+        console.log("now")
+        let resp = await axios.delete(`http://localhost:3000/job/${jobId}`);
+        console.log("resp",resp)
+        dispatch(deleteJobSuccess(resp.data));
+      } catch (error) {
+        console.log("error",error)
+        dispatch(deleteJobFailure(error));
       }
     };
   };

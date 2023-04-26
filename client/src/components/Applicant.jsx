@@ -55,7 +55,7 @@ const Event = (props) => {
     console.log("2nd use effect fired",job)
     try{
       if(job){
-        setShowData(show);
+        setShowData(showData);
         setLoading(false);
         setError(false)
       }else{

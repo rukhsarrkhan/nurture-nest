@@ -139,7 +139,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                     variant='h6'
                     component='h2'
                   >
-                  {"Upcoming Vaccines"}
+                  {"Vaccines"}
                   </Typography>
                   <Typography variant='body2' color='textSecondary' component='p'>
                     {dashboardData && dashboardData.data && dashboardData.data.vaccineDetails && dashboardData.data.vaccineDetails[0] && dashboardData.data.vaccineDetails[0].name
@@ -188,7 +188,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   variant='h6'	
                   component='h2'
                 >
-                  {"Upcoming Doctor Appointments"}
+                  {"Doctor Appointments"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
                   {dashboardData && dashboardData.data && dashboardData.data.appointmentDetails && dashboardData.data.appointmentDetails[0]

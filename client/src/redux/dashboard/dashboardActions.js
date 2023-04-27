@@ -6,10 +6,10 @@ import {
 } from './dashboardActionTypes'
 import axios from 'axios'
 
-export const getDashboardSuccess = (nanny) => {
+export const getDashboardSuccess = (child) => {
     return {
       type: GET_DASHBOARD_SUCCESS,
-      payload: nanny,
+      payload: child,
     };
   };
 
@@ -20,10 +20,10 @@ export const getDashboardFailure = (error) => {
     };
   };
 
-export const dashboardSetSuccess = (nanny) => {
+export const dashboardSetSuccess = (child) => {
     return {
       type: SET_DASHBOARD_SUCCESS,
-      payload: nanny,
+      payload: child,
     };
   };
 
@@ -34,11 +34,11 @@ export const dashboardSetFailure = (error) => {
     };
   };
 
-  export const getDashboardAPICall = (nannyId) => {
-    console.log(nannyId,"nannyId in a ction call")
+  export const getDashboardAPICall = (childId) => {
+    console.log(childId,"nannyId in a ction call")
     return async (dispatch) => {
       try {
-        let resp = await axios.get(`http://localhost:3000/nanny/dashboard/${nannyId}`);
+        let resp = await axios.get(`http://localhost:3000/child/${childId}`);
         console.log(resp.data,"got resp data here:")
         // set token here
 

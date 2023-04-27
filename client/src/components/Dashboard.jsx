@@ -17,15 +17,16 @@ import vaccineImage from '../img/vaccineimage.png'
 import appointmentImage from '../img/appointmentImage.png'
 
 const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
+  console.log(dashboardData, "dashboard ka data")
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  let { nannyId } = useParams();
+  let { childId } = useParams();
   let card = null;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        getDashboardAPICall(nannyId)
+        getDashboardAPICall(childId)
         setLoading(false);
         setError(false);
       } catch (e) {
@@ -34,10 +35,10 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
         console.log(e);
       }
     }
-    if (nannyId !== undefined) {
+    if (childId !== undefined) {
       fetchData()
     }
-  }, [nannyId]);
+  }, [childId]);
 
   if (loading) {
     return (
@@ -53,9 +54,9 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   } else {
     return (
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData && dashboardData.data && dashboardData.data.nannyId}>
+        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}>
           <CardActionArea>
-            <Link to={`/meal/${dashboardData && dashboardData.data && dashboardData.data.childId}`}>
+            <Link to={`/meal/${dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}`}>
               <CardMedia
                 sx={{
                   maxWidth: 345,
@@ -102,9 +103,9 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </Link>
           </CardActionArea>
         </Grid>
-        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData && dashboardData.data && dashboardData.data.nannyId}>
+        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}>
           <CardActionArea sx={{ transition: 'transform .2s' }}>
-            <Link to={`/vaccine/${dashboardData && dashboardData.data && dashboardData.data.childId}`}>
+            <Link to={`/vaccine/${dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}`}>
               <CardMedia
                 sx={{
                   maxWidth: 345,
@@ -140,8 +141,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Vaccines"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData && dashboardData.data && dashboardData.data.vaccineDetails && dashboardData.data.vaccineDetails[0] && dashboardData.data.vaccineDetails[0].name
-                    ? dashboardData.data.vaccineDetails[0].name + " due on " + dashboardData.data.vaccineDetails[0].date
+                  {dashboardData && dashboardData.data && dashboardData.data.vaccine && dashboardData.data.vaccine[0] && dashboardData.data.vaccine[0].name && dashboardData.data.vaccine[0].date
+                    ? dashboardData.data.vaccine[0].name + " due on " + dashboardData.data.vaccine[0].date
                     : 'No data to display'}
                   <br></br>
                   {"Click to view details"}
@@ -152,9 +153,9 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </Link>
           </CardActionArea>
         </Grid>
-        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData.data.nannyId}>
+        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}>
           <CardActionArea>
-            <Link to={`/appointment/${dashboardData.data.childId}`}>
+            <Link to={`/appointment/${dashboardData && dashboardData.data && dashboardData.data._id && dashboardData.data._id.toString()}`}>
               <CardMedia
                 sx={{
                   maxWidth: 345,
@@ -189,8 +190,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Doctor Appointments"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData && dashboardData.data && dashboardData.data.appointmentDetails && dashboardData.data.appointmentDetails[0]
-                    ? dashboardData.data.appointmentDetails[0].date + " : " + dashboardData.data.appointmentDetails[0].doctor
+                  {dashboardData && dashboardData.data && dashboardData.data.appointments && dashboardData.data.appointments[0]
+                    ? dashboardData.data.appointments[0].date + " : " + dashboardData.data.appointments[0].doctor
                     : 'No data to display'}
                   <br></br>
                   {"Click to view details"}

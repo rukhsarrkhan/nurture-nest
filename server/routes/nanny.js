@@ -22,9 +22,9 @@ router
 router
     .route('/:nannyId')
     .get(async (req, res) => {
-
-        if (!ObjectId.isValid(req.params.nannyId)) throw { statusCode: 400, message: `nannyId provided is not a valid ObjectId` }
-        req.params.nannyId = await helperFunction.validateInput(req.params.nannyId, "nannyId")
+   //    await helperFunction.isIdValid(req.params.nannyId, "nannyId")
+    //   if (!ObjectId.isValid(req.params.nannyId)) throw { statusCode: 400, message: `nannyId provided is not a valid ObjectId` }
+   //     req.params.nannyId = await helperFunction.validateInput(req.params.nannyId, "nannyId")
         const findNanny = await nannyData.getNannyById(req.params.nannyId)
         return res.status(200).json(findNanny)
     })

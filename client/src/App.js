@@ -19,6 +19,8 @@ import AppointmentList from './components/AppointmentList';
 import Chat from './components/Chat';
 import Navbar from './components/Navbar'
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import DashboardLanding from './components/DashboardLanding';
+
 
 const App = () => {
   return (
@@ -38,7 +40,8 @@ const App = () => {
             <Route path='/profile/:id' element={<Profile />} />
             <Route path='/children/:id' element={<ChildList />} />
             <Route path='/child/:id' element={<AddChild />} />
-            <Route path='/dashboard/:nannyId' element={<Dashboard /> } />
+            <Route path='/dashboardLanding/:nannyId' element={<DashboardLanding />} />
+            <Route path='/dashboard/:childId' element={<Dashboard /> } />
             <Route path='/jobs' element={<JobList />} />
             <Route path='/nannies' element={<NannyList />} />
             <Route path='/nanny/:id' element={<NannyInfo />} />

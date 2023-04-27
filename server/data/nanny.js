@@ -50,7 +50,8 @@ const createNanny = async (
 const getNannyById = async (nannyId) => {
 
   try {
-    if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: `nannyId provided is not a valid ObjectId` };
+    await helperFunction.isIdValid(nannyId, "nannyId")
+    //if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: `nannyId provided is not a valid ObjectId` };
     nannyId = await helperFunction.execValdnAndTrim(nannyId, "nannyId");
     const nannyCollection = await users();
     const nannyFound = await nannyCollection.findOne({ _id: ObjectId(nannyId) });
@@ -58,7 +59,7 @@ const getNannyById = async (nannyId) => {
     nannyFound._id = nannyFound._id.toString();
     return nannyFound;
   } catch (e) {
-    return res.status(400).json("Could not get nanny details ")
+    console.log(e)
   }
 }
 

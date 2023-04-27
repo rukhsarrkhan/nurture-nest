@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import "./Profile.css";
 import "../../App.css";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, CardHeader, Avatar, Box, Grid, Paper, Button, TextField } from "@mui/material";

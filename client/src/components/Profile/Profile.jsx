@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import "./Profile.css";
 import "../../App.css";
-import axios from "axios";
 import { Link, useParams, useLocation } from "react-router-dom";
 import { Card, CardContent, CardMedia, Typography, CardHeader, Avatar, Box, Grid, Paper, Button, TextField } from "@mui/material";
 import helpers from "../../helpers";
+import { connect } from "react-redux";
+import { setUserProfileAPICall, updateUserAPICall } from "../../redux/users/userActions";
 
-const Profile = (props) => {
-    const [userData, setUserData] = useState(undefined);
+const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
+    const [userObjData, setuserObjData] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [firstName, setFirstName] = useState("");
@@ -34,109 +35,152 @@ const Profile = (props) => {
     const [skillsError, setSkillsError] = useState(false);
     const [errorText, setErrorText] = useState("");
     const [error, setError] = useState("");
+
     let { userId } = useParams();
     console.log(userId);
     let card = null;
     const formatDate = (showdate) => {
-        var year = showdate.substring(0, 4);
-        var month = showdate.substring(5, 7);
-        var day = showdate.substring(8, 10);
-        return month + "/" + day + "/" + year;
-    };
-    const toggleEdit = () => {
-        setEditMode(!editMode);
+        if (showdate) {
+            var year = showdate.substring(0, 4);
+            var month = showdate.substring(5, 7);
+            var day = showdate.substring(8, 10);
+            return month + "/" + day + "/" + year;
+        }
     };
     const validation = async (field, valFunc) => {
+        //need to change valdn function.. it'll fail if str is empty spaces.
         let fieldVal = await helpers.execValdnAndTrim(field);
-        let check = await valFunc;
-        if (check && check.statusCode === 400) {
+        let check = "";
+        if (valFunc) {
+            check = await valFunc;
+        }
+        if (fieldVal && fieldVal.statusCode === 400) {
+            return fieldVal.message;
+        } else if (check && check.statusCode === 400) {
             return check.message;
         } else {
             return "";
         }
     };
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setFirstNameError(false);
-        setLastNameError(false);
-        setAgeError(false);
-        setAddressError(false);
-        setDOBError(false);
-        setPhoneError(false);
-        setExperienceError(false);
-        setQualificationsError(false);
-        setCertificationsError(false);
-        setSkillsError(false);
-        setErrorText("");
-
-        let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName, "FirstName"));
-        if (firstNameCheck !== "") {
-            setFirstNameError(true);
-            setErrorText(firstNameCheck);
-            return;
-        }
-
-        let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName, "LastName"));
-        if (lastNameCheck !== "") {
-            setLastNameError(true);
-            setErrorText(lastNameCheck);
-            return;
-        }
-
-        let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age), "Age"));
-        if (ageCheck !== "") {
-            setAgeError(true);
-            setErrorText(ageCheck);
-            return;
-        }
-
-        // if (firstName.trim() && lastName.trim() && email.trim() && password.trim() && errorText === "") {
-        //     try {
-        //         const resp = await doCreateUserWithEmailAndPassword(email.trim(), password.trim(), firstName.trim());
-        //         const data = {
-        //             firstName: firstName.trim(),
-        //             lastName: lastName.trim(),
-        //             email: email.trim(),
-        //             profile: profile.trim(),
-        //             age: age,
-        //         };
-        //         await userRegistrationAPICall(data);
-        //     } catch (error) {
-        //         alert(error);
-        //     }
-        // }
-    };
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const { data } = await axios.get(`http://localhost:3000/users/${userId}`);
-                console.log(data);
-                setUserData(data);
-                setLoading(false);
+                await setUserProfileAPICall(userId);
             } catch (error) {
                 console.log(error);
-                setUserData(undefined);
+                setuserObjData(undefined);
                 setLoading(false);
                 setError(error.message ? error.message : error);
             }
         }
-        if (userId && userId !== undefined) fetchData();
-    }, [userId]);
-    useEffect(() => {
-        if (userData) {
-            setFirstName(userData.firstName);
-            setLastName(userData.lastName);
-            setAge(userData.age);
-            setAddress(userData.address);
-            setDOB(userData.DOB);
-            setPhone(userData.phone);
-            setExperience(userData.n_yearsOfExperience);
-            setQualifications(userData.n_qualifications);
-            setCertifications(userData.n_certifications);
-            setSkills(userData.n_skills);
+        if (userId && userId !== undefined && userData.userProfile === null) fetchData();
+        if (userData.userProfile) {
+            setuserObjData(userData.userProfile);
+            setLoading(false);
         }
-    }, userData);
+    }, [userId, userData]);
+
+    useEffect(() => {
+        if (userObjData) {
+            setFirstName(userObjData.firstName);
+            setLastName(userObjData.lastName);
+            setAge(userObjData.age);
+            setAddress(userObjData.address);
+            setDOB(formatDate(userObjData.DOB));
+            setPhone(userObjData.phone);
+            setExperience(userObjData.n_yearsOfExperience);
+            setQualifications(userObjData.n_qualifications);
+            setCertifications(userObjData.n_certifications);
+            setSkills(userObjData.n_skills);
+        }
+    }, [userObjData]);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (editMode) {
+            setFirstNameError(false);
+            setLastNameError(false);
+            setAgeError(false);
+            setAddressError(false);
+            setDOBError(false);
+            setPhoneError(false);
+            setExperienceError(false);
+            setQualificationsError(false);
+            setCertificationsError(false);
+            setSkillsError(false);
+            setErrorText("");
+
+            let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName, "FirstName"));
+            if (firstNameCheck !== "") {
+                setFirstNameError(true);
+                setErrorText(firstNameCheck);
+                return;
+            }
+
+            let lastNameCheck = await validation(lastName, helpers.isNameValid(lastName, "LastName"));
+            if (lastNameCheck !== "") {
+                setLastNameError(true);
+                setErrorText(lastNameCheck);
+                return;
+            }
+
+            let ageCheck = await validation(age, helpers.isAgeValid(parseInt(age), "Age"));
+            if (ageCheck !== "") {
+                setAgeError(true);
+                setErrorText(ageCheck);
+                return;
+            }
+
+            if (address) {
+                let addressCheck = await validation(address, helpers.isAddressValid(address, "Address"));
+                if (addressCheck !== "") {
+                    setAddressError(true);
+                    setErrorText(addressCheck);
+                    return;
+                }
+            }
+
+            if (phone) {
+                let phoneCheck = await validation(phone, helpers.validatePhoneNumber(phone, "Phone"));
+                if (phoneCheck !== "") {
+                    setPhoneError(true);
+                    setErrorText(phoneCheck);
+                    return;
+                }
+            }
+
+            if (dob) {
+                let dobCheck = await validation(dob);
+                if (dobCheck !== "") {
+                    setDOBError(true);
+                    setErrorText(dobCheck);
+                    return;
+                }
+            }
+
+            if (errorText === "") {
+                try {
+                    let newObj = {};
+                    if (userObjData.firstName !== firstName) newObj.firstName = firstName;
+                    if (userObjData.lastName !== lastName) newObj.lastName = lastName;
+                    if (userObjData.age !== age) newObj.age = age;
+                    if (userObjData.address !== address) newObj.address = address;
+                    if (userObjData.DOB !== dob) newObj.DOB = dob;
+                    if (userObjData.phone !== phone) newObj.phone = phone;
+
+                    if (Object.keys(newObj).length > 0) {
+                        await updateUserAPICall(userId, newObj);
+                    } else {
+                        alert("No fields were changed to save");
+                    }
+                } catch (error) {
+                    alert(error);
+                }
+            }
+        }
+        setEditMode(!editMode);
+    };
 
     if (loading) {
         return (
@@ -145,7 +189,7 @@ const Profile = (props) => {
             </div>
         );
     } else {
-        if (!userData) {
+        if (!userObjData) {
             return (
                 <Link className="showlinkPage" to={`/login`}>
                     Login
@@ -159,23 +203,22 @@ const Profile = (props) => {
                         onChange={(e) => setFirstName(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
                         aria-readonly={!editMode}
                         style={{ pointerEvents: editMode ? "auto" : "none" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        // helperText={firstNameError && errorText}
                         value={firstName}
-                        // error={firstNameError}
+                        helperText={firstNameError && errorText}
+                        required
+                        error={firstNameError}
                     />
                     <TextField
                         label="Last Name"
                         onChange={(e) => setLastName(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -183,6 +226,24 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={lastName}
+                        helperText={lastNameError && errorText}
+                        required
+                        error={lastNameError}
+                    />
+
+                    <TextField
+                        label="Email"
+                        onChange={(e) => setLastName(e.target.value)}
+                        variant="filled"
+                        color="secondary"
+                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                        sx={{ mb: 3 }}
+                        fullWidth
+                        disabled="true"
+                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                        value={userObjData.email}
+                        required
                     />
 
                     <TextField
@@ -190,7 +251,6 @@ const Profile = (props) => {
                         onChange={(e) => setAge(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -198,6 +258,9 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={age}
+                        helperText={ageError && errorText}
+                        required
+                        error={ageError}
                     />
 
                     <TextField
@@ -205,7 +268,6 @@ const Profile = (props) => {
                         onChange={(e) => setAddress(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -213,6 +275,8 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={address}
+                        helperText={addressError && errorText}
+                        error={addressError}
                     />
 
                     <TextField
@@ -220,7 +284,6 @@ const Profile = (props) => {
                         onChange={(e) => setDOB(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -228,6 +291,8 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={dob}
+                        helperText={dobError && errorText}
+                        error={dobError}
                     />
 
                     <TextField
@@ -235,7 +300,6 @@ const Profile = (props) => {
                         onChange={(e) => setPhone(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -243,6 +307,8 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={phone}
+                        helperText={phoneError && errorText}
+                        error={phoneError}
                     />
                 </div>
             );
@@ -254,7 +320,6 @@ const Profile = (props) => {
                         onChange={(e) => setExperience(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -262,6 +327,9 @@ const Profile = (props) => {
                         style={{ pointerEvents: !editMode ? "none" : "auto" }}
                         InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                         value={n_yearsOfExperience}
+                        helperText={phoneError && errorText}
+                        required
+                        error={phoneError}
                     />
 
                     <TextField
@@ -269,7 +337,6 @@ const Profile = (props) => {
                         onChange={(e) => setQualifications(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -284,7 +351,6 @@ const Profile = (props) => {
                         onChange={(e) => setCertifications(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -299,7 +365,6 @@ const Profile = (props) => {
                         onChange={(e) => setSkills(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        filled
                         inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
                         sx={{ mb: 3 }}
                         fullWidth
@@ -313,39 +378,40 @@ const Profile = (props) => {
 
             return (
                 <React.Fragment>
-                    <div className="profile">
+                    <div className="profile" style={{ display: "flex", justifyContent: "center" }}>
                         <Grid item xs={12} md={8}>
                             <div style={{ display: "flex", justifyContent: "center" }}>
-                                <Avatar src={userData.photoUrl} alt={userData.name} sx={{ width: 200, height: 200 }} variant="circular" />
+                                <Avatar src={userObjData.photoUrl} alt={userObjData.name} sx={{ width: 200, height: 200 }} variant="circular" />
                             </div>
                             <Typography variant="h4" sx={{ mt: 2 }}>
-                                {userData.firstName + " " + userData.lastName}
+                                {userObjData.firstName + " " + userObjData.lastName}
                             </Typography>
                             <Typography variant="h6" sx={{ mt: 1 }}>
-                                {userData.profile}
+                                {userObjData.profile}
                             </Typography>
-                            <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}></form>
                             <Paper sx={{ p: 2 }}>
-                                <Box component="ul">
+                                <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
                                     {commonFields}
-                                    {userData.profile === "NANNY" && nannyFields}
-                                    <h4>Children:</h4>
-                                    {userData.p_childIds?.map((child) => (
-                                        <Card key={child.id} sx={{ mt: 2 }}>
-                                            <CardHeader title={child.name} />
-                                            <CardContent>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    <Link to={`/child/${child.id}`}>View child profile</Link>
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </Box>
+
+                                    <div style={{ display: "flex", justifyContent: "center" }}>
+                                        <Button variant="contained" sx={{ mt: 2 }} type="submit">
+                                            {editMode ? "Save" : "Edit"}
+                                        </Button>
+                                    </div>
+                                </form>
+                                <h4>Children:</h4>
+                                {userObjData.p_childIds?.map((child) => (
+                                    <Card key={child.id} sx={{ mt: 2 }}>
+                                        <CardHeader title={child.name} />
+                                        <CardContent>
+                                            <Typography variant="body2" color="text.secondary">
+                                                <Link to={`/child/${child.id}`}>View child profile</Link>
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                ))}
                             </Paper>
                         </Grid>
-                        <Button variant="contained" sx={{ mt: 2 }} onClick={toggleEdit}>
-                            {editMode ? "Save" : "Edit"}
-                        </Button>
                     </div>
                 </React.Fragment>
             );
@@ -353,4 +419,17 @@ const Profile = (props) => {
     }
 };
 
-export default Profile;
+const mapStateToProps = (state) => {
+    return {
+        userData: state.users,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
+        updateUserAPICall: (id, obj) => dispatch(updateUserAPICall(id, obj)),
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

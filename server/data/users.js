@@ -111,7 +111,7 @@ const updateUser = async (userId, userObj) => {
     }
     if (Object.keys(updatedUser).length == 0) throw { statusCode: 400, message: "No fields were changed" };
     const updateResult = await userCollection.updateOne({ _id: ObjectId(userId) }, { $set: userObj });
-    if (!updatedUser.acknowledged || updatedUser.modifiedCount == 0) throw { statusCode: 500, message: "Couldn't update user" };
+    if (!updateResult.acknowledged || updateResult.modifiedCount == 0) throw { statusCode: 500, message: "Couldn't update user" };
     cur_userObj = await getUserById(userId);
     return cur_userObj;
 };

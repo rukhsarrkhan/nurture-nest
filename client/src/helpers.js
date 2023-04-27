@@ -1,5 +1,10 @@
 //moment = require("moment");
 // const { ObjectId } = require("mongodb");
+const phoneUtil = require("libphonenumbers").PhoneNumberUtil.getInstance();
+function validatePhoneNumber(phoneNumber, fieldName) {
+    const number = phoneUtil.parseAndKeepRawInput(phoneNumber, "US");
+    if (!phoneUtil.isValidNumber(number, "US")) return { statusCode: 400, message: `${fieldName} is not a valid number` };
+}
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -17,9 +22,15 @@ const checkIfNum = async (str, fieldName) => {
 };
 
 const execValdnAndTrim = async (str, fieldName) => {
-    await validateInput(str, fieldName);
+    let val_res = await validateInput(str, fieldName);
+    if (val_res && val_res.statusCode === 400) {
+        return val_res;
+    }
     str = str.trim();
-    await validateStringLength(str, fieldName);
+    val_res = await validateStringLength(str, fieldName);
+    if (val_res && val_res.statusCode === 400) {
+        return val_res;
+    }
     return str;
 };
 
@@ -32,8 +43,7 @@ const execValdnForArr = async (arr, fieldName) => {
 
 const isDateValid = async (str, fieldName) => {
     // if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-    if (new Date(str) === "Invalid Date" || isNaN(new Date(str)))
-        return { statusCode: 400, message: `${fieldName} is an invalid date.` };
+    if (new Date(str) === "Invalid Date" || isNaN(new Date(str))) return { statusCode: 400, message: `${fieldName} is an invalid date.` };
 };
 
 const isUserLoggedIn = async (req) => {
@@ -45,9 +55,13 @@ const isNameValid = async (name, fieldName) => {
     if (name.trim().length < 3) return { statusCode: 400, message: `${fieldName} should atleast have 3 characters` };
     if (!/^[a-zA-Z ,.'-]+$/.test(name)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
+const isAddressValid = async (name, fieldName) => {
+    if (name.trim().length < 3) return { statusCode: 400, message: `${fieldName} should atleast have 3 characters` };
+};
 
 const isProfileValid = async (profile, fieldName) => {
-    if (profile.trim() !== "PARENT" && profile.trim() !== "NANNY" ) return { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
+    if (profile.trim() !== "PARENT" && profile.trim() !== "NANNY")
+        return { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
 };
 
 const isAgeValid = async (age, fieldName) => {
@@ -79,21 +93,18 @@ const isPasswordValid = async (password) => {
 };
 
 const onlyNumbers = (str, fieldName) => {
-   let numberCheck = /^[0-9]*$/
-   if(!str.match(numberCheck)) 
-   return {statusCode : 400, message:  `${fieldName} should only be numbers`}
+    let numberCheck = /^[0-9]*$/;
+    if (!str.match(numberCheck)) return { statusCode: 400, message: `${fieldName} should only be numbers` };
 };
 
-const onlyLettersNumbersAndSpaces = (str,fieldName) => {
-    let numLetCheck = /^[a-zA-Z0-9 ]*$/ 
-    if(!str.match(numLetCheck))
-    return {statusCode : 400, message:  `${fieldName} should only be numbers and letters`}
+const onlyLettersNumbersAndSpaces = (str, fieldName) => {
+    let numLetCheck = /^[a-zA-Z0-9 ]*$/;
+    if (!str.match(numLetCheck)) return { statusCode: 400, message: `${fieldName} should only be numbers and letters` };
 };
 
-const onlyLettersAndSpaces = (str,fieldName) => {
-    let letCheck = /^[a-zA-Z ]*$/
-    if(!str.match(letCheck))
-    return {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}
+const onlyLettersAndSpaces = (str, fieldName) => {
+    let letCheck = /^[a-zA-Z ]*$/;
+    if (!str.match(letCheck)) return { statusCode: 400, message: `${fieldName} should only be letters and spaces` };
 };
 
 // const isIdValid = (id,fieldName) => {
@@ -120,5 +131,7 @@ module.exports = {
     onlyNumbers,
     onlyLettersNumbersAndSpaces,
     onlyLettersAndSpaces,
+    isAddressValid,
+    validatePhoneNumber,
     // isIdValid
 };

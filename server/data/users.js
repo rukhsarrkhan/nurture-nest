@@ -26,8 +26,14 @@ const createUser = async (firstName, lastName, email, profile, age) => {
         address: "",
     };
     const userCollection = await users();
-    const userMatch = await userCollection.findOne({ email: email.toLowerCase() });
-    if (userMatch !== null) throw { statusCode: 400, message: "User already exists with given username" };
+    const userMatch = await userCollection.findOne({
+        email: email.toLowerCase(),
+    });
+    if (userMatch !== null)
+        throw {
+            statusCode: 400,
+            message: "User already exists with given username",
+        };
     const insertedUser = await userCollection.insertOne(newUser);
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw { statusCode: 500, message: `Couldn't Create user` };
     const user = await getUserById(insertedUser.insertedId.toString());

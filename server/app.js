@@ -5,6 +5,18 @@ const session = require("express-session");
 const configRoutes = require("./routes");
 const static = express.static(__dirname + "/public");
 
+app.use("/public", static);
+app.use(express.json());
+
+app.use(
+    session({
+        name: "AuthCookie",
+        secret: "some secret string!",
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+
 //globals here
 //This file contains all global variables
 //Example: constants, variable names, etc.

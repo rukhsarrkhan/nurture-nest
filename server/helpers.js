@@ -1,4 +1,4 @@
-//moment = require("moment");
+moment = require("moment");
 const { ObjectId } = require("mongodb");
 
 const validateInput = async (str, fieldName) => {
@@ -77,21 +77,21 @@ const isPasswordValid = async (password) => {
     else if (password.trim().length < 6) throw { statusCode: 400, message: `Password should have more than 6 characters` };
 };
 
-const onlyNumbers = (str, fieldName) => {
+const onlyNumbers = async(str, fieldName) => {
    let numberCheck = /^[0-9]*$/
    if(!str.match(numberCheck)) 
    throw {statusCode : 400, message:  `${fieldName} should only be numbers`}
     // return /^[0-9]*$/.test(str);
 };
 
-const onlyLettersNumbersAndSpaces = (str,fieldName) => {
+const onlyLettersNumbersAndSpaces = async(str,fieldName) => {
     let numLetCheck = /^[a-zA-Z0-9 ]*$/ 
     if(!str.match(numLetCheck))
     throw {statusCode : 400, message:  `${fieldName} should only be numbers and letters`}
     // return /^[a-zA-Z0-9 ]*$/.test(str);
 };
 
-const onlyLettersAndSpaces = (str,fieldName) => {
+const onlyLettersAndSpaces = async(str,fieldName) => {
     let letCheck = /^[a-zA-Z ]*$/
     if(!str.match(letCheck))
     throw {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}

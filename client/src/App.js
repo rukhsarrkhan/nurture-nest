@@ -6,7 +6,7 @@ import { AuthProvider } from "./firebase/Auth";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
 import ChildList from "./components/ChildList";
 import AddChild from "./components/AddChild";
 import Dashboard from "./components/Dashboard";
@@ -35,7 +35,7 @@ const App = () => {
                     <Route path="/" element={<Landing />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    <Route path="/profile/:id" element={<Profile />} />
+                    <Route path="/profile/:userId" element={<Profile />} />
                     <Route path="/children/:id" element={<ChildList />} />
                     <Route path="/child/:id" element={<AddChild />} />
                     <Route path="/dashboardLanding/:nannyId" element={<DashboardLanding />} />

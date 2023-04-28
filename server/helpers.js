@@ -28,11 +28,12 @@ const execValdnForArr = async (arr, fieldName) => {
         throw { statusCode: 400, message: `No parameter was passed in the ${fieldName} field of the function` };
     if (!Array.isArray(arr)) throw { statusCode: 400, message: `${fieldName} must be an array.` };
     if (!arr.length > 0) throw { statusCode: 400, message: `Length of ${fieldName} must be more than 0.` };
-};
+return arr};
 
 const isDateValid = async (str, fieldName) => {
-    if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-        throw { statusCode: 400, message: `${fieldName} is an invalid date.` };
+    // if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
+    if (new Date(str) === "Invalid Date" || isNaN(new Date(str)))
+        return { statusCode: 400, message: `${fieldName} is an invalid date.` };
 };
 
 const isUserLoggedIn = async (req) => {
@@ -112,6 +113,53 @@ const onlyNumbersAndSlashes = (str) => {
     return /^[0-9/]*$/.test(str);
 };
 
+
+const isSpecialcareParentValid = async (specialCare, fieldName) => {
+    if (specialCare.trim().length < 2) throw { statusCode: 400, message: `${fieldName} should atleast have 2 characters` };
+    if (!/^[a-zA-Z0-9 ,.'-:]+$/.test(specialCare)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
+const isDescriptionParentValid = async (description, fieldName) => {
+    if (description.trim().length < 25) throw { statusCode: 400, message: `${fieldName} should atleast have 25 characters` };
+    if (description.trim().split(" ").length < 10) throw { statusCode: 400, message: `${fieldName} should atleast have 10 words` };
+    if (!/^[a-zA-Z0-9 ,.'-:]+$/.test(description)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
+const isAddressParentValid = async (address, fieldName) => {
+    if (address.trim().length < 5) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (!/^[a-zA-Z0-9 ,.-]+$/.test(address)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
+const isStateParentValid = async (state, fieldName) => {
+    let allStates = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
+    if (state.trim().length < 4) throw { statusCode: 400, message: `${fieldName} should atleast have 4 characters` };
+    if (!/^[a-zA-Z ]+$/.test(state)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+    if (!allStates.includes(state)){throw { statusCode: 400, message: `${fieldName} contains a invalid state name selected` }}
+};
+
+const isZipCodeParentValid = async (zipCode, fieldName) => {
+    if (zipCode.trim().length != 5) throw { statusCode: 400, message: `${fieldName} should have 5 characters` };
+    if (!/^[0-9]+$/.test(zipCode)) throw { statusCode: 400, message: `${fieldName} contains invalid characters. Only numbers are allowed` };
+};
+
+const isSalaryParentValid = async (salary, fieldName) => {
+    if (!/^[0-9,.]+$/.test(salary)) throw { statusCode: 400, message: `${fieldName} contains invalid characters.` };
+    if (salary.trim() < 7.25 ) throw { statusCode: 400, message: `${fieldName} should legally be more than or equal to 7.25 USD per hour` };
+};
+
+const isTime1BeforeTime2 = async(time1, time2) => {
+    if( new Date(time1) >= new Date(time2))throw { statusCode: 400, message: `Shift-from time should be less than Shift-to time` };
+  }
+
+  const isShiftLimitValid = async(start, end,daysNum) => {
+    const startTime = new Date(start);
+    const endTime = new Date(end);    
+    const diffMs = endTime - startTime;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes*daysNum>2400){throw { statusCode: 400, message: `Shift times for a nanny cannot be more than 40hours per week`}}
+    if (diffMinutes*daysNum<120){throw { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week`}}
+}
+
 module.exports = {
     description: "This is the helper function",
     validateInput,
@@ -130,5 +178,13 @@ module.exports = {
     onlyNumbers,
     onlyLettersNumbersAndSpaces,
     onlyLettersAndSpaces,
-    isIdValid
+    isIdValid,
+    isSpecialcareParentValid,
+    isDescriptionParentValid,
+    isAddressParentValid,
+    isStateParentValid,
+    isZipCodeParentValid,
+    isSalaryParentValid,
+    isTime1BeforeTime2,
+    isShiftLimitValid
 };

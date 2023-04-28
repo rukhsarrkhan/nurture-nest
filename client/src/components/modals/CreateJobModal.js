@@ -92,6 +92,11 @@ const CreateJobModal = (props) => {
             return;
         }
         let shiftTimingsCheck = await helpers.isTime1BeforeTime2(timeFrom,timeTo)
+        if (shiftTimingsCheck !== "") {
+            setShiftError(true);
+            setErrorText(shiftTimingsCheck.message);
+            return
+        }
 
         let days = [];
         if (monday) days.push("Monday");
@@ -107,6 +112,14 @@ const CreateJobModal = (props) => {
             setCheckboxErrorText("Atleast one day should be selected for nanny shifts.");
             return;
         }
+
+        let shiftLimitCheck = await helpers.isShiftLimitValid(timeFrom,timeTo,days.length)
+        if (shiftLimitCheck !== "") {
+            setShiftError(true);
+            setErrorText(shiftLimitCheck.message);
+            return
+        }
+
         let specialCareChec = await validation(
             specialCare,
             helpers.isSpecialcareParentValid(specialCare, "SpecialCare")
@@ -186,8 +199,8 @@ const CreateJobModal = (props) => {
                 zipCode:zipCode,
                 salary: salary,
             };
-            // dispatch(createJobAPICall(data));
-            props.createJob(data, props.parentId, props.childId);
+
+            // props.createJob(data, props.parentId, props.childId);
         }
     };
 

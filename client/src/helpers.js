@@ -131,8 +131,19 @@ const isSalaryParentValid = async (salary, fieldName) => {
 };
 
 const isTime1BeforeTime2 = async(time1, time2) => {
-    if( new Date(time1) >= new Date(time2))return { statusCode: 400, message: `Shift-from time should be less than Shift-to time` };
-  }
+    if( new Date(time1) >= new Date(time2)){return { statusCode: 400, message: `Shift-from time should be less than Shift-to time`}
+}else{ return ""}
+}
+
+const isShiftLimitValid = async(start, end,daysNum) => {
+    const startTime = new Date(start);
+    const endTime = new Date(end);   
+    const diffMs = endTime - startTime;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes*daysNum>2400){return { statusCode: 400, message: `Shift times for a nanny cannot be more than 40hours per week`}}
+    if (diffMinutes*daysNum<120){return { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week`}}
+    return "";
+}
 // const isIdValid = (id,fieldName) => {
 //     if(!ObjectId.isValid(id))
 //     return {statusCode : 400, message: 'invalid object id'}
@@ -163,6 +174,7 @@ module.exports = {
     isStateParentValid,
     isZipCodeParentValid,
     isSalaryParentValid,
-    isTime1BeforeTime2
+    isTime1BeforeTime2,
+    isShiftLimitValid
     // isIdValid
 };

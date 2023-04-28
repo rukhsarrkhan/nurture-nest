@@ -2,6 +2,7 @@ const mongoCollections = require("../config/mongo-collections");
 const users = mongoCollections.users;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
+const e = require("express");
 
 const createUser = async (firstName, lastName, email, profile, age) => {
   firstName = await helper.execValdnAndTrim(firstName, "FirstName");
@@ -42,23 +43,14 @@ const createUser = async (firstName, lastName, email, profile, age) => {
 };
 
 const getUserById = async (id) => {
-  if (typeof id == "undefined")
-    throw { statusCode: 400, message: "Id parameter not provided" };
-  if (typeof id !== "string")
-    throw { statusCode: 400, message: "Id must be a string" };
-  if (id.trim().length === 0) {
-    throw {
-      statusCode: 400,
-      message: "Id cannot be an empty string or just spaces",
-    };
-  }
+  if (typeof id == "undefined") throw { statusCode: 400, message: "Id parameter not provided" };
+  if (typeof id !== "string") throw { statusCode: 400, message: "Id must be a string" };
+  if (id.trim().length === 0) throw {statusCode: 400,message: "Id cannot be an empty string or just spaces"};
   id = id.trim();
-  if (!ObjectId.isValid(id))
-    throw { statusCode: 400, message: "Invalid object ID" };
+  if (!ObjectId.isValid(id))throw { statusCode: 400, message: "Invalid object ID" };
   const userCollection = await users();
   const userFound = await userCollection.findOne({ _id: ObjectId(id) });
-  if (userFound === null)
-    throw { statusCode: 500, message: "No user with that id" };
+  if (userFound === null)throw { statusCode: 500, message: "No user with that id" };
   userFound._id = userFound._id.toString();
   return userFound;
 };

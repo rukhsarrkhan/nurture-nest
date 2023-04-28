@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const data = require("../data");
+const {ObjectId} = require('mongodb');
 const { getAllApplicants, addApplication } = require('../data/job');
 const helpers = require('../helpers');
 const jobCollection = data.job;
@@ -22,6 +23,10 @@ router
             const minsTo = dateTo.getMinutes();
             // Validations
             // Add ObjectId Validation for parentId and childId
+            parentId = await helpers.execValdnAndTrim(parentId,"Parent Id")
+            if (!ObjectId.isValid(parentId)) throw { statusCode: 400, message:"invalid object ID for Parent"};
+            childId = await helpers.execValdnAndTrim(childId,"Child Id")
+            if (!ObjectId.isValid(childId)) throw { statusCode: 400, message:"invalid object ID for Child"};
             await helpers.isDateValid(shifts.timeFrom.toLocaleString(), "Shift Timing from")
             await helpers.isDateValid(shifts.timeTo.toLocaleString(), "Shift Timing to") 
             await helpers.isTime1BeforeTime2(shifts.timeFrom,shifts.timeTo)
@@ -31,6 +36,7 @@ router
                     throw { statusCode: 400, message: `Shift-Days field contains a invalid day value selected` }
                 }
             })
+            await helpers.isShiftLimitValid(shifts.timeFrom.toLocaleString(),shifts.timeTo.toLocaleString(),shifts.days.length)
             description = await helpers.execValdnAndTrim(description,"description")
              await helpers.isDescriptionParentValid(description, "Description")
               address = await helpers.execValdnAndTrim(address,"Address")
@@ -50,9 +56,10 @@ router
             try{
               const jobCreated = await jobCollection.createJob(parentId, childId, shifts, description, address, specialCare, state, zipCode, salary);
               if (!jobCreated) {  throw { statusCode: 500, message: `Couldn't Create Job` }; }
+              const updateChild = await jobCollection.assignJobToChild(childId,jobCreated._id.toString())
               return res.json(jobCreated);
         } catch (e) { 
-            // throw e.message
+            throw e.message
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
   });
@@ -61,17 +68,21 @@ router
     .get(async (req, res) => {
         try {
             let jobId = req.params.jobId
+            jobId = await helpers.execValdnAndTrim(jobId,"Job Id")
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID for Job"};
             const jobFound = await jobCollection.getJobById(jobId);
             if (!jobFound) { throw "Couldn't find Job with that id"; }
             return res.json(jobFound);
       } catch (e) { 
           // throw e
-            return res.status(400).json({ error: e }); 
+          return res.status(e.statusCode).json({ title: "Error", message: e.message });
       }
     })
     .put(async (req, res) => {
         console.log("Inside add application route")
         let jobId = req.params.jobId
+        jobId = await helpers.execValdnAndTrim(jobId,"Job Id")
+        if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID for Job"};
         let { nannyId,nannyName,distance,nannyAddress,whySelect,disability,shiftPuntuality,experience,attachment,expectedSalary } = req.body;
         try {
               const applicationCreated = await jobCollection.addApplication(jobId,nannyId,nannyName,distance,nannyAddress,whySelect,disability,shiftPuntuality,experience,attachment,expectedSalary);
@@ -86,15 +97,18 @@ router
         console.log("Inside delete job route")
         let jobId = req.params.jobId
         try {
+            jobId = await helpers.execValdnAndTrim(jobId,"Job Id")
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID for Job"};
             if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
             if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
             if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobIdd cannot be an empty string or just spaces"};
             jobId = jobId.trim();
-              const deletedJob = await jobCollection.removeJob(jobId);
-              if (!deletedJob){throw { statusCode: 500, message:`Could not delete Job with id of ${id}`}};
-              return res.json(deletedJob);
+            const deletedJob = await jobCollection.removeJob(jobId);
+            if (!deletedJob){throw { statusCode: 500, message:`Could not delete Job with id of ${id}`}};
+            const updateChild = await jobCollection.removeJobFromChild(deletedJob.childId.toString())
+            return res.json(deletedJob);
         } catch (e) { 
-            // throw e.message
+            throw e.message
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     });

@@ -151,6 +151,15 @@ const isTime1BeforeTime2 = async(time1, time2) => {
     if( new Date(time1) >= new Date(time2))throw { statusCode: 400, message: `Shift-from time should be less than Shift-to time` };
   }
 
+  const isShiftLimitValid = async(start, end,daysNum) => {
+    const startTime = new Date(start);
+    const endTime = new Date(end);    
+    const diffMs = endTime - startTime;
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes*daysNum>2400){throw { statusCode: 400, message: `Shift times for a nanny cannot be more than 40hours per week`}}
+    if (diffMinutes*daysNum<120){throw { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week`}}
+}
+
 module.exports = {
     description: "This is the helper function",
     validateInput,
@@ -176,5 +185,6 @@ module.exports = {
     isStateParentValid,
     isZipCodeParentValid,
     isSalaryParentValid,
-    isTime1BeforeTime2
+    isTime1BeforeTime2,
+    isShiftLimitValid
 };

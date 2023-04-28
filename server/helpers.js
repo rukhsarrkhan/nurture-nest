@@ -40,13 +40,20 @@ const isUserLoggedIn = async (req) => {
     else return false;
 };
 
+const isSexValid = async (str) => {
+    const validSexArr = ["male", "female", "non-binary", "transgender", "other"];
+    if (!validSexArr.includes(str.toLowerCase())) {
+        throw { statusCode: 400, message: `Invalid Gender` };
+    }
+};
+
 const isNameValid = async (name, fieldName) => {
     if (name.trim().length < 3) throw { statusCode: 400, message: `${fieldName} should atleast have 3 characters` };
     if (!/^[a-zA-Z ,.'-]+$/.test(name)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
 const isProfileValid = async (profile, fieldName) => {
-    if (profile.trim() != "PARENT" && profile.trim() != "NANNY" ) throw { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
+    if (profile.trim() != "PARENT" && profile.trim() != "NANNY") throw { statusCode: 400, message: `${fieldName} should be either PARENT or NANNY` };
 };
 
 const isAgeValid = async (age, fieldName) => {
@@ -77,30 +84,26 @@ const isPasswordValid = async (password) => {
     else if (password.trim().length < 6) throw { statusCode: 400, message: `Password should have more than 6 characters` };
 };
 
-const onlyNumbers = async(str, fieldName) => {
-   let numberCheck = /^[0-9]*$/
-   if(!str.match(numberCheck)) 
-   throw {statusCode : 400, message:  `${fieldName} should only be numbers`}
+const onlyNumbers = async (str, fieldName) => {
+    let numberCheck = /^[0-9]*$/;
+    if (!str.match(numberCheck)) throw { statusCode: 400, message: `${fieldName} should only be numbers` };
     // return /^[0-9]*$/.test(str);
 };
 
-const onlyLettersNumbersAndSpaces = async(str,fieldName) => {
-    let numLetCheck = /^[a-zA-Z0-9 ]*$/ 
-    if(!str.match(numLetCheck))
-    throw {statusCode : 400, message:  `${fieldName} should only be numbers and letters`}
+const onlyLettersNumbersAndSpaces = async (str, fieldName) => {
+    let numLetCheck = /^[a-zA-Z0-9 ]*$/;
+    if (!str.match(numLetCheck)) throw { statusCode: 400, message: `${fieldName} should only be numbers and letters` };
     // return /^[a-zA-Z0-9 ]*$/.test(str);
 };
 
-const onlyLettersAndSpaces = async(str,fieldName) => {
-    let letCheck = /^[a-zA-Z ]*$/
-    if(!str.match(letCheck))
-    throw {statusCode : 400, message:  `${fieldName} should only be letters and spaces`}
+const onlyLettersAndSpaces = async (str, fieldName) => {
+    let letCheck = /^[a-zA-Z ]*$/;
+    if (!str.match(letCheck)) throw { statusCode: 400, message: `${fieldName} should only be letters and spaces` };
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
-const isIdValid = async (id,fieldName) => {
-    if(!ObjectId.isValid(id))
-    throw {statusCode : 400, message: 'invalid object id'}
+const isIdValid = async (id, fieldName) => {
+    if (!ObjectId.isValid(id)) throw { statusCode: 400, message: "invalid object id" };
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
@@ -130,5 +133,6 @@ module.exports = {
     onlyNumbers,
     onlyLettersNumbersAndSpaces,
     onlyLettersAndSpaces,
-    isIdValid
+    isIdValid,
+    isSexValid,
 };

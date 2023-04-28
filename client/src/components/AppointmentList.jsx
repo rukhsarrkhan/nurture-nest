@@ -79,7 +79,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                     }}>
                     <CardHeader
                         title={appointments.doctor}
-                        subheader={appointments.hospital}
+                        subheader={" At " + appointments.hospital + " On " + appointments.date}
                     />
                     <CardMedia
                         component="img"

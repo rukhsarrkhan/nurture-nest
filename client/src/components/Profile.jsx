@@ -4,6 +4,7 @@ import '../App.css';
 const Profile = () => {
   return (
     <div>
+    
     </div>
   );
 };

@@ -67,7 +67,7 @@ const isUsernameValid = async (username) => {
     let usernameAlphaNumCheck = /^[A-Za-z0-9]+$/;
     if (!username.match(usernameAlphaNumCheck)) throw { statusCode: 400, message: `Username should be alpha-numeric` };
     else if (/\s/.test(username)) throw { statusCode: 400, message: `Username should not contain empty spaces` };
-    else if (username.trim().length < 4) throw { statusCode: 400, message: `Username should have more than 4 characters` };
+    else if (username.trim().length < 4) throw { statusCode: 400, message: `Username should hav e more than 4 characters` };
 };
 
 const isPasswordValid = async (password) => {
@@ -99,7 +99,7 @@ const onlyLettersAndSpaces = async(str,fieldName) => {
     // return /^[a-zA-Z ]*$/.test(str);
 };
 
-const isIdValid = (id,fieldName) => {
+const isIdValid = async (id,fieldName) => {
     if(!ObjectId.isValid(id))
     throw {statusCode : 400, message: 'invalid object id'}
     // return /^[a-zA-Z ]*$/.test(str);

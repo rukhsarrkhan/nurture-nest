@@ -114,11 +114,11 @@ router
     });
 
 router
-    .route('/:jobId/searchApplicants/:searchTerm')
+    .route('/:jobId/searchApplicants/:searchTerm/:pageNum')
     .get(async (req, res) => {
-        let {jobId,searchTerm} = req.params
+        let {jobId,searchTerm,pageNum} = req.params
         try {
-              const searchedApplicants = await jobCollection.searchApplications(jobId,searchTerm);
+              const searchedApplicants = await jobCollection.searchApplications(jobId,searchTerm,pageNum);
               console.log("This was searched in routes",searchedApplicants)
               if (!searchedApplicants) { throw "Couldn't get applications"; }
               return res.json(searchedApplicants);
@@ -143,4 +143,21 @@ router
         }
     });
 
+    router
+    .route('/:jobId/Application/:applicationId')
+    .get(async (req, res) => {
+        let jobId = req.params.jobId
+        try {
+
+              const allApplicants = await jobCollection.getApplication(jobId);
+              if (!allApplicants) { throw "Couldn't get applications"; }
+              return res.json(allApplicants);
+        } catch (e) { 
+            throw e
+              return res.status(400).json({ error: e }); 
+        }
+    });
+
+
+    
 module.exports = router;

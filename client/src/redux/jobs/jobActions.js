@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE,SHOW_ALL_APPLICANTS_SUCCESS , SHOW_ALL_APPLICANTS_FAILURE,GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
+import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE,SHOW_ALL_APPLICANTS_SUCCESS , SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
 
   export const createJobSuccess = (job) => {
     return {
@@ -40,6 +40,20 @@ import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS
   export const showAllApplicantsFailure = (error) => {
     return {
       type: SHOW_ALL_APPLICANTS_FAILURE,
+      payload: error,
+    };
+  };
+
+  export const searchApplicantsSuccess = (job) => {
+    return {
+      type: SEARCH_APPLICANTS_SUCCESS,
+      payload: job,
+    };
+  };
+  
+  export const searchApplicantsFailure = (error) => {
+    return {
+      type: SEARCH_APPLICANTS_FAILURE,
       payload: error,
     };
   };
@@ -104,11 +118,25 @@ import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS
     };
   };
 
-  export const getApplicantAPICall = (jobId,applicantId) => {
+  export const searchApplicantsAPICall = (jobId,searchTerm,pageNum) => {
+    return async (dispatch) => {
+      try {
+        console.log(jobId,searchTerm,pageNum,"hallooo here")
+        let resp = await axios.get(`http://localhost:3000/job/${jobId}/searchApplicants/${searchTerm}/${pageNum}`);
+        console.log("axios call got:",resp)
+        dispatch(searchApplicantsSuccess(resp.data));
+      } catch (error) {
+        console.log("error",error)
+        dispatch(searchApplicantsFailure(error));
+      }
+    };
+  };
+
+  export const getApplicantAPICall = (jobId,applicationId) => {
     return async (dispatch) => {
       try {
         console.log(jobId,applicantId,"hallooo here")
-        let resp = await axios.get(`http://localhost:3000/job/${jobId}/Applicantion/${applicantId}`);
+        let resp = await axios.get(`http://localhost:3000/job/${jobId}/Application/${applicationId}`);
         console.log("axios call got:",resp)
         dispatch(getApplicantSuccess(resp.data));
       } catch (error) {

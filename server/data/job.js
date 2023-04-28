@@ -170,7 +170,8 @@ const getUserById = async (parentId) => {
     return job;
   };
 
-  const searchApplications = async (jobId,searchTerm) => {
+  const searchApplications = async (jobId,searchTerm,pageNum) => {
+    console.log("Inside search route")
     if (typeof jobId=="undefined") throw "jobId parameter not provjobIded";
     if (typeof jobId !== "string") throw "jobId must be a string";
     if (jobId.trim().length === 0){throw "jobId cannot be an empty string or just spaces"};
@@ -188,7 +189,7 @@ const getUserById = async (parentId) => {
     //     },
     //   }
     // ).toArray()
-    const nanniesFound = await jobCollection.aggregate([
+    let nanniesFound = await jobCollection.aggregate([
       {$unwind:'$applications'},
       {$match:{
         'applications.nannyName':{$regex:searchTerm,$options:'i'}
@@ -201,8 +202,30 @@ const getUserById = async (parentId) => {
 ]).toArray()
     console.log("This was queried for search : ",nanniesFound)
     if (nanniesFound === null) throw "No applications with that search term";
+    nanniesFound = nanniesFound[0].applications
     // nanniesFound._id = nanniesFound._id.toString();
     return nanniesFound;
+  };
+
+  const getApplication = async (jobId,applicationId) => {
+    applicationId = checkId(applicationId, "applicationId");
+    const jobCollection = await jobs();
+    let applicationFound = await movieCollection.findOne(
+      { _id:
+        reviews: { $elemMatch: { _id: ObjectId(applicationId) } },
+      },
+      {
+        projection: {
+          _id: 0,
+          reviews: { $elemMatch: { _id: ObjectId(applicationId) } },
+        },
+      }
+    );
+    if (applicationFound === null) throw "No applicationFound with that id";
+    applicationFound=applicationFound['reviews'][0]
+    applicationFound["_id"] = applicationFound["_id"].toString();
+  
+    return applicationFound;
   };
 
   module.exports = {
@@ -214,5 +237,6 @@ const getUserById = async (parentId) => {
     addApplication,
     searchApplications,
     assignJobToChild,
-    removeJobFromChild
+    removeJobFromChild,
+    getApplication
   };

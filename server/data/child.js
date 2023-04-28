@@ -1,7 +1,8 @@
 const mongoCollections = require("../config/mongo-collections");
 const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
-const helper = require("../helpers");
+const helper = require('../helpers')
+
 
 const createChild = async (
   name,
@@ -25,6 +26,7 @@ const createChild = async (
   };
   const childCollection = await childs();
   const insertedChild = await childCollection.insertOne(newChild);
+  if (age > 12) throw { statusCode: 400, message: "child cannnot be more than 12 years old" };
   if (!insertedChild.acknowledged || !insertedChild.insertedId)
     throw "Could not add User";
   const child = await getChildById(insertedChild.insertedId.toString());
@@ -32,17 +34,17 @@ const createChild = async (
 };
 
 const getChildById = async (childId) => {
-  childId = await helper.execValdnAndTrim(childId, "Child Id");
-  if (!ObjectId.isValid(childId)) {
-    throw { statusCode: 400, message: "Child Id is not valid" };
+  try {
+    childId = await helper.execValdnAndTrim(childId, "Child Id");
+    if (!ObjectId.isValid(childId)) throw "invalid object id";
+    const childCollection = await childs();
+    const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+    if (childFound === null) throw "No child with that Id";
+    childFound._id = childFound._id.toString();
+    return childFound;
+  } catch (e) {
+    throw e
   }
-  childId = childId.trim();
-  if (!ObjectId.isValid(childId)) throw "invalid object id";
-  const childCollection = await childs();
-  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
-  if (childFound === null) throw "No child with that Id";
-  childFound._id = childFound._id.toString();
-  return childFound;
 };
 
 const updateChild = async (
@@ -245,6 +247,17 @@ const removeAppointment = async (appointmentId) => {
   }
 };
 
+const getMealPlans = async (childId) => {
+
+  await helper.isIdValid(childId, "childId")
+  await helper.execValdnAndTrim(childId, "childId")
+  const childCollection = await childs();
+  const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+  if (childFound === null) throw "No child with that Id";
+  const mealDetails = childFound.mealRequirements
+  return mealDetails;
+}
+
 module.exports = {
   createChild,
   getChildById,
@@ -256,4 +269,6 @@ module.exports = {
   addAppointment,
   removeVaccine,
   removeAppointment,
+  getMealPlans,
+
 };

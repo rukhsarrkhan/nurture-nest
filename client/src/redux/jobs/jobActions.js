@@ -135,7 +135,7 @@ import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE , DELETE_JOB_SUCCESS
   export const getApplicantAPICall = (jobId,applicationId) => {
     return async (dispatch) => {
       try {
-        console.log(jobId,applicantId,"hallooo here")
+        console.log(jobId,applicationId,"hallooo here")
         let resp = await axios.get(`http://localhost:3000/job/${jobId}/Application/${applicationId}`);
         console.log("axios call got:",resp)
         dispatch(getApplicantSuccess(resp.data));

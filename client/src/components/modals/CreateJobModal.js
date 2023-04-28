@@ -200,7 +200,7 @@ const CreateJobModal = (props) => {
                 salary: salary,
             };
 
-            // props.createJob(data, props.parentId, props.childId);
+            props.createJob(data, props.parentId, props.childId);
         }
     };
 

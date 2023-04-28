@@ -59,7 +59,7 @@ const deleteJob = async (jobId) => {
 {openDeleteJobModal && <DeleteJobModal
                         open={openDeleteJobModal}
                         onClose={handleCloseDeleteJob}
-                        jobId={"644b62d46038624874a99561"}
+                        jobId={"644c264c8c407bf6d08675a7"}
                         deleteJob={deleteJob}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"

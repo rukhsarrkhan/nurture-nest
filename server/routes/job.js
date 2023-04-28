@@ -59,7 +59,7 @@ router
               const updateChild = await jobCollection.assignJobToChild(childId,jobCreated._id.toString())
               return res.json(jobCreated);
         } catch (e) { 
-            throw e.message
+            // throw e.message
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
   });

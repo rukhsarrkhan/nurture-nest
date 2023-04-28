@@ -211,13 +211,13 @@ const getUserById = async (parentId) => {
     applicationId = checkId(applicationId, "applicationId");
     const jobCollection = await jobs();
     let applicationFound = await movieCollection.findOne(
-      { _id:
-        reviews: { $elemMatch: { _id: ObjectId(applicationId) } },
+      { _id:ObjectId(jobId),
+        applications: { $elemMatch: { _id: ObjectId(applicationId) } },
       },
       {
         projection: {
           _id: 0,
-          reviews: { $elemMatch: { _id: ObjectId(applicationId) } },
+          applications: { $elemMatch: { _id: ObjectId(applicationId) } },
         },
       }
     );

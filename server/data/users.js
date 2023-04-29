@@ -3,7 +3,7 @@ const users = mongoCollections.users;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 // Email is always inserted in lowercase.. Ensure to always check the same when comparing
-const createUser = async (firstName, lastName, email, profile, age) => {
+const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     firstName = await helper.execValdnAndTrim(firstName, "FirstName");
     await helper.isNameValid(firstName, "FirstName");
     lastName = await helper.execValdnAndTrim(lastName, "LastName");
@@ -14,12 +14,15 @@ const createUser = async (firstName, lastName, email, profile, age) => {
     await helper.isProfileValid(profile, "Profile");
     age = await helper.execValdnAndTrim(age, "Age");
     await helper.isAgeValid(parseInt(age), "Age");
+    uuid = await helper.execValdnAndTrim(uuid, "Uuid");
+
     let newUser = {
         firstName: firstName,
         lastName: lastName,
         email: email.toLowerCase(),
         profile: profile,
         age: age,
+        firebaseUuid: uuid,
         p_childIds: [],
         n_childIds: [],
         photoUrl: "",
@@ -38,6 +41,17 @@ const createUser = async (firstName, lastName, email, profile, age) => {
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw { statusCode: 500, message: `Couldn't Create user` };
     const user = await getUserById(insertedUser.insertedId.toString());
     return user;
+};
+
+const getUserByFirebaseId = async (id) => {
+    id = await helper.execValdnAndTrim(id, "Uuid");
+    // if (!ObjectId.isValid(id)) throw { statusCode: 400, message: "Invalid object ID" };
+    const userCollection = await users();
+    const userFound = await userCollection.findOne({ firebaseUuid: ObjectId(id) });
+    console.log("userFound", userFound);
+    if (userFound === null) throw { statusCode: 404, message: "No user with that id" };
+    userFound._id = userFound._id.toString();
+    return userFound;
 };
 
 const getUserById = async (id) => {
@@ -170,4 +184,5 @@ module.exports = {
     updateUser,
     removeUser,
     addChildToUser,
+    getUserByFirebaseId,
 };

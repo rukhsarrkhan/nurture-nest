@@ -238,7 +238,6 @@ router.route("/appointment/:appointmentId").delete(async (req, res) => {
         const removedAppointment = await childCollection.removeAppointment(appointmentId);
         return res.status(200).json(removedAppointment);
     } catch (e) {
-        console.log(e, "e");
         return res.status(500).json({ error: e });
     }
 });

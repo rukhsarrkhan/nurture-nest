@@ -1,18 +1,21 @@
 import React from 'react';
-import {doSocialSignIn} from '../firebase/FirebaseFunctions';
+import { doSocialSignIn } from '../firebase/FirebaseFunctions';
+import { Navigate } from "react-router-dom";
 
 const SocialSignIn = () => {
   const socialSignOn = async (provider) => {
     try {
-      await doSocialSignIn(provider);
+      const resp = await doSocialSignIn(provider);
+      console.log("resp3", resp);
+      return <Navigate to='/dashboard' />;
     } catch (error) {
       alert(error);
     }
   };
   return (
     <div>
-              <small>or</small>
-        <br />
+      <small>or</small>
+      <br />
       <img
         onClick={() => socialSignOn('google')}
         alt='google signin'

@@ -11,7 +11,7 @@ AWS.config.update({
 })
 
 const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET},
+    params: { Bucket: nurture-nest},
     region: REGION,
 })
 
@@ -29,7 +29,7 @@ const UploadImageToS3WithNativeSdk = () => {
         const params = {
             ACL: 'public-read',
             Body: file,
-            Bucket: S3_BUCKET,
+            Bucket: nurture-nest,
             Key: file.name
         };
 

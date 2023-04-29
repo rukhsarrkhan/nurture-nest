@@ -83,10 +83,7 @@ const DashboardLanding = ({ getDashboardLandingAPICall, childData }) => {
   
   
     card =
-      childData &&
-      childData.data &&
-      childData.data.n_childIds &&
-      childData.data.n_childIds.map((child) => {
+      childData?.data?.n_childIds?.map((child) => {
         if (child !== null) {
           return buildCard(child);
         }

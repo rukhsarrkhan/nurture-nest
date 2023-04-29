@@ -1,43 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
-import IconButton from '@mui/material/IconButton';
 import {
   Card,
-  CardActionArea,
-  CardContent,
   CardMedia,
-  Grid,
-  Typography
+  Grid
 } from '@mui/material';
-import { getMealPlanAPICall } from '../redux/mealplans/mealPlanActions'
-import mealPlanImage from '../img/MealPlan.jpg'
+import { getMealPlanAPICall } from '../redux/mealplans/mealPlanActions';
+import mealPlanImage from '../img/MealPlan.jpg';
 
 const MealList = ({ getMealPlanAPICall, mealData }) => {
-  const regex = /(<([^>]+)>)/gi;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [data, setData] = useState([])
   let { childId } = useParams();
   let card = null;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        getMealPlanAPICall(childId)
+        getMealPlanAPICall(childId);
         setLoading(false);
         setError(false);
       } catch (e) {
         setLoading(false);
         setError(true);
-        console.log(e);
       }
     }
-    if (childId != undefined) { fetchData() }
+    if (childId !== undefined) { fetchData(); }
   }, [childId]);
 
   const buildCard = (meal) => {
@@ -51,13 +43,11 @@ const MealList = ({ getMealPlanAPICall, mealData }) => {
             marginLeft: 'auto',
             marginRight: 'auto',
             borderRadius: 5,
-            // border: '1px solid #080a33',
             boxShadow:
               '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
           }}>
           <CardHeader
             title={meal}
-          //     subheader={vaccines.date}
           />
           <CardMedia
             component="img"
@@ -65,11 +55,9 @@ const MealList = ({ getMealPlanAPICall, mealData }) => {
             image={mealPlanImage}
           />
           <CardActions disableSpacing>
-
             {/* <IconButton onClick={() => handleOpen} color='error' aria-label="Add Vaccine">
                         <FavoriteIcon />
                     </IconButton> */}
-
           </CardActions>
 
         </Card>
@@ -100,7 +88,6 @@ const MealList = ({ getMealPlanAPICall, mealData }) => {
     </div>
     );
   } else {
-    console.log(data)
     return (
       <div>
         <Grid
@@ -112,12 +99,10 @@ const MealList = ({ getMealPlanAPICall, mealData }) => {
           }}
         >
           {card}
-
         </Grid>
       </div>
-    )
+    );
   };
-
 };
 
 const mapStateToProps = state => {

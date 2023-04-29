@@ -36,7 +36,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [error, setError] = useState("");
 
     let { userId } = useParams();
-    console.log(userId);
     let card = null;
     const formatDate = (showdate) => {
         if (showdate) {
@@ -67,7 +66,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             try {
                 await setUserProfileAPICall(userId);
             } catch (error) {
-                console.log(error);
                 setuserObjData(undefined);
                 setLoading(false);
                 setError(error.message ? error.message : error);

@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
-import {userReducer} from './redux/users/userReducer';
-import  {vaccineReducer}  from './redux/vaccines/vaccineReducer';
-import {appointmentReducer} from './redux/appointments/appointmentReducer';
-import {dashboardReducer} from './redux/dashboard/dashboardReducer';
-import { mealPlanReducer } from './redux/mealplans/mealPlanReducer'
-import { dashboardLandingReducer } from './redux/dashboardLanding/dashboardLandingReducer';
+import { userReducer } from './redux/users/userReducer';
+import { vaccineReducer } from './redux/vaccines/vaccineReducer';
+import { appointmentReducer } from './redux/appointments/appointmentReducer';
+import { dashboardReducer } from './redux/dashboard/dashboardReducer';
+import { mealPlanReducer } from './redux/mealplans/mealPlanReducer';
+import { homeReducer } from './redux/home/homeReducer';
 import { jobReducer } from './redux/jobs/jobReducer';
 
 
@@ -15,7 +15,7 @@ const rootReducer = combineReducers({
     jobs: jobReducer,
     dashboard: dashboardReducer,
     meals: mealPlanReducer,
-    dashboardLanding: dashboardLandingReducer
+    home: homeReducer
 });
 
 export default rootReducer;

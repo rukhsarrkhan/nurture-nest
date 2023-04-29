@@ -1,7 +1,7 @@
 import { FaBars } from 'react-icons/fa';
 import { NavLink as Link } from 'react-router-dom';
 import styled from 'styled-components';
-import showProfileDropdown from './Navbar'
+import showProfileDropdown from './Navbar';
 
 export const Nav = styled.nav`
   background: #2c3e50;
@@ -112,7 +112,7 @@ export const DropdownItem = styled.div`
     background-color: #f1c40f;
     `;
 
-    export const ProfileDropdown = styled.div`
+export const ProfileDropdown = styled.div`
     background-color: #2c3e50;
     border-radius: 4px;
     position: absolute;

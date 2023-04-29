@@ -5,9 +5,9 @@ import {
     USER_LOGIN_FALIURE,
     USER_REGISTER_SUCCESS,
     USER_REGISTER_FALIURE,
-    SET_USER_PROFILE,
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
+    USER_ID_STORE
 } from "./userActionTypes";
 
 export const userLogout = () => {
@@ -57,23 +57,31 @@ export const userRegisterFailure = (error) => {
     };
 };
 
+export const userIdStore = (id) => {
+    return {
+        type: USER_ID_STORE,
+        payload: id,
+    };
+};
+
 export const userRegistrationAPICall = (obj) => {
+    console.log("obj", obj);
     return async (dispatch) => {
         try {
+            dispatch(userIdStore(obj.uuid));
             let resp = await axios.post("http://localhost:3000/users/signup", obj);
             dispatch(userRegisterSuccess(resp.data));
-            // set token here
-            // localStorage.setItem("authToken", resp.data.token);
+            localStorage.setItem("userData", JSON.stringify(resp.data));
         } catch (error) {
             dispatch(userRegisterFailure(error));
         }
     };
 };
 
-export const userLoginAPICall = (obj) => {
+export const userLoginAPICall = (id) => {
     return async (dispatch) => {
         try {
-            let resp = await axios.post("http://localhost:3000/login", obj);
+            let resp = await axios.post(`http://localhost:3000/signin/${id}`);
             // set token here
             // sessionStorage.setItem("token", resp.data.token);
             dispatch(userLoginSuccess(resp.data));
@@ -87,6 +95,7 @@ export const setUserProfileAPICall = (id) => {
     return async (dispatch) => {
         try {
             let { data } = await axios.get(`http://localhost:3000/users/${id}`);
+            console.log("data", data);
             dispatch(setProfileSuccess(data));
         } catch (error) {
             dispatch(setProfileFailure(error));
@@ -109,6 +118,6 @@ export const userLogoutCall = (obj) => {
     return async (dispatch) => {
         dispatch(userLogout());
         // remove token here
-        // localStorage.removeItem("authToken");
+        localStorage.removeItem("userData");
     };
 };

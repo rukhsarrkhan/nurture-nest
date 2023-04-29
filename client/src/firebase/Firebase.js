@@ -9,6 +9,5 @@ const firebaseApp = firebase.initializeApp({
     messagingSenderId: process.env.REACT_APP_FIREBASE_SENDER_ID,
     appId: process.env.REACT_APP_FIREBASE_APP_ID,
 });
-console.log(process.env.REACT_APP_FIREBASE_KEY);
 
 export default firebaseApp;

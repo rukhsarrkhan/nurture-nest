@@ -1,8 +1,12 @@
 import firebase from 'firebase/compat/app';
+import { Navigate } from "react-router-dom";
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
-  await firebase.auth().createUserWithEmailAndPassword(email, password);
-  firebase.auth().currentUser.updateProfile({displayName: firstName});
+  const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
+  if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
+    await firebase.auth().currentUser.updateProfile({ displayName: firstName });
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doChangePassword(email, oldPassword, newPassword) {
@@ -26,7 +30,10 @@ async function doSocialSignIn(provider) {
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
-  await firebase.auth().signInWithPopup(socialProvider);
+  const resp = await firebase.auth().signInWithPopup(socialProvider);
+  if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doPasswordReset(email) {
@@ -39,6 +46,8 @@ async function doPasswordUpdate(password) {
 
 async function doSignOut() {
   await firebase.auth().signOut();
+  <Navigate to='/' />;
+
 }
 
 export {

@@ -9,7 +9,7 @@ const { ObjectId } = require("mongodb");
 router.route("/").post(async (req, res) => {
     try {
         let { name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr, parentId } = req.body;
-        name = helper.execValdnAndTrim(name, "Name");
+        name = await helper.execValdnAndTrim(name, "Name");
         age = await helper.execValdnAndTrim(age, "Age");
         if (isNaN(age)) {
             throw { statusCode: 400, message: `${fieldName} should be a number` };
@@ -34,10 +34,13 @@ router.route("/").post(async (req, res) => {
         if (!childCreated) {
             throw { statusCode: 500, message: "Internal Server error" };
         }
-
-        return res.json(childCreated);
+        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString(), childCreated.name);
+        if (userUpdated) {
+            parentObj = await userData.getUserById(parentId);
+        }
+        return res.json(parentObj);
     } catch (e) {
-        return res.status(404).json({ error: e });
+        return res.status(e.statusCode).json({ message: e.message });
     }
 });
 router

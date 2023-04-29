@@ -44,7 +44,7 @@ const createChild = async (name, age, sex, mealRequirementsArr, vaccineArr, appo
 
 const getChildById = async (childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");
-    if (!ObjectId.isValid(childId)) throw "invalid object id";
+    if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "Invalid object ID" };
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
     if (childFound === null) throw { statusCode: 404, message: "No child with that Id" };

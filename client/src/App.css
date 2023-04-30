@@ -324,3 +324,38 @@ footer {
 	text-align: center;
 	margin-top: 150px;
 }
+.vaccine-form { 
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+}
+
+.vacField {
+		width: 100%;
+		margin-bottom: 1rem;
+}
+
+.vaccine-image {
+	width: 160px;
+	height: 160
+}
+
+.appointment-form { 
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.appointmentField {
+	width: 100%;
+	margin-bottom: 1rem;
+}
+
+.mealField {
+	width: 100%;
+	margin-bottom: 1rem;
+}

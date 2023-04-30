@@ -3,12 +3,15 @@ import {
   GET_VACCINE_FAILURE,
   SET_VACCINE_SUCCESS,
   SET_VACCINE_FAILURE,
-  SET_VACCINE_TRIGGER
+  SET_VACCINE_TRIGGER,
+  VACCINE_DELETE_SUCCESS,
+  VACCINE_DELETE_FAILURE 
 } from "./vaccineActionTypes";
 
 const initialState = {
   loading: false,
   data: [],
+  deleteSuccess: {},
   error: "",
   status: "",
 };
@@ -46,6 +49,18 @@ export const vaccineReducer = (state = initialState, action) => {
         ...state,
         error: payload.response.data,
       };
+      case  VACCINE_DELETE_SUCCESS:
+        return {
+          ...state,
+          deleteSuccess: payload,
+          error: "",
+          status: "OK",
+        };
+        case VACCINE_DELETE_FAILURE:
+          return {
+            ...state,
+            error: payload.response.data,
+          };
     default:
       return state;
   }

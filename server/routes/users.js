@@ -4,32 +4,53 @@ const userData = require("../data/users");
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
 
-router.route("/signup").post(async (req, res) => {
-    let { firstName, lastName, email, profile, age } = req.body;
-    try {
-        firstName = await helper.execValdnAndTrim(firstName, "FirstName");
-        await helper.isNameValid(firstName, "FirstName");
-        lastName = await helper.execValdnAndTrim(lastName, "LastName");
-        await helper.isNameValid(lastName, "LastName");
-        email = await helper.execValdnAndTrim(email, "Email");
-        await helper.isEmailValid(email, "Email");
-        profile = await helper.execValdnAndTrim(profile, "Profile");
-        await helper.isProfileValid(profile, "Profile");
-        age = await helper.execValdnAndTrim(age, "Age");
-        await helper.isAgeValid(parseInt(age), "Age");
-    } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
-    }
-    try {
-        const userCreated = await userData.createUser(firstName, lastName, email, profile, age);
-        if (!userCreated) {
-            throw { statusCode: 500, message: `Couldn't Create user` };
+router
+    .route("/signup").post(async (req, res) => {
+        let { firstName, lastName, email, profile, age, uuid } = req.body;
+        try {
+            firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+            await helper.isNameValid(firstName, "FirstName");
+            lastName = await helper.execValdnAndTrim(lastName, "LastName");
+            await helper.isNameValid(lastName, "LastName");
+            email = await helper.execValdnAndTrim(email, "Email");
+            await helper.isEmailValid(email, "Email");
+            profile = await helper.execValdnAndTrim(profile, "Profile");
+            await helper.isProfileValid(profile, "Profile");
+            age = await helper.execValdnAndTrim(age, "Age");
+            await helper.isAgeValid(parseInt(age), "Age");
+            uuid = await helper.execValdnAndTrim(uuid, "Uuid");
+        } catch (e) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
-        return res.json(userCreated);
-    } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
-    }
-});
+        try {
+            const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
+            if (!userCreated) {
+                throw { statusCode: 500, message: `Couldn't Create user` };
+            }
+            return res.json(userCreated);
+        } catch (e) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        }
+    });
+
+router
+    .route("/signin/:uuId").post(async (req, res) => {
+        let uuId = req.params.uuId;
+        try {
+            uuId = await helper.execValdnAndTrim(uuId, "Uuid");
+        } catch (e) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        }
+        try {
+            const userFetched = await userData.getUserByFirebaseId(uuId);
+            if (!userFetched) {
+                throw { statusCode: 500, message: `Couldn't fetch user` };
+            }
+            return res.json(userFetched);
+        } catch (e) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        }
+    });
 router
     .route("/:userId")
     .get(async (req, res) => {

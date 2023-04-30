@@ -8,6 +8,7 @@ import {
     SET_USER_PROFILE,
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
+    USER_ID_STORE
 } from "./userActionTypes";
 
 // const initalState = [
@@ -25,11 +26,11 @@ const initialState = {
     error: "",
     status: "",
     userProfile: null,
+    userId: ""
 };
 
 export const userReducer = (state = initialState, action) => {
     const { type, payload } = action;
-
     switch (type) {
         case USER_LOGIN_SUCCESS:
             return {
@@ -49,6 +50,11 @@ export const userReducer = (state = initialState, action) => {
         case USER_LOGOUT:
             return {
                 ...initialState,
+            };
+        case USER_ID_STORE:
+            return {
+                ...state,
+                userId: payload
             };
         case USER_REGISTER_SUCCESS:
             return {

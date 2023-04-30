@@ -1,8 +1,14 @@
 import firebase from 'firebase/compat/app';
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+const auth = getAuth();
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
-  await firebase.auth().createUserWithEmailAndPassword(email, password);
-  firebase.auth().currentUser.updateProfile({displayName: firstName});
+  const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
+  if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
+    await firebase.auth().currentUser.updateProfile({ displayName: firstName });
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doChangePassword(email, oldPassword, newPassword) {
@@ -16,7 +22,10 @@ async function doChangePassword(email, oldPassword, newPassword) {
 }
 
 async function doSignInWithEmailAndPassword(email, password) {
-  await firebase.auth().signInWithEmailAndPassword(email, password);
+  const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
+  if (resp?.user?.multiFactor?.user?.uid !== "") {
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doSocialSignIn(provider) {
@@ -26,11 +35,15 @@ async function doSocialSignIn(provider) {
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
-  await firebase.auth().signInWithPopup(socialProvider);
+  const resp = await firebase.auth().signInWithPopup(socialProvider);
+  if (resp?.user?.multiFactor?.user?.uid !== "") {
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doPasswordReset(email) {
-  await firebase.auth().sendPasswordResetEmail(email);
+  return sendPasswordResetEmail(auth, email).then((a) => {
+  });
 }
 
 async function doPasswordUpdate(password) {
@@ -38,7 +51,10 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
+  // let navigate = useNavigate();
   await firebase.auth().signOut();
+  localStorage.removeItem("userData");
+  window.location.href = "/";
 }
 
 export {

@@ -1,63 +1,66 @@
-import React, { useState } from 'react';
-import {
-  Nav,
-  NavLink,
-  Bars,
-  NavMenu,
-  NavBtn,
-  NavBtnLink,
-  ProfileBtn,
-  ProfileDropdown,
-  ProfileDropdownItem,
-} from './NavbarElements';
+import React, { useContext } from "react";
+import { connect } from 'react-redux';
+import { AuthContext } from '../firebase/Auth';
+import { doSignOut } from '../firebase/FirebaseFunctions';
+import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from './NavbarElements';
 
-const Navbar = () => {
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
-  const handleProfileBtnClick = () => {
-    setShowProfileDropdown(prevState => !prevState);
-  };
-
-  const handleLogoutClick = () => {
-    console.log("Logout button clicked")
-  };
+const Navbar = ({ userData }) => {
+  const { currentUser } = useContext(AuthContext);
+  let items;
+  if (currentUser) {
+    items = JSON.parse(localStorage.getItem('userData'));
+  }
+  const profileLink = `/profile/${items?._id}`;
 
   return (
     <>
       <Nav>
         <Bars />
         <NavMenu>
-          <NavLink to='/dashboard/:nannyId' activeStyle>
-            Dashboard
-          </NavLink>
-          <NavLink to='/applications' activeStyle>
+          {currentUser && <NavLink to='/home' id={items?._id} activeStyle>
+            Home
+          </NavLink>}
+          {currentUser && <NavLink to='/applications' activeStyle>
             Applications
-          </NavLink>
-          <NavLink to='/chat/:chatid' activeStyle>
+          </NavLink>}
+          {currentUser && <NavLink to='/chat/:chatid' activeStyle>
             Inbox
-          </NavLink>
-          <NavLink to='/team' activeStyle>
-            Manage Child
-          </NavLink>
-          <NavLink to='/jobs' activeStyle>
+          </NavLink>}
+          {currentUser && <NavLink to='/jobs' activeStyle>
             Careers
-          </NavLink>
+          </NavLink>}
         </NavMenu>
         <NavBtn>
-          <ProfileBtn onClick={handleProfileBtnClick}>
-            Profile
-          </ProfileBtn>
-          {showProfileDropdown && (
-            <ProfileDropdown>
-              <ProfileDropdownItem onClick={handleLogoutClick}>
-                Logout
-              </ProfileDropdownItem>
-            </ProfileDropdown>
-          )}
+          {!currentUser && <ProfileBtn>
+            <NavLink to='/login' activeStyle>
+              Login
+            </NavLink>
+          </ProfileBtn>}
+          {!currentUser && <ProfileBtn>
+            <NavLink to='/register' activeStyle>
+              Register
+            </NavLink>
+          </ProfileBtn>}
+          {currentUser && <ProfileBtn>
+            <NavLink to={profileLink} activeStyle>
+              Profile
+            </NavLink>
+          </ProfileBtn>}
+          {currentUser && <ProfileBtn onClick={doSignOut}>
+            Logout
+          </ProfileBtn>}
         </NavBtn>
       </Nav>
     </>
   );
 };
 
-export default Navbar;
+const mapStateToProps = state => {
+  return {
+    userData: state.users
+  };
+};
+
+export default connect(
+  mapStateToProps
+)(Navbar);

@@ -14,12 +14,12 @@
 }
 
 .loading {
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  padding: 250px 0;
-  align-items: center;
- }
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	padding: 250px 0;
+	align-items: center;
+}
 
 body {
 	background: rgb(197, 190, 219);
@@ -39,24 +39,26 @@ body {
 	box-shadow: 0 50px 50px rgba(0, 0, 0, .2);
 }
 
-.toolBar{
+.toolBar {
 	height: '10vh';
 	display: 'flex';
 	justify-content: 'space-between';
 	padding: '20px';
 	background-color: 'white';
-  }
-  .logo {
+}
+
+.logo {
 	color: 'blue';
-	cursor: 'pointer'; 
-  }
-  .menuIcon{
+	cursor: 'pointer';
+}
+
+.menuIcon {
 	color: '#000';
-  }
+}
+
 .formField {
 	color: #56689a;
 }
-
 
 .sign-form {
 	width: 600px;
@@ -227,4 +229,98 @@ dd {
 	color: #080a33;
 	text-decoration: none !important;
 	margin: 5px;
+}
+
+.center {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.centerLogin {
+	margin: 0;
+	position: absolute;
+	/* top: 50%; */
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.topNav {
+	right: 25px;
+	position: absolute;
+}
+
+
+.banner {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 400px;
+	/* background-image: url('banner.jpg'); */
+	background-size: cover;
+	color: #fff;
+	text-align: center;
+}
+
+h1 {
+	color: rgba(0, 0, 0, .2);
+	font-size: 48px;
+	margin-bottom: 20px;
+}
+
+h2 {
+	color: rgba(0, 0, 0, .2);
+	font-size: 32px;
+	margin-bottom: 20px;
+}
+
+p {
+	color: rgba(0, 0, 0, .2);
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+button {
+	padding: 10px 20px;
+	border: none;
+	background-color: #fff;
+	color: #000;
+	font-weight: bold;
+	font-size: 16px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+button:hover {
+	background-color: #000;
+	color: #fff;
+}
+
+.features {
+	display: flex;
+	justify-content: space-between;
+	margin: 50px auto;
+	width: 80%;
+}
+
+.feature {
+	flex-basis: 30%;
+	text-align: center;
+}
+
+.testimonials {
+	margin: 50px auto;
+	width: 80%;
+}
+
+footer {
+	background-color: #f9f9f9;
+	padding: 20px;
+	text-align: center;
+	margin-top: 150px;
 }

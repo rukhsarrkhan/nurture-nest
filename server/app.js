@@ -38,21 +38,21 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: true }));
-app.use(async (req, res, next) => {
-    const requestBody = JSON.parse(JSON.stringify(req.body));
-    if (requestBody.password) {
-        delete requestBody.password;
-    }
-    console.log(`URL : ${req.originalUrl} HTTP Method: ${req.method}  Request Body ${JSON.stringify(requestBody)}`);
-    if (ctrReq[req.url]) {
-        ctrReq[req.url] += 1;
-    } else {
-        ctrReq[req.url] = 1;
-    }
-    console.log(`The url ${req.url} has been requested ${ctrReq[req.url]} time(s).`);
+// app.use(async (req, res, next) => {
+//     const requestBody = JSON.parse(JSON.stringify(req.body));
+//     if (requestBody.password) {
+//         delete requestBody.password;
+//     }
+//     console.log(`URL : ${req.originalUrl} HTTP Method: ${req.method}  Request Body ${JSON.stringify(requestBody)}`);
+//     if (ctrReq[req.url]) {
+//         ctrReq[req.url] += 1;
+//     } else {
+//         ctrReq[req.url] = 1;
+//     }
+//     console.log(`The url ${req.url} has been requested ${ctrReq[req.url]} time(s).`);
 
-    next();
-});
+//     next();
+// });
 configRoutes(app);
 
 app.listen(3000, () => {

@@ -19,7 +19,6 @@ router
             age = await helper.execValdnAndTrim(age, "Age");
             await helper.isAgeValid(parseInt(age), "Age");
             uuid = await helper.execValdnAndTrim(uuid, "Uuid");
-            // objectid validation
         } catch (e) {
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
@@ -30,7 +29,6 @@ router
             }
             return res.json(userCreated);
         } catch (e) {
-            console.log("e", e);
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     });
@@ -40,7 +38,6 @@ router
         let uuId = req.params.uuId;
         try {
             uuId = await helper.execValdnAndTrim(uuId, "Uuid");
-            // objectid validation
         } catch (e) {
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }

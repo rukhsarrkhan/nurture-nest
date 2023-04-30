@@ -1,5 +1,7 @@
 import firebase from 'firebase/compat/app';
-import { Navigate } from "react-router-dom";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+
+const auth = getAuth();
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
   const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -20,7 +22,10 @@ async function doChangePassword(email, oldPassword, newPassword) {
 }
 
 async function doSignInWithEmailAndPassword(email, password) {
-  await firebase.auth().signInWithEmailAndPassword(email, password);
+  const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
+  if (resp?.user?.multiFactor?.user?.uid !== "") {
+    return resp?.user?.multiFactor?.user?.uid;
+  }
 }
 
 async function doSocialSignIn(provider) {
@@ -31,13 +36,14 @@ async function doSocialSignIn(provider) {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
   const resp = await firebase.auth().signInWithPopup(socialProvider);
-  if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
+  if (resp?.user?.multiFactor?.user?.uid !== "") {
     return resp?.user?.multiFactor?.user?.uid;
   }
 }
 
 async function doPasswordReset(email) {
-  await firebase.auth().sendPasswordResetEmail(email);
+  return sendPasswordResetEmail(auth, email).then((a) => {
+  });
 }
 
 async function doPasswordUpdate(password) {
@@ -45,9 +51,10 @@ async function doPasswordUpdate(password) {
 }
 
 async function doSignOut() {
+  // let navigate = useNavigate();
   await firebase.auth().signOut();
-  <Navigate to='/' />;
-
+  localStorage.removeItem("userData");
+  window.location.href = "/";
 }
 
 export {

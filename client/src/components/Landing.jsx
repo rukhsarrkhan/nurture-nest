@@ -5,9 +5,10 @@ import { Link, Navigate } from "react-router-dom";
 
 const Landing = () => {
   const { currentUser } = useContext(AuthContext);
-  // if (currentUser) {
-  //   return <Navigate to='/' />;
-  // }
+  if (currentUser) {
+    const items = JSON.parse(localStorage.getItem('userData'));
+    return <Navigate to='/home' id={items?._id} />;
+  }
   return (
     <div>
       <section className="banner">

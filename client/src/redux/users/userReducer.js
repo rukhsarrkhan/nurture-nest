@@ -31,7 +31,6 @@ const initialState = {
 
 export const userReducer = (state = initialState, action) => {
     const { type, payload } = action;
-    console.log("payload", payload);
     switch (type) {
         case USER_LOGIN_SUCCESS:
             return {
@@ -53,7 +52,6 @@ export const userReducer = (state = initialState, action) => {
                 ...initialState,
             };
         case USER_ID_STORE:
-            console.log("payload----", payload);
             return {
                 ...state,
                 userId: payload

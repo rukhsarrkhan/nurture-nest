@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate } from "react-router-dom";
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import {
@@ -9,14 +9,18 @@ import {
   CardMedia,
   Grid
 } from '@mui/material';
+import { AuthContext } from '../firebase/Auth';
 import { gethomeAPICall } from '../redux/home/homeActions';
 import childImage from '../img/childImage.png';
+import Loading from './Loading';
 
 const Home = ({ gethomeAPICall, childData, id }) => {
-  console.log("id", id);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let card = null;
+  const { currentUser } = useContext(AuthContext);
+  console.log("currentUser", currentUser);
 
   useEffect(() => {
     async function fetchData() {
@@ -71,10 +75,14 @@ const Home = ({ gethomeAPICall, childData, id }) => {
       }
     });
 
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
+
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
   } else if (error) {

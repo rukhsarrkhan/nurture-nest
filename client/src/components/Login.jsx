@@ -1,13 +1,15 @@
-import React, { useState, useContext, useEffect } from "react";
-import { TextField, FormControl, Button, MenuItem } from "@mui/material";
+import React, { useState, useContext } from "react";
+import { TextField, Button, MenuItem } from "@mui/material";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import { doSignInWithEmailAndPassword, doPasswordReset } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
+import { userLoginAPICall } from '../redux/users/userActions';
+
 import SocialSignIn from './SocialSignIn';
 import helpers from '../helpers';
 
-const Login = ({ userData }) => {
+const Login = ({ userData, userLoginAPICall }) => {
   const { currentUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,10 +50,14 @@ const Login = ({ userData }) => {
 
     if (email.trim() && password.trim() && errorText === "") {
       try {
-        await doSignInWithEmailAndPassword(
+        const resp = await doSignInWithEmailAndPassword(
           email.trim(),
           password.trim()
         );
+        if (resp !== "") {
+          await userLoginAPICall(resp);
+          return <Navigate to='/home' id={resp} />;
+        }
       } catch (error) {
         alert(error);
       }
@@ -130,6 +136,14 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => {
+  return {
+    userLoginAPICall: (obj) => dispatch(userLoginAPICall(obj))
+  };
+};
+
+
 export default connect(
   mapStateToProps,
+  mapDispatchToProps
 )(Login);

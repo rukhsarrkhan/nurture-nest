@@ -47,13 +47,15 @@ router
     .route("/:childId")
     .get(async (req, res) => {
         try {
-            const childFound = await childCollection.getChildById(req.params.childId);
-            if (!childFound) {
-                throw "Child not found";
+            let childId = req.params.childId;
+            childId = await helper.execValdnAndTrim(childId, "Child Id");
+            const childObj = await childCollection.getChildById(req.params.childId);
+            if (!childObj || childObj === null || childObj === undefined) {
+                throw { statusCode: 404, message: "No child found with that id" };
             }
             return res.json(childFound);
         } catch (e) {
-            return res.status(404).json({ error: e });
+            return res.status(e.statusCode).json({ message: e.message });
         }
     })
     .put(async (req, res) => {

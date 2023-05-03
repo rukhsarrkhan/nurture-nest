@@ -4,56 +4,54 @@ const userData = require("../data/users");
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
 
-router
-    .route("/signup").post(async (req, res) => {
-        let { firstName, lastName, email, profile, age, uuid } = req.body;
-        try {
-            firstName = await helper.execValdnAndTrim(firstName, "FirstName");
-            await helper.isNameValid(firstName, "FirstName");
-            lastName = await helper.execValdnAndTrim(lastName, "LastName");
-            await helper.isNameValid(lastName, "LastName");
-            email = await helper.execValdnAndTrim(email, "Email");
-            await helper.isEmailValid(email, "Email");
-            profile = await helper.execValdnAndTrim(profile, "Profile");
-            await helper.isProfileValid(profile, "Profile");
-            age = await helper.execValdnAndTrim(age, "Age");
-            await helper.isAgeValid(parseInt(age), "Age");
-            uuid = await helper.execValdnAndTrim(uuid, "Uuid");
-            // objectid validation
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+router.route("/signup").post(async (req, res) => {
+    let { firstName, lastName, email, profile, age, uuid } = req.body;
+    try {
+        firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+        await helper.isNameValid(firstName, "FirstName");
+        lastName = await helper.execValdnAndTrim(lastName, "LastName");
+        await helper.isNameValid(lastName, "LastName");
+        email = await helper.execValdnAndTrim(email, "Email");
+        await helper.isEmailValid(email, "Email");
+        profile = await helper.execValdnAndTrim(profile, "Profile");
+        await helper.isProfileValid(profile, "Profile");
+        age = await helper.execValdnAndTrim(age, "Age");
+        await helper.isAgeValid(parseInt(age), "Age");
+        uuid = await helper.execValdnAndTrim(uuid, "Uuid");
+        // objectid validation
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+    try {
+        const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
+        if (!userCreated) {
+            throw { statusCode: 500, message: `Couldn't Create user` };
         }
-        try {
-            const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
-            if (!userCreated) {
-                throw { statusCode: 500, message: `Couldn't Create user` };
-            }
-            return res.json(userCreated);
-        } catch (e) {
-            console.log("e", e);
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-    });
+        return res.json(userCreated);
+    } catch (e) {
+        console.log("e", e);
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+});
 
-router
-    .route("/signin/:uuId").post(async (req, res) => {
-        let uuId = req.params.uuId;
-        try {
-            uuId = await helper.execValdnAndTrim(uuId, "Uuid");
-            // objectid validation
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+router.route("/signin/:uuId").post(async (req, res) => {
+    let uuId = req.params.uuId;
+    try {
+        uuId = await helper.execValdnAndTrim(uuId, "Uuid");
+        // objectid validation
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+    try {
+        const userFetched = await userData.getUserByFirebaseId(uuId);
+        if (!userFetched) {
+            throw { statusCode: 500, message: `Couldn't fetch user` };
         }
-        try {
-            const userFetched = await userData.getUserByFirebaseId(uuId);
-            if (!userFetched) {
-                throw { statusCode: 500, message: `Couldn't fetch user` };
-            }
-            return res.json(userFetched);
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-    });
+        return res.json(userFetched);
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+});
 router
     .route("/:userId")
     .get(async (req, res) => {
@@ -84,8 +82,21 @@ router
     })
     .patch(async (req, res) => {
         try {
-            let { firstName, lastName, age, email, address, photoUrl, profile, n_yearsOfExperience, n_qualifications, n_certifications, n_skills } =
-                req.body;
+            let {
+                firstName,
+                lastName,
+                age,
+                email,
+                address,
+                photoUrl,
+                profile,
+                phone,
+                sex,
+                n_yearsOfExperience,
+                n_qualifications,
+                n_certifications,
+                n_skills,
+            } = req.body;
             let userId = req.params.userId;
             userId = await helper.execValdnAndTrim(userId, "User Id");
             if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid object ID" };
@@ -113,6 +124,16 @@ router
                 email = await helper.execValdnAndTrim(email, "Email");
                 await helper.isEmailValid(email, "Email");
                 if (cur_userObj.email != email) userObj.email = email;
+            }
+            if (sex) {
+                sex = await helper.execValdnAndTrim(sex, "Sex");
+                await helper.isSexValid(sex);
+                if (cur_userObj.sex != sex) userObj.sex = sex;
+            }
+            if (phone) {
+                phone = await helper.execValdnAndTrim(phone, "phone");
+                await helper.validatePhoneNumber(phone, "Phone number");
+                if (cur_userObj.phone != phone) userObj.phone = phone;
             }
 
             if (address) {

@@ -1,5 +1,10 @@
 moment = require("moment");
 const { ObjectId } = require("mongodb");
+const phoneUtil = require("libphonenumbers").PhoneNumberUtil.getInstance();
+const validatePhoneNumber = async (phoneNumber, fieldName) => {
+    const number = phoneUtil.parseAndKeepRawInput(phoneNumber, "US");
+    if (!phoneUtil.isValidNumber(number, "US")) throw { statusCode: 400, message: `${fieldName} is not a valid number` };
+};
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -247,4 +252,5 @@ module.exports = {
     isSalaryParentValid,
     isTime1BeforeTime2,
     isShiftLimitValid,
+    validatePhoneNumber,
 };

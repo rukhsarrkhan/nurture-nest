@@ -2,7 +2,23 @@ import React, { useState, useEffect } from "react";
 
 import "../../App.css";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, CardHeader, Avatar, Box, Grid, Paper, Button, TextField } from "@mui/material";
+import {
+    Card,
+    CardContent,
+    CardMedia,
+    Typography,
+    CardHeader,
+    Avatar,
+    Box,
+    Grid,
+    Paper,
+    Button,
+    TextField,
+    FormLabel,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
+} from "@mui/material";
 import helpers from "../../helpers";
 import { connect } from "react-redux";
 import { setUserProfileAPICall, updateUserAPICall } from "../../redux/users/userActions";
@@ -14,6 +30,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
+    const [sex, setSex] = useState("");
     const [address, setAddress] = useState("");
     const [dob, setDOB] = useState("");
     const [phone, setPhone] = useState("");
@@ -28,12 +45,15 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [addressError, setAddressError] = useState(false);
     const [dobError, setDOBError] = useState(false);
     const [phoneError, setPhoneError] = useState(false);
+    const [sexError, setSexError] = useState(false);
     const [experienceError, setExperienceError] = useState(false);
     const [qualificationsError, setQualificationsError] = useState(false);
     const [certificationsError, setCertificationsError] = useState(false);
     const [skillsError, setSkillsError] = useState(false);
     const [errorText, setErrorText] = useState("");
     const [error, setError] = useState("");
+
+    const validSexArr = ["male", "female", "non-binary", "transgender", "other"];
 
     let { userId } = useParams();
     let card = null;
@@ -45,6 +65,11 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             return month + "/" + day + "/" + year;
         }
     };
+
+    const handleSexChange = (event) => {
+        setSex(event.target.value);
+    };
+
     const validation = async (field, valFunc) => {
         //need to change valdn function.. it'll fail if str is empty spaces.
         let fieldVal = await helpers.execValdnAndTrim(field);
@@ -90,6 +115,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setQualifications(userObjData.n_qualifications);
             setCertifications(userObjData.n_certifications);
             setSkills(userObjData.n_skills);
+            setSex(userObjData.sex);
         }
     }, [userObjData]);
 
@@ -106,6 +132,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setQualificationsError(false);
             setCertificationsError(false);
             setSkillsError(false);
+            setSexError(false);
             setErrorText("");
 
             let firstNameCheck = await validation(firstName, helpers.isNameValid(firstName, "FirstName"));
@@ -155,6 +182,13 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                     return;
                 }
             }
+            if (sex) {
+                if (!validSexArr.includes(sex.toLowerCase())) {
+                    setSexError(true);
+                    setErrorText("Invalid sex provided");
+                    return;
+                }
+            }
 
             if (errorText === "") {
                 try {
@@ -165,6 +199,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                     if (userObjData.address !== address) newObj.address = address;
                     if (userObjData.DOB !== dob) newObj.DOB = dob;
                     if (userObjData.phone !== phone) newObj.phone = phone;
+                    if (userObjData.sex !== sex) newObj.sex = sex;
 
                     if (Object.keys(newObj).length > 0) {
                         await updateUserAPICall(userId, newObj);
@@ -259,6 +294,32 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                         required
                         error={ageError}
                     />
+                    <FormLabel component="legend">Sex</FormLabel>
+                    <RadioGroup aria-label="sex" name="sex" value={sex} onChange={handleSexChange} disabled={!editMode}>
+                        {validSexArr.map((sexOption) => (
+                            <FormControlLabel
+                                key={sexOption}
+                                value={sexOption}
+                                control={
+                                    <Radio
+                                        color="secondary"
+                                        sx={{
+                                            "&.Mui-checked": {
+                                                color: "black",
+                                            },
+                                        }}
+                                    />
+                                }
+                                label={sexOption}
+                                sx={{
+                                    "& .MuiFormControlLabel-label": {
+                                        color: "black",
+                                    },
+                                }}
+                                disabled={!editMode}
+                            />
+                        ))}
+                    </RadioGroup>
 
                     <TextField
                         label="Address"
@@ -297,7 +358,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                         onChange={(e) => setPhone(e.target.value)}
                         variant="filled"
                         color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                        inputProps={{ style: { color: "black", background: "#e3e9ff" }, type: "number" }}
                         sx={{ mb: 3 }}
                         fullWidth
                         aria-readonly={!editMode}

@@ -379,9 +379,13 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                 <React.Fragment>
                     <div className="profile" style={{ display: "flex", justifyContent: "center" }}>
                         <Grid item xs={12} md={8}>
-                            <div style={{ display: "flex", justifyContent: "center" }}>
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                 <Avatar src={userObjData.photoUrl} alt={userObjData.name} sx={{ width: 200, height: 200 }} variant="circular" />
-                            </div>
+                                <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }} disabled={!editMode}>
+                                    Upload Image
+                                    <input type="file" hidden />
+                                </Button>
+                            </Box>
                             <Typography variant="h4" sx={{ mt: 2 }}>
                                 {userObjData.firstName + " " + userObjData.lastName}
                             </Typography>

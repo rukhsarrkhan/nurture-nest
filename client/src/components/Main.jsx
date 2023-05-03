@@ -58,7 +58,7 @@ const Main = ({ userData }) => {
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
                     <Route path="/chat/:chatid" element={<Chat />} />
                     <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
-                    <Route path='/job/:jobId/applicant/:applicantId' element={<Applicant />} />
+                    <Route path='/job/applications/viewApplication' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
                 </Routes>
             </div>

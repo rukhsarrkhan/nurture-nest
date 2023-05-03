@@ -5,11 +5,14 @@ const { ObjectId } = require('mongodb');
 const { getAllApplicants, addApplication } = require('../data/job');
 const helpers = require('../helpers');
 const jobCollection = data.job;
+const childCollection = data.child;
+const userCollection = data.users;
 
 
 router
     .route("/:parentId/:childId/createJob")
     .post(async (req, res) => {
+        //Create Job from Parent side
         let { parentId, childId } = req.params;
         let { shifts, description, address, specialCare, salary, state, zipCode } = req.body;
         try {
@@ -66,6 +69,7 @@ router
 router
     .route('/:jobId')
     .get(async (req, res) => {
+        //required in other routes
         try {
             let jobId = req.params.jobId;
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
@@ -79,6 +83,7 @@ router
         }
     })
     .put(async (req, res) => {
+        //Add an Nanny Application to a Job
         let jobId = req.params.jobId;
         jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
         if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
@@ -93,13 +98,15 @@ router
         }
     })
     .delete(async (req, res) => {
+        // Parent deleting a job
         let jobId = req.params.jobId;
         try {
+            console.log("insideee route")
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
-            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
             if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
             if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
             if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
             jobId = jobId.trim();
             const deletedJob = await jobCollection.removeJob(jobId);
             if (!deletedJob) { throw { statusCode: 500, message: `Could not delete Job with id of ${id}` }; };
@@ -114,6 +121,7 @@ router
 router
     .route('/:jobId/searchApplicants/:searchTerm/:pageNum')
     .get(async (req, res) => {
+        // Searching Applicats from Parent side
         let { jobId, searchTerm, pageNum } = req.params;
         try {
             const searchedApplicants = await jobCollection.searchApplications(jobId, searchTerm, pageNum);
@@ -128,9 +136,9 @@ router
 router
     .route('/:jobId/allApplicants/:pageNum')
     .get(async (req, res) => {
+        // Find all Applicants from Parent side
         let jobId = req.params.jobId;
         try {
-
             const allApplicants = await jobCollection.getAllApplicants(jobId);
             if (!allApplicants) { throw "Couldn't get applications"; }
             return res.json(allApplicants);
@@ -141,17 +149,31 @@ router
     });
 
 router
-    .route('/:jobId/Application/:applicationId')
-    .get(async (req, res) => {
-        let jobId = req.params.jobId;
+    .route('/:jobId/setNanny/:nannyId')
+    .post(async (req, res) => {
+        // Assign nanny to a specific job
+        console.log("inside setNannytoJob route")
+        let {jobId,nannyId} = req.params
         try {
-
-            const allApplicants = await jobCollection.getApplication(jobId);
-            if (!allApplicants) { throw "Couldn't get applications"; }
-            return res.json(allApplicants);
-        } catch (e) {
-            throw e;
-            return res.status(400).json({ error: e });
+            jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+            if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
+            if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
+            if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for job" };
+            nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
+            if (typeof nannyId == "undefined") throw { statusCode: 400, message: "nannyId parameter not provided" };
+            if (typeof nannyId !== "string") throw { statusCode: 400, message: "nannyId must be a string" };
+            if (nannyId.trim().length === 0) throw { statusCode: 400, message: "nannyId cannot be an empty string or just spaces" }; 
+            if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
+            // Validations done
+              const nannyJobSet = await jobCollection.setNannytoJob(jobId,nannyId);
+              if (!nannyJobSet) { throw { statusCode: 400, message:`Could not update and set nanny to Job with jobId of ${jobId} and nannyId of ${nannyId}`} };
+              const child = await childCollection.getChildById(nannyJobSet.childId.toString())
+              const setChildToNanny = await userCollection.addChildToUser(nannyId,nannyJobSet.childId.toString(),child.name);
+              return res.json(nannyJobSet);
+        } catch (e) { 
+            throw e.message
+              return res.status(400).json({ error: e }); 
         }
     });
 

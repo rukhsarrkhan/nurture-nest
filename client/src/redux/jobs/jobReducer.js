@@ -1,4 +1,5 @@
-import { CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS, SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
+import { v4 as uuid } from "uuid";
+import { CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS , SEARCH_INITIATE, SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, SELECT_NANNY_SUCCESS, SELECT_NANNY_FAILURE  } from "./jobActionTypes";
 
 const initialState = {
   loading: false,
@@ -71,7 +72,7 @@ export const jobReducer = (state = initialState, action) => {
         ...state,
         error: payload.response.data,
       };
-    case GET_APPLICANT_SUCCESS:
+    case SELECT_NANNY_SUCCESS:
       console.log("payload", payload);
       return {
         ...state,
@@ -79,15 +80,20 @@ export const jobReducer = (state = initialState, action) => {
         error: "",
         status: "OK",
       };
-    case GET_APPLICANT_FAILURE:
+    case SELECT_NANNY_FAILURE:
       console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
-    default:
-      return state;
-  }
+      case SEARCH_INITIATE:
+        return {
+          ...state,
+          applicantsData: []
+        }
+  default:
+    return state;
+}
 };
 
 export default jobReducer;

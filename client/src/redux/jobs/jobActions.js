@@ -1,6 +1,12 @@
 import axios from "axios";
-import { CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS, SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, GET_APPLICANT_SUCCESS, GET_APPLICANT_FAILURE } from "./jobActionTypes";
+import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS, SEARCH_INITIATE, SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, SELECT_NANNY_SUCCESS, SELECT_NANNY_FAILURE } from "./jobActionTypes";
 
+
+export const searchInitiate = () => {
+  return {
+    type: SEARCH_INITIATE,
+  };
+};
 export const createJobSuccess = (job) => {
   return {
     type: CREATE_JOB_SUCCESS,
@@ -28,6 +34,7 @@ export const deleteJobFailure = (error) => {
     payload: error,
   };
 };
+
 
 
 export const showAllApplicantsSuccess = (job) => {
@@ -59,16 +66,16 @@ export const searchApplicantsFailure = (error) => {
 };
 
 
-export const getApplicantSuccess = (job) => {
+export const selectNannySuccess = (job) => {
   return {
-    type: SHOW_ALL_APPLICANTS_SUCCESS,
+    type: SELECT_NANNY_SUCCESS,
     payload: job,
   };
 };
 
-export const getApplicantFailure = (error) => {
+export const selectNannyFailure = (error) => {
   return {
-    type: SHOW_ALL_APPLICANTS_FAILURE,
+    type: SELECT_NANNY_FAILURE,
     payload: error,
   };
 };
@@ -121,6 +128,7 @@ export const showAllApplicantsAPICall = (jobId, pageNum) => {
 export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
   return async (dispatch) => {
     try {
+      dispatch(searchInitiate());
       console.log(jobId, searchTerm, pageNum, "hallooo here");
       let resp = await axios.get(`http://localhost:3000/job/${jobId}/searchApplicants/${searchTerm}/${pageNum}`);
       console.log("axios call got:", resp);
@@ -132,16 +140,16 @@ export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
   };
 };
 
-export const getApplicantAPICall = (jobId, applicationId) => {
+export const selectNannyAPICall = (jobId,nannyId) => {
   return async (dispatch) => {
     try {
-      console.log(jobId, applicationId, "hallooo here");
-      let resp = await axios.get(`http://localhost:3000/job/${jobId}/Application/${applicationId}`);
+      console.log("jobId:",jobId,"nannyId:",nannyId, "hallooo here");
+      let resp = await axios.post(`http://localhost:3000/job/${jobId}/setNanny/${nannyId}`);
       console.log("axios call got:", resp);
-      dispatch(getApplicantSuccess(resp.data));
+      dispatch(selectNannySuccess(resp.data));
     } catch (error) {
       console.log("error", error);
-      dispatch(getApplicantFailure(error));
+      dispatch(selectNannyFailure(error));
     }
   };
 };

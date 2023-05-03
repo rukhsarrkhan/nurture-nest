@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
 import {
@@ -11,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { connect } from 'react-redux';
 import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
 import { searchApplicantsAPICall } from "../redux/jobs/jobActions";
 import CardHeader from "@mui/material/CardHeader";
@@ -18,16 +18,17 @@ import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
+import { Navigate, useNavigate } from "react-router-dom";
 import Container from "@mui/material/Container";
 import "../App.css";
 
 let noImage = "noImage";
 
-const EventList = () => {
+const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall }) => {
   let { jobId, pageNum } = useParams();
-
-  const job = useSelector((state) => state.jobs);
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const job = useSelector((state) => state.jobs);
+  // const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [errorMsg, setError] = useState(true);
   const [searchData, setSearchData] = useState(undefined);
@@ -37,11 +38,13 @@ const EventList = () => {
   let card = null;
   let pagenum = pageNum;
 
+
+  //View Applicants useEffect for apiCall
   useEffect(() => {
     try {
       console.log("1st use effect fired", jobId, pageNum);
-      if (pagenum) {
-        dispatch(showAllApplicantsAPICall(jobId, pageNum));
+      if (pageNum) {
+        showAllApplicantsAPICall(jobId, pageNum);
       }
     } catch (e) {
       console.log("error===>", e);
@@ -50,28 +53,39 @@ const EventList = () => {
     }
   }, [pageNum, jobId]);
 
+
+// Common useEffect for setting data for rendering
   useEffect(() => {
     console.log("2nd use effect fired", job);
-    try {
-      if (job.data) {
+
+    if (searchTerm) {
+      try {
+        setSearchData(job.applicantsData);
+      } catch (e) {
+
+      }
+    } else {
+      try {
+        setSearchData(job.applicantsData);
+
         setShowsData(job.applicantsData);
-        console.log("showsData is set to:",showsData," with job from dispatch:",job);
         setLoading(false);
         setError(false);
+      } catch (e) {
+
       }
-    } catch (e) {
-      console.log(e);
-      setError(true);
-      setLoading(false);
     }
   }, [job]);
 
+
+
+    //Search Applicants useEffect for apiCall
   useEffect(() => {
     async function fetchData() {
       try {
         console.log("search use effect fired", jobId, pageNum);
-        if (pagenum) {
-          dispatch(searchApplicantsAPICall(jobId, searchTerm, pageNum));
+        if (pageNum) {
+          searchApplicantsAPICall(jobId, searchTerm, pageNum);
         }
       } catch (e) {
         console.log(e);
@@ -82,9 +96,12 @@ const EventList = () => {
     }
   }, [searchTerm]);
 
+  
   const searchValue = async (value) => {
     setSearchTerm(value);
   };
+
+
 
   const buildCard = (show) => {
     const date = new Date(
@@ -128,7 +145,7 @@ const EventList = () => {
                 alt="Paella dish"
               />
             </Grid>
-            <Grid item xs={12} sm={8} sx={{ paddingLeft: "20px" }}>
+            <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
                 <div style={{ display: "flex", alignItems: "flex-start" }}>
                   <CardHeader
@@ -172,9 +189,11 @@ const EventList = () => {
                 disableSpacing
                 style={{ position: "absolute", bottom: 0, right: 0 }}
               >
-                <Button variant="contained" sx={{ bgcolor: purple[700] }}>
+                {/* <Link to={{pathname:"/job/applications/viewApplication" ,state:show._id }}> */}
+                <Button variant="contained" onClick={() => { navigate('/job/applications/viewApplication', { state: { application: show,jobId:jobId } }); }} sx={{ bgcolor: purple[700] }}>
                   Select
                 </Button>
+                {/* </Link> */}
               </CardActions>
             </Grid>
           </Grid>
@@ -188,7 +207,7 @@ const EventList = () => {
     card =
       searchData &&
       searchData.map((shows) => {
-        console.log("coming here")
+        console.log("coming here");
         return buildCard(shows);
       });
   } else {
@@ -225,25 +244,30 @@ const EventList = () => {
         </Grid>
         <br />
         <br />
-        {pagenum > 1 && (
-          <Link
-            className="showlink"
-            to={`/job/${jobId}/allApplicants/${pagenum - 1}`}
-          >
-            Previous
-          </Link>
-        )}
-        {nextButton && (
-          <Link
-            className="showlink"
-            to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}
-          >
-            Next
-          </Link>
-        )}
+        {pagenum > 1 && (<Link className="showlink" to={`/job/${jobId}/allApplicants/${pagenum - 1}`}>Previous</Link>)}
+        {nextButton && (<Link className="showlink" to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}>Next</Link>)}
       </div>
+      
     );
   }
 };
 
-export default EventList;
+const mapStateToProps = state => {
+  return {
+    job: state.jobs
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    showAllApplicantsAPICall: (jobId, pageNum) => dispatch(showAllApplicantsAPICall(jobId, pageNum)),
+    searchApplicantsAPICall: (jobId, searchTerm, pageNum) => dispatch(searchApplicantsAPICall(jobId, searchTerm, pageNum))
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AllApplicants);
+
+// export default EventList;

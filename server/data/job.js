@@ -85,6 +85,8 @@ const getUserById = async (parentId) => {
 
     const parent = await getUserById(parentId)
     if(!parent[0].p_childIds.includes(childId)){throw { statusCode: 400, message: `Incorrect child and parent combination` }}
+    // const isChildParentValid = await helpers.isParentCildCombinationValid(childId,parent[0].p_childIds)
+    console.log(isChildParentValid,"CHecked here if ch\ild and parent combo is valid")
     const child = await childData.getChildById(childId)
     if(child.jobId){ throw { statusCode: 400, message: `Job already exists for the child.Please remove the current job to create new Job` }}
 
@@ -104,6 +106,7 @@ const getUserById = async (parentId) => {
     jobId = jobId.trim();
     if (!ObjectId.isValid(jobId)) throw "invalid object ID";
     const jobCollection = await jobs();
+    console.log("holaa inside",jobId)
     const jobFound = await jobCollection.findOne({ _id: ObjectId(jobId) });
     if (jobFound === null) throw "No job with that id";
     jobFound._id = jobFound._id.toString();
@@ -114,13 +117,16 @@ const getUserById = async (parentId) => {
   };
 
   const removeJob = async (jobId) => {
+    console.log("inside data")
     if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
     if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
     if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobIdd cannot be an empty string or just spaces"};
     jobId = jobId.trim();
     if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     // Should I keep this validation that I've done below
+    console.log("hgfdn")
     const jobInDB = await getJobById(jobId)
+    console.log("idharrr",jobInDB)
     if(jobInDB.nannyId!=null) throw { statusCode: 400, message: "Job Cannot be deleted. Please fire the nanny assigned to this job first to delete this job"};
     const jobCollection = await jobs();
     const deletionInfo = await jobCollection.findOneAndDelete({ _id: ObjectId(jobId) });
@@ -131,6 +137,11 @@ const getUserById = async (parentId) => {
 
 
   const getAllApplicants = async (jobId) => {
+    if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
+    if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
+    if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobIdd cannot be an empty string or just spaces"};
+    jobId = jobId.trim();
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     const jobCollection = await jobs();
       let allApplications = await jobCollection.findOne(
         { _id: ObjectId(jobId) },
@@ -171,24 +182,13 @@ const getUserById = async (parentId) => {
   };
 
   const searchApplications = async (jobId,searchTerm,pageNum) => {
-    console.log("Inside search route")
-    if (typeof jobId=="undefined") throw "jobId parameter not provjobIded";
-    if (typeof jobId !== "string") throw "jobId must be a string";
-    if (jobId.trim().length === 0){throw "jobId cannot be an empty string or just spaces"};
+    console.log("Inside search dataFunction")
+    if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
+    if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
+    if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobId cannot be an empty string or just spaces"};
     jobId = jobId.trim();
-    if (!ObjectId.isValid(jobId)) throw "invalid object ID";
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     const jobCollection = await jobs();
-    // const nanniesFound = await jobCollection.find(
-    //   {
-    //     applications: {"$elemMatch": {nannyName: { "$regex": searchTerm, "$options": "i" }}},
-    //   },
-    //   {
-    //     projection: {
-    //       _id: 0,
-    //       "applications.$": {"$elemMatch": {"nannyName": { "$regex": searchTerm, "$options": "i" }}},
-    //     },
-    //   }
-    // ).toArray()
     let nanniesFound = await jobCollection.aggregate([
       {$unwind:'$applications'},
       {$match:{
@@ -207,25 +207,26 @@ const getUserById = async (parentId) => {
     return nanniesFound;
   };
 
-  const getApplication = async (jobId,applicationId) => {
-    applicationId = checkId(applicationId, "applicationId");
+  const setNannytoJob = async (jobId,nannyId) => {
+    jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+    if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
+    if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
+    if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for job" };
+    nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
+    if (typeof nannyId == "undefined") throw { statusCode: 400, message: "nannyId parameter not provided" };
+    if (typeof nannyId !== "string") throw { statusCode: 400, message: "nannyId must be a string" };
+    if (nannyId.trim().length === 0) throw { statusCode: 400, message: "nannyId cannot be an empty string or just spaces" }; 
+    if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
+//Validations Done
     const jobCollection = await jobs();
-    let applicationFound = await movieCollection.findOne(
-      { _id:ObjectId(jobId),
-        applications: { $elemMatch: { _id: ObjectId(applicationId) } },
-      },
-      {
-        projection: {
-          _id: 0,
-          applications: { $elemMatch: { _id: ObjectId(applicationId) } },
-        },
-      }
-    );
-    if (applicationFound === null) throw "No applicationFound with that id";
-    applicationFound=applicationFound['reviews'][0]
-    applicationFound["_id"] = applicationFound["_id"].toString();
-  
-    return applicationFound;
+    console.log(jobId,nannyId,"before mongo query")
+    let jobUpdated = await jobCollection.updateOne({_id:ObjectId(jobId)},{ $set: {nannyId:ObjectId(nannyId)}});
+    if (!jobUpdated.acknowledged || jobUpdated.modifiedCount == 0) throw { statusCode: 500, message:`Could not update and set nanny to Job with jobId of ${jobId} and nannyId of ${nannyId}`}
+    console.log("This was jobUpdated _id:",jobUpdated.upsertedId)
+    const job = await getJobById(jobId);
+    job["_id"] = job["_id"].toString();
+    return job;
   };
 
   module.exports = {
@@ -238,5 +239,5 @@ const getUserById = async (parentId) => {
     searchApplications,
     assignJobToChild,
     removeJobFromChild,
-    getApplication
+    setNannytoJob
   };

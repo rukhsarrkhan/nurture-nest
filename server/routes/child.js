@@ -212,6 +212,53 @@ router
                   console.log(e);
                   return res.status(400).json({ error: e });
             }
+      })
+      .post(async (req, res) => {
+            childId = req.params.childId;
+            const postMeal = req.body;
+            try {
+                  childId = await helper.execValdnAndTrim(childId, "Child Id");
+                  if (!ObjectId.isValid(childId)) {
+                        throw { statusCode: 400, message: "Child Id is not valid" };
+                  }
+                  postMeal.meal = await helper.execValdnAndTrim(postMeal.meal, "meal");
+                  await helper.onlyLettersNumbersAndSpaces(postMeal.meal, "meal");
+
+
+            } catch (e) {
+                  console.log(e);
+                  return res.status(400).json({ error: e });
+            }
+
+            try {
+                  const { meal, time,directions } = postMeal;
+                  const mealAdded = await childCollection.addAMealPlan(meal, time,directions, childId);
+                  if (!mealAdded) { throw "Couldn't create"; }
+                  return res.json(mealAdded);
+            } catch (e) {
+                  console.log(e);
+                  return res.status(404).json({ error: e });
+            }
+      });
+
+      router
+      .route("/mealplan/:mealId")
+      .delete(async (req, res) => {
+            const mealId = req.params.mealId;
+            try {
+                  await helper.execValdnAndTrim(mealId, "Meal Id");
+                  if (!ObjectId.isValid(mealId)) {
+                        throw { statusCode: 400, message: "Meal Id is not valid" };
+                  }
+            } catch (e) {
+                  return res.status(400).json({ error: e });
+            }
+            try {
+                  const removedMeal = await childCollection.removeMeal(mealId);
+                  return res.status(200).json(removedMeal);
+            } catch (e) {
+                  return res.status(500).json({ error: e });
+            }
       });
 
 module.exports = router;

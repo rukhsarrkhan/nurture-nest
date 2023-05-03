@@ -118,7 +118,7 @@ const removeNanny = async (nannyId) => {
     deletedNanny.value._id = deletedNanny.value._id.toString();
     return `${deletedNanny.value.name} has been successfully deleted!`;
   } catch (e) {
-    throw e
+    throw { statusCode: 400, message: "Nanny not found" }
   }
 };
 

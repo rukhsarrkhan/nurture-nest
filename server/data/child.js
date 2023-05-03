@@ -172,7 +172,7 @@ const addAppointment = async (doctor, hospital, date, time, childId) => {
     return updatedChild.appointments;
 };
 const removeVaccine = async (vaccineId) => {
-    vaccineId = await helper.execValdnAndTrim(vaccineId, "Child Id");
+    vaccineId = await helper.execValdnAndTrim(vaccineId, "vaccine Id");
     if (!ObjectId.isValid(vaccineId)) {
         throw { statusCode: 400, message: "Vaccine Id is not valid" };
     }
@@ -193,12 +193,12 @@ const removeVaccine = async (vaccineId) => {
         const remVaccine = await childCollection.updateOne({ _id: postVaccine }, { $pull: { vaccine: { _id: ObjectId(vaccineId) } } });
         return remVaccine;
     } else {
-        throw "Vaccine does not exist";
+        throw { statusCode: 400, message: "Vaccine does not exist" };
     }
 };
 
 const removeAppointment = async (appointmentId) => {
-    appointmentId = await helper.execValdnAndTrim(appointmentId, "Child Id");
+    appointmentId = await helper.execValdnAndTrim(appointmentId, "appointment Id");
     if (!ObjectId.isValid(appointmentId)) {
         throw { statusCode: 400, message: "Appointment Id is not valid" };
     }
@@ -222,7 +222,7 @@ const removeAppointment = async (appointmentId) => {
         );
         return remAppointment;
     } else {
-        throw "Appointment does not exist";
+        throw { statusCode: 400, message: "Appointment does not exist" };
     }
 };
 
@@ -234,6 +234,55 @@ const getMealPlans = async (childId) => {
     if (childFound === null) throw "No child with that Id";
     const mealDetails = childFound.mealRequirements;
     return mealDetails;
+};
+
+const addAMealPlan = async (meal, time, directions, childId) => {
+    childId = await helper.execValdnAndTrim(childId, "Child Id");
+    if (!ObjectId.isValid(childId)) {
+        throw { statusCode: 400, message: "Child Id is not valid" };
+    }
+    meal = await helper.execValdnAndTrim(meal, "meal");
+    await helper.onlyLettersNumbersAndSpaces(meal, "meal");
+
+    let mealId = new ObjectId();
+    let newMeal = {
+        _id: mealId,
+        meal: meal,
+        time: time,
+        directions: directions,
+    };
+    const childCollection = await childs();
+    const mealList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { mealRequirements: newMeal } });
+    if (!mealList.acknowledged || mealList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add Meal" };
+
+    const updatedChild = await getChildById(childId);
+    return updatedChild.mealRequirements;
+};
+
+const removeMeal = async (mealId) => {
+    mealId = await helper.execValdnAndTrim(mealId, "Meal Id");
+    if (!ObjectId.isValid(mealId)) {
+        throw { statusCode: 400, message: "Meal Id is not valid" };
+    }
+
+    const childCollection = await childs();
+    const meal = await childCollection.findOne(
+        { mealRequirements: { $elemMatch: { _id: ObjectId(mealId) } } },
+        {
+            projection: {
+                _id: 1,
+                mealRequirements: { $elemMatch: { _id: ObjectId(mealId) } },
+            },
+        }
+    );
+
+    if (meal !== null) {
+        const postMeal = meal._id;
+        const remMeal = await childCollection.updateOne({ _id: postMeal }, { $pull: { mealRequirements: { _id: ObjectId(mealId) } } });
+        return remMeal;
+    } else {
+        throw { statusCode: 400, message: "Meal does not exist" };
+    }
 };
 
 module.exports = {
@@ -248,4 +297,6 @@ module.exports = {
     removeVaccine,
     removeAppointment,
     getMealPlans,
+    addAMealPlan,
+    removeMeal,
 };

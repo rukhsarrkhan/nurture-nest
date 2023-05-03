@@ -6,62 +6,54 @@ import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Grid } from '@mui/material';
 import '../App.css';
 import { getVaccineAPICall } from '../redux/vaccines/vaccineActions';
 import { vaccineSetAPICall } from '../redux/vaccines/vaccineActions';
-import { delVaccineAPICall } from '../redux/vaccines/vaccineActions'
+import { delVaccineAPICall } from '../redux/vaccines/vaccineActions';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteModal from './modals/DeleteVaccineModal';
 import Button from '@mui/material/Button';
-import image from '../img/vaccineimage.png'
+import image from '../img/vaccineimage.png';
 import AddModal from './modals/AddVaccineModal';
-
-const submitButton = {
-    position: 'absolute',
-    right: '5%',
-    top: '95%',
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-}
+import Loading from './Loading';
 
 const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall }) => {
-    let card = null
+    let card = null;
     let { childId } = useParams();
 
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [errorPage, setErrorPage] = useState(false)
-    const [deleteId, setDeleteId] = useState('')
+    const [errorPage, setErrorPage] = useState(false);
+    const [deleteId, setDeleteId] = useState('');
 
-    const handleOpen = () => { setOpen(true) };
+    const handleOpen = () => { setOpen(true); };
     const handleClose = () => setOpen(false);
 
     const handleOpen2 = (id) => {
-        setDeleteId(id)
-        setOpen2(true)
+        setDeleteId(id);
+        setOpen2(true);
     };
     const handleClose2 = () => setOpen2(false);
 
     useEffect(() => {
         getVaccineAPICall(childId);
-        setLoading(false)
+        setLoading(false);
     }, [childId]);
 
     const addVaccine = async (obj) => {
-        await vaccineSetAPICall(obj, childId)
+        await vaccineSetAPICall(obj, childId);
         handleClose();
-    }
+    };
 
 
     const deleteVaccine = async (vaccineId) => {
         await delVaccineAPICall(vaccineId);
         setOpen2(false);
         await getVaccineAPICall(childId);
-    }
+    };
 
     const buildCard = (vaccines) => {
         return (
@@ -111,7 +103,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     if (loading) {
         return (
             <div>
-                <h2>Loading....</h2>
+                <Loading />
             </div>
         );
         // } else if (error) {

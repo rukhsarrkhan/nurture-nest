@@ -7,7 +7,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Grid } from '@mui/material';
 import '../App.css';
 import { getAppointmentAPICall } from '../redux/appointments/appointmentActions';
@@ -16,9 +16,10 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteAppointmentModal from './modals/DeleteAppointmentModal';
 import Button from '@mui/material/Button';
 
-import image from '../img/appointmentImage.png'
+import image from '../img/appointmentImage.png';
 import AddAppointmentModal from './modals/AddAppointmentModal';
 import { delAppointmentAPICall } from '../redux/appointments/appointmentActions';
+import Loading from './Loading';
 
 const submitButton = {
     position: 'absolute',
@@ -27,23 +28,23 @@ const submitButton = {
     width: 40,
     height: 40,
     borderRadius: 10,
-}
+};
 
 const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall }) => {
-    let card = null
+    let card = null;
     let { childId } = useParams();
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [errorPage, setErrorPage] = useState(false)
-    const [deleteId, setDeleteId] = useState('')
+    const [errorPage, setErrorPage] = useState(false);
+    const [deleteId, setDeleteId] = useState('');
 
-    const handleOpen = () => { setOpen(true) };
+    const handleOpen = () => { setOpen(true); };
     const handleClose = () => setOpen(false);
 
     const handleOpen2 = (id) => {
-        setDeleteId(id)
-        setOpen2(true)
+        setDeleteId(id);
+        setOpen2(true);
     };
     const handleClose2 = () => setOpen2(false);
 
@@ -53,15 +54,15 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     }, [childId]);
 
     const addAppointment = async (obj) => {
-        await appointmentSetAPICall(obj, childId)
+        await appointmentSetAPICall(obj, childId);
         handleClose();
-    }
+    };
 
     const deleteAppointment = async (appointmentId) => {
         await delAppointmentAPICall(appointmentId);
         setOpen2(false);
         await getAppointmentAPICall(childId);
-    }
+    };
 
     const buildCard = (appointments) => {
         return (
@@ -111,7 +112,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     if (loading) {
         return (
             <div>
-                <h2>Loading....</h2>
+                <Loading />
             </div>
         );
         // } else if (error) {

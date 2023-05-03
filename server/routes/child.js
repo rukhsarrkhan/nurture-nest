@@ -244,20 +244,67 @@ router.route("/appointment/:appointmentId").delete(async (req, res) => {
     }
 });
 
-router.route("/mealplan/:childId").get(async (req, res) => {
-    childId = req.params.childId;
-    try {
-        await helper.validateInput(childId, "child Id");
-        await helper.onlyLettersNumbersAndSpaces(childId, "child Id");
-        await helper.isIdValid(childId);
-        const mealsFound = await childCollection.getMealPlans(childId);
-        if (!mealsFound) {
-            throw "Meals not found";
+router
+    .route("/mealplan/:childId")
+    .get(async (req, res) => {
+        childId = req.params.childId;
+        try {
+            await helper.validateInput(childId, "child Id");
+            await helper.onlyLettersNumbersAndSpaces(childId, "child Id");
+            await helper.isIdValid(childId);
+            const mealsFound = await childCollection.getMealPlans(childId);
+            if (!mealsFound) {
+                throw "Meals not found";
+            }
+            return res.json(mealsFound);
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({ error: e });
         }
-        return res.json(mealsFound);
+    })
+    .post(async (req, res) => {
+        childId = req.params.childId;
+        const postMeal = req.body;
+        try {
+            childId = await helper.execValdnAndTrim(childId, "Child Id");
+            if (!ObjectId.isValid(childId)) {
+                throw { statusCode: 400, message: "Child Id is not valid" };
+            }
+            postMeal.meal = await helper.execValdnAndTrim(postMeal.meal, "meal");
+            await helper.onlyLettersNumbersAndSpaces(postMeal.meal, "meal");
+        } catch (e) {
+            console.log(e);
+            return res.status(400).json({ error: e });
+        }
+
+        try {
+            const { meal, time, directions } = postMeal;
+            const mealAdded = await childCollection.addAMealPlan(meal, time, directions, childId);
+            if (!mealAdded) {
+                throw "Couldn't create";
+            }
+            return res.json(mealAdded);
+        } catch (e) {
+            console.log(e);
+            return res.status(404).json({ error: e });
+        }
+    });
+
+router.route("/mealplan/:mealId").delete(async (req, res) => {
+    const mealId = req.params.mealId;
+    try {
+        await helper.execValdnAndTrim(mealId, "Meal Id");
+        if (!ObjectId.isValid(mealId)) {
+            throw { statusCode: 400, message: "Meal Id is not valid" };
+        }
     } catch (e) {
-        console.log(e);
         return res.status(400).json({ error: e });
+    }
+    try {
+        const removedMeal = await childCollection.removeMeal(mealId);
+        return res.status(200).json(removedMeal);
+    } catch (e) {
+        return res.status(500).json({ error: e });
     }
 });
 

@@ -24,6 +24,7 @@ import Applicant from '../components/Applicant';
 import AllApplicants from '../components/AllApplicants';
 import Logout from "../components/Logout";
 import NannyDetails from "./NannyDetails";
+import UploadImage from "./UploadImage";
 
 const Main = ({ userData }) => {
     console.log('userData-----', userData);
@@ -60,6 +61,7 @@ const Main = ({ userData }) => {
                     <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
                     <Route path='/job/:jobId/applicant/:applicantId' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
+                    <Route path="/uploadImage" element={<UploadImage/>} />
                 </Routes>
             </div>
         </div >

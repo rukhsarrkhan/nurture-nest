@@ -60,7 +60,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   marginRight: 'auto',
                   borderRadius: 5,
                   boxShadow:
-                    '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    'none'
                 }}
                 component='img'
                 image={mealPlanImage}
@@ -75,8 +75,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                     marginRight: 'auto',
                     borderRadius: 5,
                     border: '1px solid #080a33',
-                    boxShadow:
-                      '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    boxShadow: 'none'
                   }}
                   gutterBottom
                   variant='h6'
@@ -98,7 +97,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
           </CardActionArea>
         </Grid>
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?._id?.toString()}>
-          <CardActionArea sx={{ transition: 'transform .2s' }}>
+          <CardActionArea sx={{ transition: 'none' }}>
             <Link to={`/vaccine/${dashboardData?.data?._id?.toString()}`}>
               <CardMedia
                 sx={{

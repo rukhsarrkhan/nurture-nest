@@ -85,11 +85,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Daily Meal Plans"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-<<<<<<< HEAD
-                  {dashboardData && dashboardData.data && dashboardData.data.mealRequirements && dashboardData.data.mealRequirements[0] && dashboardData.data.mealRequirements[0].meal
-=======
                   {dashboardData?.data?.mealRequirements && dashboardData.data.mealRequirements[0].meal
->>>>>>> 2b2bce60876221731b9abf9a9fd0c86f05747f42
                     ? dashboardData.data.mealRequirements[0].meal
                     : 'No data to display'}
                   <br></br>

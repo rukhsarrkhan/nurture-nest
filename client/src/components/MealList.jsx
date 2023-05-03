@@ -24,15 +24,8 @@ import AddMealModal from './modals/AddMealModal';
 import DeleteMealModal from './modals/DeleteMealModal';
 import Collapse from '@mui/material/Collapse';
 
-<<<<<<< HEAD
-const MealList = ({ getMealPlanAPICall, mealData }) => {
-  console.log(mealData, "meal data ye rhaa")
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-=======
 
 const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPICall }) => {
->>>>>>> 2b2bce60876221731b9abf9a9fd0c86f05747f42
   let { childId } = useParams();
   let card = null;
   const [open, setOpen] = useState(false);
@@ -91,10 +84,7 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
           }}>
           <CardHeader
             title={meal.meal}
-<<<<<<< HEAD
-=======
             subheader={meal.time}
->>>>>>> 2b2bce60876221731b9abf9a9fd0c86f05747f42
           />
           <CardMedia
             component="img"

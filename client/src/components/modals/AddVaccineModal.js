@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
 import { useNavigate } from 'react-router-dom';
+import image from '../../img/vaccineimage.png'
 
 
 const style = {
@@ -17,7 +18,9 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    borderRadius: '50px'
 };
+
 
 const AddModal = (props) => {
 
@@ -27,6 +30,7 @@ const AddModal = (props) => {
         var day = showdate.substring(8, 10);
         return month + '/' + day + '/' + year;
     };
+    const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
@@ -52,11 +56,12 @@ const AddModal = (props) => {
             setErrorText(nameCheck.message)
             return;
         }
-        let dateCheck = await helpers.isDateValid(date, "date")
-        if (dateCheck !== undefined) {
-            setDateError(true);
-            setErrorText(dateCheck.message)
+        if(date < today) {
+            setDateError(true)
+            setErrorText('Please select a future date')
             return
+        } else {
+            setDateError(false)
         }
         let dosesCheck = await helpers.onlyNumbers(doses, "doses")
         if (dosesCheck !== undefined) {
@@ -90,12 +95,18 @@ const AddModal = (props) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
+                    <img
+                        src={image}
+                        alt="vaccine description"
+                        className='vaccine-image'
+                   />
+
                     <p className='P-title-home' >
                         Add Vaccine
                     </p>
-                    <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
+                    <form autoComplete="off"  onSubmit={handleSubmit}>
                         <TextField
-                            className="formField"
+                            className="vacField"
                             label="Name"
                             onChange={e => setName(e.target.value)}
                             required
@@ -107,8 +118,7 @@ const AddModal = (props) => {
                             error={nameError}
                         />
                         <TextField
-                            className="formField"
-                            label="Date"
+                            className="vacField"
                             type='date'
                             onChange={e => setDate(e.target.value)}
                             required
@@ -120,7 +130,7 @@ const AddModal = (props) => {
                             error={dateError}
                         />
                         <TextField
-                            className="formField"
+                            className="vacField"
                             label="Doses"
                             onChange={e => setDoses(e.target.value)}
                             required

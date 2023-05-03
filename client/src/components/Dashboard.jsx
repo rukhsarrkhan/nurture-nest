@@ -13,6 +13,7 @@ import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
 import appointmentImage from '../img/appointmentImage.png';
+import Loading from './Loading';
 
 const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
   } else if (error) {
@@ -84,7 +85,11 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Daily Meal Plans"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
+<<<<<<< HEAD
                   {dashboardData && dashboardData.data && dashboardData.data.mealRequirements && dashboardData.data.mealRequirements[0] && dashboardData.data.mealRequirements[0].meal
+=======
+                  {dashboardData?.data?.mealRequirements && dashboardData.data.mealRequirements[0].meal
+>>>>>>> 2b2bce60876221731b9abf9a9fd0c86f05747f42
                     ? dashboardData.data.mealRequirements[0].meal
                     : 'No data to display'}
                   <br></br>

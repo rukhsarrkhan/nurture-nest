@@ -47,8 +47,7 @@ const getUserByFirebaseId = async (id) => {
     id = await helper.execValdnAndTrim(id, "Uuid");
     // if (!ObjectId.isValid(id)) throw { statusCode: 400, message: "Invalid object ID" };
     const userCollection = await users();
-    const userFound = await userCollection.findOne({ firebaseUuid: ObjectId(id) });
-    console.log("userFound", userFound);
+    const userFound = await userCollection.findOne({ firebaseUuid: id });
     if (userFound === null) throw { statusCode: 404, message: "No user with that id" };
     userFound._id = userFound._id.toString();
     return userFound;

@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { Route, Routes } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { AuthContext } from '../firebase/Auth';
@@ -27,11 +27,16 @@ import NannyDetails from "./NannyDetails";
 import UploadImage from "./UploadImage";
 
 const Main = ({ userData }) => {
-    console.log('userData-----', userData);
     const { currentUser } = useContext(AuthContext);
+    let items;
+    if (currentUser) {
+        items = JSON.parse(localStorage.getItem('userData'));
+    }
 
-    const items = JSON.parse(localStorage.getItem('userData'));
-    console.log("items-----", items);
+    // else {
+    //     return <Navigate to='/' />;
+    // }
+
     return (
         <div className='App'>
             <div>

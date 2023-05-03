@@ -164,11 +164,9 @@ const removeUser = async (userId) => {
     return `User: ${deletedUser.value.username} has been successfully deleted!`;
 };
 
-const addChildToUser = async (userId, childId, childName) => {
+const addChildToUser = async (userId, childId) => {
     userId = await helper.execValdnAndTrim(userId, "User Id");
     childId = await helper.execValdnAndTrim(childId, "Child Id");
-    childName = await helper.execValdnAndTrim(childName, "Child Name");
-    await helper.isNameValid(childName, "Child Name");
     if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid user ID" };
     if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "Invalid child ID" };
     let userObj = await getUserById(userId);
@@ -180,9 +178,8 @@ const addChildToUser = async (userId, childId, childName) => {
     } else {
         throw { statusCode: 400, message: "Invalid user Profile type" };
     }
-    let childObj = { name: childName, id: childId };
     let pushObj = {};
-    pushObj[childArrVar] = childObj;
+    pushObj[childArrVar] = childId;
     const userCollection = await users();
     const updateResult = await userCollection.updateOne({ _id: ObjectId(userId) }, { $push: pushObj });
     if (!updateResult.acknowledged || updateResult.modifiedCount == 0) throw { statusCode: 500, message: "Couldn't add child to User" };

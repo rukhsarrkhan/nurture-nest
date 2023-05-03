@@ -34,7 +34,7 @@ router.route("/").post(async (req, res) => {
         if (!childCreated) {
             throw { statusCode: 500, message: "Internal Server error" };
         }
-        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString(), childCreated.name);
+        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString());
         if (userUpdated) {
             parentObj = await userData.getUserById(parentId);
         }

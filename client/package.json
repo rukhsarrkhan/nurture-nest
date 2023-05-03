@@ -20,6 +20,7 @@
         "date-fns": "latest",
         "dayjs": "latest",
         "firebase": "^9.19.1",
+        "imagemagick": "^0.1.3",
         "libphonenumbers": "^1.3.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

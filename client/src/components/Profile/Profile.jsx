@@ -1,24 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import "../../App.css";
-import { Link, useParams, useLocation } from "react-router-dom";
-import {
-    Card,
-    CardContent,
-    CardMedia,
-    Typography,
-    CardHeader,
-    Avatar,
-    Box,
-    Grid,
-    Paper,
-    Button,
-    TextField,
-    FormLabel,
-    RadioGroup,
-    FormControlLabel,
-    Radio,
-} from "@mui/material";
+import { Link, useParams } from "react-router-dom";
+import { Typography, Avatar, Grid, Paper, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box } from "@mui/material";
 import helpers from "../../helpers";
 import { connect } from "react-redux";
 import { setUserProfileAPICall, updateUserAPICall } from "../../redux/users/userActions";
@@ -34,10 +18,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [address, setAddress] = useState("");
     const [dob, setDOB] = useState("");
     const [phone, setPhone] = useState("");
-    const [n_yearsOfExperience, setExperience] = useState("");
-    const [n_qualifications, setQualifications] = useState("");
-    const [n_certifications, setCertifications] = useState("");
-    const [n_skills, setSkills] = useState("");
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
@@ -46,17 +26,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [dobError, setDOBError] = useState(false);
     const [phoneError, setPhoneError] = useState(false);
     const [sexError, setSexError] = useState(false);
-    const [experienceError, setExperienceError] = useState(false);
-    const [qualificationsError, setQualificationsError] = useState(false);
-    const [certificationsError, setCertificationsError] = useState(false);
-    const [skillsError, setSkillsError] = useState(false);
     const [errorText, setErrorText] = useState("");
-    const [error, setError] = useState("");
-
     const validSexArr = ["male", "female", "non-binary", "transgender", "other"];
 
     let { userId } = useParams();
-    let card = null;
     const formatDate = (showdate) => {
         if (showdate) {
             var year = showdate.substring(0, 4);
@@ -93,7 +66,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             } catch (error) {
                 setuserObjData(undefined);
                 setLoading(false);
-                setError(error.message ? error.message : error);
+                setErrorText(error.message ? error.message : error);
             }
         }
         if (userId && userId !== undefined && userData.userProfile === null) fetchData();
@@ -101,7 +74,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setuserObjData(userData.userProfile);
             setLoading(false);
         }
-    }, [userId, userData]);
+    }, [userId, userData, setUserProfileAPICall]);
 
     useEffect(() => {
         if (userObjData) {
@@ -111,10 +84,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setAddress(userObjData.address);
             setDOB(formatDate(userObjData.DOB));
             setPhone(userObjData.phone);
-            setExperience(userObjData.n_yearsOfExperience);
-            setQualifications(userObjData.n_qualifications);
-            setCertifications(userObjData.n_certifications);
-            setSkills(userObjData.n_skills);
+
             setSex(userObjData.sex);
         }
     }, [userObjData]);
@@ -128,10 +98,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setAddressError(false);
             setDOBError(false);
             setPhoneError(false);
-            setExperienceError(false);
-            setQualificationsError(false);
-            setCertificationsError(false);
-            setSkillsError(false);
             setSexError(false);
             setErrorText("");
 
@@ -317,6 +283,8 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                                     },
                                 }}
                                 disabled={!editMode}
+                                helperText={sexError && errorText}
+                                error={sexError}
                             />
                         ))}
                     </RadioGroup>
@@ -371,82 +339,87 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                 </div>
             );
 
-            const nannyFields = (
-                <div className="container">
-                    <TextField
-                        label="Years of Experience"
-                        onChange={(e) => setExperience(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={n_yearsOfExperience}
-                        helperText={phoneError && errorText}
-                        required
-                        error={phoneError}
-                    />
+            // const nannyFields = (
+            //     <div className="container">
+            //         <TextField
+            //             label="Years of Experience"
+            //             onChange={(e) => setExperience(e.target.value)}
+            //             variant="filled"
+            //             color="secondary"
+            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+            //             sx={{ mb: 3 }}
+            //             fullWidth
+            //             aria-readonly={!editMode}
+            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
+            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+            //             value={n_yearsOfExperience}
+            //             helperText={phoneError && errorText}
+            //             required
+            //             error={phoneError}
+            //         />
 
-                    <TextField
-                        label="Qualifications"
-                        onChange={(e) => setQualifications(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={n_qualifications}
-                    />
+            //         <TextField
+            //             label="Qualifications"
+            //             onChange={(e) => setQualifications(e.target.value)}
+            //             variant="filled"
+            //             color="secondary"
+            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+            //             sx={{ mb: 3 }}
+            //             fullWidth
+            //             aria-readonly={!editMode}
+            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
+            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+            //             value={n_qualifications}
+            //         />
 
-                    <TextField
-                        label="Certifications"
-                        onChange={(e) => setCertifications(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={n_certifications}
-                    />
+            //         <TextField
+            //             label="Certifications"
+            //             onChange={(e) => setCertifications(e.target.value)}
+            //             variant="filled"
+            //             color="secondary"
+            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+            //             sx={{ mb: 3 }}
+            //             fullWidth
+            //             aria-readonly={!editMode}
+            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
+            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+            //             value={n_certifications}
+            //         />
 
-                    <TextField
-                        label="Skills"
-                        onChange={(e) => setSkills(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={n_skills}
-                    />
-                </div>
-            );
+            //         <TextField
+            //             label="Skills"
+            //             onChange={(e) => setSkills(e.target.value)}
+            //             variant="filled"
+            //             color="secondary"
+            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+            //             sx={{ mb: 3 }}
+            //             fullWidth
+            //             aria-readonly={!editMode}
+            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
+            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+            //             value={n_skills}
+            //         />
+            //     </div>
+            // );
 
             return (
                 <React.Fragment>
                     <div className="profile" style={{ display: "flex", justifyContent: "center" }}>
                         <Grid item xs={12} md={8}>
-                            <div style={{ display: "flex", justifyContent: "center" }}>
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                                 <Avatar src={userObjData.photoUrl} alt={userObjData.name} sx={{ width: 200, height: 200 }} variant="circular" />
-                            </div>
+                                <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }} disabled={!editMode}>
+                                    Upload Image
+                                    <input type="file" hidden />
+                                </Button>
+                            </Box>
                             <Typography variant="h4" sx={{ mt: 2 }}>
                                 {userObjData.firstName + " " + userObjData.lastName}
                             </Typography>
                             <Typography variant="h6" sx={{ mt: 1 }}>
                                 {userObjData.profile}
                             </Typography>
+
                             <Paper sx={{ p: 2 }}>
                                 <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
                                     {commonFields}
@@ -457,17 +430,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
                                         </Button>
                                     </div>
                                 </form>
-                                <h4>Children:</h4>
-                                {userObjData.p_childIds?.map((child) => (
-                                    <Card key={child.id} sx={{ mt: 2 }}>
-                                        <CardHeader title={child.name} />
-                                        <CardContent>
-                                            <Typography variant="body2" color="text.secondary">
-                                                <Link to={`/child/${child.id}`}>View child profile</Link>
-                                            </Typography>
-                                        </CardContent>
-                                    </Card>
-                                ))}
                             </Paper>
                         </Grid>
                     </div>

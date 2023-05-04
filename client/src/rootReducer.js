@@ -6,6 +6,7 @@ import { dashboardReducer } from './redux/dashboard/dashboardReducer';
 import { mealPlanReducer } from './redux/mealplans/mealPlanReducer';
 import { homeReducer } from './redux/home/homeReducer';
 import { jobReducer } from './redux/jobs/jobReducer';
+import { nannyDetailsReducer } from './redux/nannyDetails/nannyDetailsReducer'
 
 
 const rootReducer = combineReducers({
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
     jobs: jobReducer,
     dashboard: dashboardReducer,
     meals: mealPlanReducer,
-    home: homeReducer
+    home: homeReducer,
+    nanny: nannyDetailsReducer
 });
 
 export default rootReducer;

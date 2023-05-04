@@ -5,6 +5,7 @@ const validatePhoneNumber = async (phoneNumber, fieldName) => {
     const number = phoneUtil.parseAndKeepRawInput(phoneNumber, "US");
     if (!phoneUtil.isValidNumber(number, "US")) throw { statusCode: 400, message: `${fieldName} is not a valid number` };
 };
+require("dotenv").config();
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")

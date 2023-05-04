@@ -13,7 +13,6 @@ import AddChild from '../components/AddChild';
 import Dashboard from '../components/Dashboard';
 import JobList from '../components/JobList';
 import NannyList from '../components/NannyList';
-import NannyInfo from '../components/NannyInfo';
 import MealList from '../components/MealList';
 import VaccineList from '../components/VaccineList';
 import AppointmentList from '../components/AppointmentList';
@@ -24,6 +23,8 @@ import Home from "../components/Home";
 import Applicant from '../components/Applicant';
 import AllApplicants from '../components/AllApplicants';
 import Logout from "../components/Logout";
+import NannyDetails from "./NannyDetails";
+import UploadImage from "./UploadImage";
 
 const Main = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
@@ -57,7 +58,7 @@ const Main = ({ userData }) => {
                     <Route path="/dashboard/:childId" element={<Dashboard />} />
                     <Route path="/jobs" element={<JobList />} />
                     <Route path="/nannies" element={<NannyList />} />
-                    <Route path="/nanny/:id" element={<NannyInfo />} />
+                    <Route path="/nanny/:nannyId" element={<NannyDetails />} />
                     <Route path="/meal/:childId" element={<MealList />} />
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
@@ -65,6 +66,7 @@ const Main = ({ userData }) => {
                     <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
                     <Route path='/job/:jobId/applicant/:applicantId' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
+                    <Route path="/uploadImage" element={<UploadImage/>} />
                 </Routes>
             </div>
         </div >

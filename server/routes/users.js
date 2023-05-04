@@ -3,6 +3,29 @@ const router = express.Router();
 const userData = require("../data/users");
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
+require("dotenv").config();
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+
+aws.config.update({
+    secretAccessKey: process.env.ACCESS_SECRET,
+    accessKeyId: process.env.ACCESS_KEY,
+    region: process.env.REGION,
+})
+console.log(process.env.BUCKET + " Bucket here")
+const BUCKET = process.env.BUCKET;
+const s3 = new aws.S3();
+const upload = multer({
+    storage: multerS3({
+        bucket: BUCKET,
+        s3: s3,
+        acl: "public-read",
+        key: (req, file, cb) => {
+            cb(null, file.originalname);
+        }
+    })
+})
 
 router.route("/signup").post(async (req, res) => {
     let { firstName, lastName, email, profile, age, uuid } = req.body;
@@ -189,5 +212,40 @@ router
             return res.status(404).json({ error: e });
         }
     });
+
+router
+    .route("/upload")
+    .post(upload.single("file"), async (req, res) => {
+        console.log(req.file)
+        return res.status(200).json("successfully uploaded ");
+    })
+
+// router
+//     .route("/list")
+//     .get(async (req, res) => {
+//         let r = await s3.listObjectsV2({ Bucket: BUCKET }).promise()
+//         let x = await r.Contents.map(item => item.Key);
+//         return res.send(x)
+//     })
+
+router
+    .route("/download/:filename")
+    .get(async (req, res) => {
+        const filename = req.params.filename
+        let x = await s3.getObject({ Bucket: BUCKET, Key: filename }).promise();
+        return res.send(x.Body);
+    })
+
+router
+    .route("/delete/:filename")
+    .delete(async (req, res) => {
+        const filename = req.params.filename
+        await s3.deleteObject({ Bucket: BUCKET, Key: filename }).promise();
+        return res.status(200).json("File Deleted!")
+    })
+
+
+
+
 
 module.exports = router;

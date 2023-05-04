@@ -7,7 +7,7 @@ import {
     USER_REGISTER_FALIURE,
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
-    USER_ID_STORE
+    USER_ID_STORE,
 } from "./userActionTypes";
 
 export const userLogout = () => {
@@ -104,6 +104,16 @@ export const updateUserAPICall = (id, obj) => {
     return async (dispatch) => {
         try {
             let { data } = await axios.patch(`http://localhost:3000/users/${id}`, obj);
+            dispatch(setProfileSuccess(data));
+        } catch (error) {
+            dispatch(setProfileFailure(error));
+        }
+    };
+};
+export const updateProfileImageAPICall = (id, formData) => {
+    return async (dispatch) => {
+        try {
+            let { data } = await axios.put(`http://localhost:3000/users/image/${id}`, formData);
             dispatch(setProfileSuccess(data));
         } catch (error) {
             dispatch(setProfileFailure(error));

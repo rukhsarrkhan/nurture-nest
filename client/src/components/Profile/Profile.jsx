@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 
 import "../../App.css";
 import { Link, useParams } from "react-router-dom";
-import { Typography, Avatar, Grid, Paper, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box } from "@mui/material";
+import { Typography, Avatar, Grid, Paper, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box, Alert } from "@mui/material";
 import helpers from "../../helpers";
 import { connect } from "react-redux";
-import { setUserProfileAPICall, updateUserAPICall } from "../../redux/users/userActions";
+import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
+import Loading from "../Loading";
+// import axios from "axios";
 
-const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
+const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updateProfileImageAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
@@ -18,6 +20,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     const [address, setAddress] = useState("");
     const [dob, setDOB] = useState("");
     const [phone, setPhone] = useState("");
+    const [imagePreview, setImagePreview] = useState(null);
+    const [image, setImage] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [imageError, setImageError] = useState(null);
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
@@ -36,6 +42,42 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             var month = showdate.substring(5, 7);
             var day = showdate.substring(8, 10);
             return month + "/" + day + "/" + year;
+        }
+    };
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            if (file.size > 1000000) {
+                setImageError("File size should not exceed 1 MB.");
+                setImagePreview(null);
+            } else {
+                setImagePreview(URL.createObjectURL(file));
+                setImageFile(file);
+                setImage(null);
+                setImageError(null);
+            }
+        } else {
+            setImagePreview(null);
+            setImageError(null);
+        }
+    };
+
+    const handleImageSubmit = async () => {
+        console.log("Here in image submit");
+        try {
+            if (!imageFile) {
+                setImageError("No image available");
+                setImagePreview(null);
+                return;
+            }
+            const formData = new FormData();
+            formData.append("image", imageFile);
+
+            await updateProfileImageAPICall(userId, formData);
+            // const response = await axios.put("http://localhost:3000/users/image", formData);
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -84,8 +126,9 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
             setAddress(userObjData.address);
             setDOB(formatDate(userObjData.DOB));
             setPhone(userObjData.phone);
-
             setSex(userObjData.sex);
+            setImage(userObjData.photoUrl);
+            setImagePreview(null);
         }
     }, [userObjData]);
 
@@ -183,259 +226,203 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall }) => {
     if (loading) {
         return (
             <div>
-                <h2>Loading....</h2>
+                <Loading />
             </div>
         );
+    } else if (errorText !== "") {
+        return <Alert severity="error">errorText</Alert>;
     } else {
-        if (!userObjData) {
-            return (
-                <Link className="showlinkPage" to={`/login`}>
-                    Login
-                </Link>
-            );
-        } else {
-            const commonFields = (
-                <div className="container">
-                    <TextField
-                        label="FirstName"
-                        onChange={(e) => setFirstName(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: editMode ? "auto" : "none" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={firstName}
-                        helperText={firstNameError && errorText}
-                        required
-                        error={firstNameError}
-                    />
-                    <TextField
-                        label="Last Name"
-                        onChange={(e) => setLastName(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={lastName}
-                        helperText={lastNameError && errorText}
-                        required
-                        error={lastNameError}
-                    />
+        const commonFields = (
+            <div className="container">
+                <TextField
+                    label="FirstName"
+                    onChange={(e) => setFirstName(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: editMode ? "auto" : "none" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={firstName}
+                    helpertext={firstNameError && errorText}
+                    required
+                    error={firstNameError}
+                />
+                <TextField
+                    label="Last Name"
+                    onChange={(e) => setLastName(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={lastName}
+                    helpertext={lastNameError && errorText}
+                    required
+                    error={lastNameError}
+                />
 
-                    <TextField
-                        label="Email"
-                        onChange={(e) => setLastName(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        disabled="true"
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={userObjData.email}
-                        required
-                    />
+                <TextField
+                    label="Email"
+                    onChange={(e) => setLastName(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    disabled={true}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={userObjData.email}
+                    required
+                />
 
-                    <TextField
-                        label="Age"
-                        onChange={(e) => setAge(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={age}
-                        helperText={ageError && errorText}
-                        required
-                        error={ageError}
-                    />
-                    <FormLabel component="legend">Sex</FormLabel>
-                    <RadioGroup aria-label="sex" name="sex" value={sex} onChange={handleSexChange} disabled={!editMode}>
-                        {validSexArr.map((sexOption) => (
-                            <FormControlLabel
-                                key={sexOption}
-                                value={sexOption}
-                                control={
-                                    <Radio
-                                        color="secondary"
-                                        sx={{
-                                            "&.Mui-checked": {
-                                                color: "black",
-                                            },
-                                        }}
-                                    />
-                                }
-                                label={sexOption}
-                                sx={{
-                                    "& .MuiFormControlLabel-label": {
-                                        color: "black",
-                                    },
-                                }}
-                                disabled={!editMode}
-                                helperText={sexError && errorText}
-                                error={sexError}
-                            />
-                        ))}
-                    </RadioGroup>
+                <TextField
+                    label="Age"
+                    onChange={(e) => setAge(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={age}
+                    helpertext={ageError && errorText}
+                    required
+                    error={ageError}
+                />
+                <FormLabel component="legend">Sex</FormLabel>
+                <RadioGroup aria-label="sex" name="sex" value={sex} onChange={handleSexChange} disabled={!editMode}>
+                    {validSexArr.map((sexOption) => (
+                        <FormControlLabel
+                            key={sexOption}
+                            value={sexOption}
+                            control={
+                                <Radio
+                                    color="secondary"
+                                    sx={{
+                                        "&.Mui-checked": {
+                                            color: "black",
+                                        },
+                                    }}
+                                />
+                            }
+                            label={sexOption}
+                            sx={{
+                                "& .MuiFormControlLabel-label": {
+                                    color: "black",
+                                },
+                            }}
+                            disabled={!editMode}
+                            helpertext={sexError && errorText}
+                            error={sexError}
+                        />
+                    ))}
+                </RadioGroup>
 
-                    <TextField
-                        label="Address"
-                        onChange={(e) => setAddress(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={address}
-                        helperText={addressError && errorText}
-                        error={addressError}
-                    />
+                <TextField
+                    label="Address"
+                    onChange={(e) => setAddress(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={address}
+                    helpertext={addressError && errorText}
+                    error={addressError}
+                />
 
-                    <TextField
-                        label="Date of Birth"
-                        onChange={(e) => setDOB(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={dob}
-                        helperText={dobError && errorText}
-                        error={dobError}
-                    />
+                <TextField
+                    label="Date of Birth"
+                    onChange={(e) => setDOB(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={dob}
+                    helpertext={dobError && errorText}
+                    error={dobError}
+                />
 
-                    <TextField
-                        label="Phone Number"
-                        onChange={(e) => setPhone(e.target.value)}
-                        variant="filled"
-                        color="secondary"
-                        inputProps={{ style: { color: "black", background: "#e3e9ff" }, type: "number" }}
-                        sx={{ mb: 3 }}
-                        fullWidth
-                        aria-readonly={!editMode}
-                        style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                        InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                        value={phone}
-                        helperText={phoneError && errorText}
-                        error={phoneError}
-                    />
+                <TextField
+                    label="Phone Number"
+                    onChange={(e) => setPhone(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    inputProps={{ style: { color: "black", background: "#e3e9ff" }, type: "number" }}
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    value={phone}
+                    helpertext={phoneError && errorText}
+                    error={phoneError}
+                />
+            </div>
+        );
+
+        return (
+            <React.Fragment>
+                <div className="profile" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        {image ? (
+                            <Avatar src={image} alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
+                        ) : imagePreview ? (
+                            <Avatar src={imagePreview} alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
+                        ) : (
+                            <Avatar src={userObjData.photoUrl} alt={userObjData.name} sx={{ width: 200, height: 200 }} variant="circular" />
+                        )}
+                        <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }}>
+                            Upload Image
+                            <input type="file" hidden onChange={handleImageChange} accept="image/*" />
+                        </Button>
+                        {imageError && <Typography color="error">{imageError}</Typography>}
+                        {imagePreview && (
+                            <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit}>
+                                Save Image
+                            </Button>
+                        )}
+                    </Box>
+
+                    <Grid item xs={12} md={8}>
+                        <Typography variant="h4" sx={{ mt: 2 }}>
+                            {userObjData.firstName + " " + userObjData.lastName}
+                        </Typography>
+                        <Typography variant="h6" sx={{ mt: 1 }}>
+                            {userObjData.profile}
+                        </Typography>
+
+                        <Paper sx={{ p: 2 }}>
+                            <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
+                                {commonFields}
+
+                                <div style={{ display: "flex", justifyContent: "center" }}>
+                                    <Button variant="contained" sx={{ mt: 2 }} type="submit">
+                                        {editMode ? "Save" : "Edit"}
+                                    </Button>
+                                </div>
+                            </form>
+                        </Paper>
+                    </Grid>
                 </div>
-            );
-
-            // const nannyFields = (
-            //     <div className="container">
-            //         <TextField
-            //             label="Years of Experience"
-            //             onChange={(e) => setExperience(e.target.value)}
-            //             variant="filled"
-            //             color="secondary"
-            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-            //             sx={{ mb: 3 }}
-            //             fullWidth
-            //             aria-readonly={!editMode}
-            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
-            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-            //             value={n_yearsOfExperience}
-            //             helperText={phoneError && errorText}
-            //             required
-            //             error={phoneError}
-            //         />
-
-            //         <TextField
-            //             label="Qualifications"
-            //             onChange={(e) => setQualifications(e.target.value)}
-            //             variant="filled"
-            //             color="secondary"
-            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-            //             sx={{ mb: 3 }}
-            //             fullWidth
-            //             aria-readonly={!editMode}
-            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
-            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-            //             value={n_qualifications}
-            //         />
-
-            //         <TextField
-            //             label="Certifications"
-            //             onChange={(e) => setCertifications(e.target.value)}
-            //             variant="filled"
-            //             color="secondary"
-            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-            //             sx={{ mb: 3 }}
-            //             fullWidth
-            //             aria-readonly={!editMode}
-            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
-            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-            //             value={n_certifications}
-            //         />
-
-            //         <TextField
-            //             label="Skills"
-            //             onChange={(e) => setSkills(e.target.value)}
-            //             variant="filled"
-            //             color="secondary"
-            //             inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-            //             sx={{ mb: 3 }}
-            //             fullWidth
-            //             aria-readonly={!editMode}
-            //             style={{ pointerEvents: !editMode ? "none" : "auto" }}
-            //             InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-            //             value={n_skills}
-            //         />
-            //     </div>
-            // );
-
-            return (
-                <React.Fragment>
-                    <div className="profile" style={{ display: "flex", justifyContent: "center" }}>
-                        <Grid item xs={12} md={8}>
-                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                                <Avatar src={userObjData.photoUrl} alt={userObjData.name} sx={{ width: 200, height: 200 }} variant="circular" />
-                                <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }} disabled={!editMode}>
-                                    Upload Image
-                                    <input type="file" hidden />
-                                </Button>
-                            </Box>
-                            <Typography variant="h4" sx={{ mt: 2 }}>
-                                {userObjData.firstName + " " + userObjData.lastName}
-                            </Typography>
-                            <Typography variant="h6" sx={{ mt: 1 }}>
-                                {userObjData.profile}
-                            </Typography>
-
-                            <Paper sx={{ p: 2 }}>
-                                <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
-                                    {commonFields}
-
-                                    <div style={{ display: "flex", justifyContent: "center" }}>
-                                        <Button variant="contained" sx={{ mt: 2 }} type="submit">
-                                            {editMode ? "Save" : "Edit"}
-                                        </Button>
-                                    </div>
-                                </form>
-                            </Paper>
-                        </Grid>
-                    </div>
-                </React.Fragment>
-            );
-        }
+            </React.Fragment>
+        );
     }
 };
 
@@ -449,6 +436,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
         updateUserAPICall: (id, obj) => dispatch(updateUserAPICall(id, obj)),
+        updateProfileImageAPICall: (id, formData) => dispatch(updateProfileImageAPICall(id, formData)),
     };
 };
 

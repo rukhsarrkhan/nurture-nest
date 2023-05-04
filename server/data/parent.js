@@ -36,13 +36,7 @@ const getParentById = async (parentId) => {
     return parentObj;
 };
 
-const updateParent = async () => {};
-
-const removeParent = async () => {};
-
 module.exports = {
     createParent,
-    getParentById,
-    updateParent,
-    removeParent,
+    getParentById
 };

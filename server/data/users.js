@@ -3,7 +3,7 @@ const users = mongoCollections.users;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 // Email is always inserted in lowercase.. Ensure to always check the same when comparing
-const createUser = async (firstName, lastName, email, profile, age, uuid) => {
+const createUser = async (firstName, lastName, email, profile, age, sex, uuid) => {
     firstName = await helper.execValdnAndTrim(firstName, "FirstName");
     await helper.isNameValid(firstName, "FirstName");
     lastName = await helper.execValdnAndTrim(lastName, "LastName");
@@ -22,6 +22,8 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
         email: email.toLowerCase(),
         profile: profile,
         age: age,
+        sex: sex,
+        phone: phone,
         firebaseUuid: uuid,
         p_childIds: [],
         n_childIds: [],
@@ -92,6 +94,16 @@ const updateUser = async (userId, userObj) => {
         await helper.isAgeValid(userObj.age, "Age");
         if (cur_userObj.age != userObj.age) updatedUser.age = userObj.age;
     }
+    if (userObj.sex) {
+        userObj.sex = await helper.execValdnAndTrim(userObj.sex, "Sex");
+        await helper.isSexValid(userObj.sex);
+        if (cur_userObj.sex != userObj.sex) updatedUser.sex = userObj.sex;
+    }
+    if (userObj.phone) {
+        userObj.phone = await helper.execValdnAndTrim(userObj.phone, "phone");
+        await helper.validatePhoneNumber(userObj.phone, "Phone number");
+        if (cur_userObj.phone != userObj.phone) updatedUser.phone = userObj.phone;
+    }
     if (userObj.email) {
         userObj.email = await helper.execValdnAndTrim(userObj.email, "Email");
         await helper.isEmailValid(userObj.email, "Email");
@@ -152,10 +164,33 @@ const removeUser = async (userId) => {
     return `User: ${deletedUser.value.username} has been successfully deleted!`;
 };
 
+const addChildToUser = async (userId, childId) => {
+    userId = await helper.execValdnAndTrim(userId, "User Id");
+    childId = await helper.execValdnAndTrim(childId, "Child Id");
+    if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid user ID" };
+    if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "Invalid child ID" };
+    let userObj = await getUserById(userId);
+    let childArrVar = "";
+    if (userObj.profile === global.userTypeParent) {
+        childArrVar = "p_childIds";
+    } else if (userObj.profile === global.userTypeNanny) {
+        childArrVar = "n_childIds";
+    } else {
+        throw { statusCode: 400, message: "Invalid user Profile type" };
+    }
+    let pushObj = {};
+    pushObj[childArrVar] = childId;
+    const userCollection = await users();
+    const updateResult = await userCollection.updateOne({ _id: ObjectId(userId) }, { $push: pushObj });
+    if (!updateResult.acknowledged || updateResult.modifiedCount == 0) throw { statusCode: 500, message: "Couldn't add child to User" };
+    return true;
+};
+
 module.exports = {
     createUser,
     getUserById,
     updateUser,
     removeUser,
-    getUserByFirebaseId
+    addChildToUser,
+    getUserByFirebaseId,
 };

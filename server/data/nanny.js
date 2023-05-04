@@ -39,7 +39,7 @@ const createNanny = async (
     const nannyCollection = await users();
     const insertedNanny = await nannyCollection.insertOne(newNanny);
     if (!insertedNanny.acknowledged || !insertedNanny.insertedId)
-      throw "Could not add User";
+      throw  { statusCode: 400, message: "Could not add User" }; 
     const nanny = await getNannyById(insertedNanny.insertedId.toString());
     return nanny;
   } catch (e) {
@@ -55,7 +55,7 @@ const getNannyById = async (nannyId) => {
     nannyId = await helperFunction.execValdnAndTrim(nannyId, "nannyId");
     const nannyCollection = await users();
     const nannyFound = await nannyCollection.findOne({ _id: ObjectId(nannyId) });
-    if (nannyFound === null) throw "No nanny found with that Id";
+    if (nannyFound === null) throw  { statusCode: 400, message: "No nanny found with that Id" }; 
     nannyFound._id = nannyFound._id.toString();
     return nannyFound;
   } catch (e) {
@@ -101,7 +101,7 @@ const updateNanny = async (
     editedNanny
   );
   if (!updatedNanny.acknowledged || updatedNanny.modifiedCount == 0)
-    throw "Couldn't update Nanny Details";
+    throw { statusCode: 500, message:  "Couldn't update Nanny Details" };
   const nanny = await getNannyById(nannyId);
   return nanny;
 };
@@ -113,7 +113,7 @@ const removeNanny = async (nannyId) => {
     const nannyCollection = await users();
     const deletedNanny = await nannyCollection.findOneAndDelete({ _id: ObjectId(nannyId) });
     if (deletedNanny.value == null) {
-      throw `Could not delete nanny with id of ${nannyId}`;
+      throw  { statusCode: 500, message:`Could not delete nanny with id of ${nannyId}`};
     }
     deletedNanny.value._id = deletedNanny.value._id.toString();
     return `${deletedNanny.value.name} has been successfully deleted!`;

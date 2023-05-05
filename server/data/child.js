@@ -65,23 +65,23 @@ const updateChild = async (childId, name, age, sex, jobId, mealRequirements, vac
     };
     const childCollection = await childs();
     const updatedChild = await childCollection.replaceOne({ _id: ObjectId(childId) }, editedChild);
-    if (!updatedChild.acknowledged || updatedChild.modifiedCount == 0) throw "Couldn't update child";
+    if (!updatedChild.acknowledged || updatedChild.modifiedCount == 0) throw { statusCode: 500, message: "couldn't update child!" };
     const child = await getChildById(childId);
     return child;
 };
 
 const removeChild = async (childId) => {
-    if (typeof childId == "undefined") throw "Id parameter not provided";
-    if (typeof childId !== "string") throw "Id must be a string";
-    if (childId.trim().length === 0) throw "id cannot be an empty string or just spaces";
+    if (typeof childId == "undefined") throw { statusCode: 400, message: "childId must be provided" };
+    if (typeof childId !== "string") throw { statusCode: 400, message: "childId must be a string" };
+    if (childId.trim().length === 0) throw { statusCode: 400, message: "id cannot be an empty string or just spaces" };
     childId = childId.trim();
-    if (!ObjectId.isValid(childId)) throw "invalid object ID";
+    if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID" };
     const childCollection = await childs();
     const deletedChild = await childCollection.findOneAndDelete({
         _id: ObjectId(childId),
     });
     if (deletedChild.value == null) {
-        throw `Could not delete child with id of ${childId}`;
+        throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
     deletedChild.value._id = deletedChild.value._id.toString();
     return `${deletedChild.value.name} has been successfully deleted!`;
@@ -120,11 +120,11 @@ const addVaccine = async (name, date, doses, childId) => {
 const getVaccines = async (childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");
     if (!ObjectId.isValid(childId)) {
-        throw { statusCode: 400, message: "Child Id is not valid" };
+        throw { statusCode: 401, message: "Child Id is not valid" };
     }
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
-    if (childFound === null) throw "No child with that Id";
+    if (childFound === null) throw { statusCode: 400, message: "No child with that Id" };
     const childvaccines = childFound.vaccine;
     return childvaccines;
 };
@@ -137,7 +137,7 @@ const getAppointments = async (childId) => {
 
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
-    if (childFound === null) throw "No child with that Id";
+    if (childFound === null) throw { statusCode: 400, message: "No child with that Id" };
     const childAppointments = childFound.appointments;
     return childAppointments;
 };
@@ -231,7 +231,7 @@ const getMealPlans = async (childId) => {
     await helper.execValdnAndTrim(childId, "childId");
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
-    if (childFound === null) throw "No child with that Id";
+    if (childFound === null) throw { statusCode: 400, message: "No child with that Id" };
     const mealDetails = childFound.mealRequirements;
     return mealDetails;
 };

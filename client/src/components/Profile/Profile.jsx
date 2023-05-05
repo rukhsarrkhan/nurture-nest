@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import "../../App.css";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Typography, Avatar, Grid, Paper, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box, Alert } from "@mui/material";
 import helpers from "../../helpers";
 import { connect } from "react-redux";

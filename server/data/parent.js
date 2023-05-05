@@ -5,11 +5,11 @@ const helperFunc = require("../helpers");
 const createParent = async (userId, socketId) => {
     userId = await helperFunc.execValdnAndTrim(userId, "User Id");
     if (!ObjectId.isValid(userId)) {
-        throw { statusCode: 400, message: "userId is not valid" };
+        throw { statusCode: 401, message: "userId is not valid" };
     }
     socketId = await helperFunc.execValdnAndTrim(socketId, "User Id");
     if (!ObjectId.isValid(socketId)) {
-        throw { statusCode: 400, message: "socketId is not valid" };
+        throw { statusCode: 401, message: "socketId is not valid" };
     }
     let newParent = {
         userId: userId,
@@ -28,7 +28,7 @@ const createParent = async (userId, socketId) => {
 const getParentById = async (parentId) => {
     parentId = await helperFunc.execValdnAndTrim(parentId, "ParentId");
     if (!ObjectId.isValid(parentId)) {
-        throw { statusCode: 400, message: "parentId is not valid" };
+        throw { statusCode: 401, message: "parentId is not valid" };
     }
     const parentCollection = await mongoCollections.parent();
     const parentObj = await parentCollection.findOne({ _id: ObjectId(parentId) });
@@ -36,13 +36,7 @@ const getParentById = async (parentId) => {
     return parentObj;
 };
 
-const updateParent = async () => {};
-
-const removeParent = async () => {};
-
 module.exports = {
     createParent,
-    getParentById,
-    updateParent,
-    removeParent,
+    getParentById
 };

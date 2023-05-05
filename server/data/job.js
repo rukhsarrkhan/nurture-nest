@@ -192,13 +192,11 @@ const addApplication = async (
 
 const searchApplications = async (jobId, searchTerm, pageNum) => {
     console.log("Inside search route");
-    if (typeof jobId == "undefined") throw "jobId parameter not provjobIded";
-    if (typeof jobId !== "string") throw "jobId must be a string";
-    if (jobId.trim().length === 0) {
-        throw "jobId cannot be an empty string or just spaces";
-    }
+    if (typeof jobId == "undefined") throw { statusCode: 401, message: "jobId parameter not provjobIded" };
+    if (typeof jobId !== "string") throw { statusCode: 401, message: "jobId must be a string" };
+    if (jobId.trim().length === 0) throw { statusCode: 401, message: "jobId cannot be an empty string or just spaces" };
     jobId = jobId.trim();
-    if (!ObjectId.isValid(jobId)) throw "invalid object ID";
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 401, message: "invalid object ID" };
     const jobCollection = await jobs();
     // const nanniesFound = await jobCollection.find(
     //   {
@@ -248,7 +246,7 @@ const getApplication = async (jobId, applicationId) => {
             },
         }
     );
-    if (applicationFound === null) throw "No applicationFound with that id";
+    if (applicationFound === null) throw { statusCode: 400, message: "No applicationFound with that id" };
     applicationFound = applicationFound["reviews"][0];
     applicationFound["_id"] = applicationFound["_id"].toString();
 

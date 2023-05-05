@@ -113,9 +113,11 @@ const Home = ({ gethomeAPICall, childData, id }) => {
   } else {
     return (
       <div>
+        {profile === "PARENT"&& 
         <Button variant="contained" startIcon={<AddIcon />}>
           Add Child
         </Button>
+  }
         <Grid
           container
           spacing={2}

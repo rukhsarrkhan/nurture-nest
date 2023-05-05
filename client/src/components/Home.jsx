@@ -115,18 +115,7 @@ const Home = ({ gethomeAPICall, childData, id }) => {
         >
           {card}
         </Grid>
-        <Grid
-          container
-          spacing={10}
-          sx={{
-            flexGrow: 1,
-            flexDirection: 'row'
-          }}
-        >
-          {card}
-        </Grid>
       </div>
-      
     );
   };
 

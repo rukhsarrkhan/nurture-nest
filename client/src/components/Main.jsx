@@ -17,7 +17,7 @@ import MealList from '../components/MealList';
 import VaccineList from '../components/VaccineList';
 import AppointmentList from '../components/AppointmentList';
 import CreateJob from "../components/CreateJob";
-import Chat from "../components/Chat";
+import ChatPage from "./ChatPage";
 import Navbar from "../components/Navbar";
 import Home from "../components/Home";
 import Applicant from '../components/Applicant';
@@ -25,13 +25,20 @@ import AllApplicants from '../components/AllApplicants';
 import Logout from "../components/Logout";
 import NannyDetails from "./NannyDetails";
 import UploadImage from "./UploadImage";
+import socketIO from 'socket.io-client';
+
+const socket = socketIO.connect('http://localhost:3000');
+console.log("socket", socket);
 
 const Main = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
-    let items;
-    if (currentUser) {
-        items = JSON.parse(localStorage.getItem('userData'));
-    }
+    let items = JSON.parse(localStorage.getItem('userData'));
+    console.log("items", items);
+
+    // if (currentUser) {
+    //     items = 
+    // }
+
 
     // else {
     //     return <Navigate to='/' />;
@@ -44,7 +51,6 @@ const Main = ({ userData }) => {
                     <Navbar />
                 </header>
             </div>
-            <br></br>
             <div className='App-body'>
                 <Routes>
                     <Route path="/" element={<Landing />} />
@@ -62,11 +68,12 @@ const Main = ({ userData }) => {
                     <Route path="/meal/:childId" element={<MealList />} />
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
-                    <Route path="/chat/:chatid" element={<Chat />} />
+                    <Route path="/chat" element={<ChatPage socket={socket} />} />
                     <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
                     <Route path='/job/:jobId/applicant/:applicantId' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
-                    <Route path="/uploadImage" element={<UploadImage/>} />
+                    <Route path="/uploadImage" element={<UploadImage />} />
+
                 </Routes>
             </div>
         </div >

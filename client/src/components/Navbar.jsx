@@ -23,7 +23,7 @@ const Navbar = ({ userData }) => {
           {currentUser && <NavLink to='/applications' activeStyle>
             Applications
           </NavLink>}
-          {currentUser && <NavLink to='/chat/:chatid' activeStyle>
+          {currentUser && <NavLink to='/chat' activeStyle>
             Inbox
           </NavLink>}
           {currentUser && <NavLink to='/jobs' activeStyle>

@@ -16,16 +16,7 @@ router
         let { parentId, childId } = req.params;
         let { shifts, description, address, specialCare, salary, state, zipCode } = req.body;
         try {
-            const dateFrom = new Date(shifts.timeFrom.toLocaleString());
-            const dateTo = new Date(shifts.timeTo.toLocaleString());
-            const timeStringFrom = dateFrom.toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" });
-            const timeStringTo = dateTo.toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" });
-            const hoursFrom = dateFrom.getUTCHours();
-            const minsFrom = dateFrom.getUTCMinutes();
-            const hoursTo = dateTo.getHours();
-            const minsTo = dateTo.getMinutes();
             // Validations
-            // Add ObjectId Validation for parentId and childId
             parentId = await helpers.execValdnAndTrim(parentId, "Parent Id");
             if (!ObjectId.isValid(parentId)) throw { statusCode: 400, message: "invalid object ID for Parent" };
             childId = await helpers.execValdnAndTrim(childId, "Child Id");
@@ -74,27 +65,12 @@ router
             let jobId = req.params.jobId;
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
             if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
-            const jobFound = await jobCollection.getJobById(jobId);
+            const jobFound = await jobCollection.getMyJob(jobId);
             if (!jobFound) { throw "Couldn't find Job with that id"; }
             return res.json(jobFound);
         } catch (e) {
             // throw e
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-    })
-    .put(async (req, res) => {
-        //Add an Nanny Application to a Job
-        let jobId = req.params.jobId;
-        jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
-        if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
-        let { nannyId, nannyName, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment, expectedSalary } = req.body;
-        try {
-            const applicationCreated = await jobCollection.addApplication(jobId, nannyId, nannyName, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment, expectedSalary);
-            if (!applicationCreated) { throw "Couldn't Create Application"; }
-            return res.json(applicationCreated);
-        } catch (e) {
-            // throw e
-            return res.status(400).json({ error: e });
         }
     })
     .delete(async (req, res) => {
@@ -119,6 +95,52 @@ router
     });
 
 router
+    .route('/:jobId/apply/:nannyId')
+    .put(async (req, res) => {
+        //Add an Nanny Application to a Job
+        try {
+            ////////////Params validation
+            let {jobId,nannyId} = req.params;
+            jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
+            nannyId = await helpers.execValdnAndTrim(nannyId, "Nanny Id");
+            if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
+            /////////////
+            console.log("inside applytoJob route with jobId and nannyId:",jobId,nannyId)
+            jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
+            let { nannyName,contact,city,state,zipCode, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment } = req.body;
+            //////////Validations
+            nannyName = await helpers.execValdnAndTrim(nannyName, "Nanny Name");
+            await helpers.isNameValid(nannyName, "Nanny Name")
+            contact = await helpers.execValdnAndTrim(contact, "Phone Number");
+            await helpers.validatePhoneNumber(contact, "Phone Number")
+            nannyAddress = await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
+            await helpers.isNameValid(nannyAddress, "Nanny Address")
+            city = await helpers.execValdnAndTrim(city, "City");
+            await helpers.isCityParentValid(city, "City")
+            state = await helpers.execValdnAndTrim(state, "State");
+            await helpers.isStateParentValid(state, "State")
+            zipCode = await helpers.execValdnAndTrim(zipCode, "ZipCode");
+            await helpers.isZipCodeParentValid(zipCode, "ZipCode")
+            distance = await helpers.execValdnAndTrim(distance, "Distance from Job");
+            await helpers.isDistanceInputValid(distance, "Distance from Job")
+            if(shiftPuntuality){shiftPuntuality=shiftPuntuality.trim()}
+            if(description){description=description.trim()}
+            if(disability){disability=disability.trim()}
+            if(experience){experience=experience.trim()}
+            if(coverLetter){attachment=attachment.trim()}
+            ///////////////
+            const applicationCreated = await jobCollection.addApplication(jobId, nannyId, nannyName,contact,city,state,zipCode, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment);
+            if (!applicationCreated) { throw "Couldn't Create Application"; }
+            return res.json(applicationCreated);
+        } catch (e) {
+            throw e.message
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        }
+    })
+
+router
     .route('/:jobId/searchApplicants/:searchTerm/:pageNum')
     .get(async (req, res) => {
         // Searching Applicats from Parent side
@@ -137,9 +159,10 @@ router
     .route('/:jobId/allApplicants/:pageNum')
     .get(async (req, res) => {
         // Find all Applicants from Parent side
-        let jobId = req.params.jobId;
+        let {jobId,pageNum} = req.params;
         try {
-            const allApplicants = await jobCollection.getAllApplicants(jobId);
+            const allApplicants = await jobCollection.getAllApplicants(jobId,pageNum);
+            console.log(allApplicants,"outside datafunc")
             if (!allApplicants) { throw "Couldn't get applications"; }
             return res.json(allApplicants);
         } catch (e) {
@@ -174,6 +197,52 @@ router
         } catch (e) { 
             throw e.message
               return res.status(400).json({ error: e }); 
+        }
+    });
+
+router
+    .route('/getJobs/AllJobs/:pageNum')
+    .get(async (req, res) => {
+        // Searching Applicats from Parent side
+        let { pageNum } = req.params;
+        console.log("in getAllJobs route with pageNUM:",pageNum)
+        try {
+            const searchedApplicants = await jobCollection.getAllJobs(pageNum);
+            if (!searchedApplicants) { throw "Couldn't get applications"; }
+            return res.json(searchedApplicants);
+        } catch (e) {
+            throw e.message
+            return res.status(400).json({ error: e });
+        }
+    });
+
+router
+    .route('/searchJobs/:searchTerm/:pageNum')
+    .get(async (req, res) => {
+        // Searching Applicants from Parent side
+        let { pageNum, searchTerm } = req.params;
+        try {
+            const searchedApplicants = await jobCollection.searchJobsBasedOnCity(searchTerm,pageNum);
+            if (!searchedApplicants) { throw "Couldn't get applications"; }
+            return res.json(searchedApplicants);
+        } catch (e) {
+            throw e.message
+            return res.status(400).json({ error: e });
+        }
+    });
+
+router
+    .route('/:nannyId/applications/myApplications/appliedJobs')
+    .get(async (req, res) => {
+        // Searching Applicants from Parent side
+        let { nannyId } = req.params;
+        try {
+            const searchedApplicants = await jobCollection.findMyAppliedJobs(nannyId);
+            if (!searchedApplicants) { throw "Couldn't get applications"; }
+            return res.json(searchedApplicants);
+        } catch (e) {
+            throw e.message
+            return res.status(400).json({ error: e });
         }
     });
 

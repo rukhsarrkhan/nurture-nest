@@ -36,7 +36,7 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
 
   const createJob = async (data,parentId,childId) => {
     dispatch(createJobAPICall(data,parentId,childId));
-    // handleCloseCreateJob();    //this is needed and is only temporarily commented
+    handleCloseCreateJob();   
   };
 
 const deleteJob = async (jobId) => {

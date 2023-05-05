@@ -99,6 +99,23 @@ const getUserById = async (parentId) => {
     return job;
   };
 
+  const getMyJob = async (jobId) => {
+    if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
+    if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
+    if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobIdd cannot be an empty string or just spaces"};
+    jobId = jobId.trim();
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
+    const jobCollection = await jobs();
+    let myJob = await jobCollection.findOne(
+      { _id: ObjectId(jobId) },
+      { projection: {  applications: 0 } }
+    );
+    if (myJob === null) throw { statusCode: 400,message:"No Job with that id"};  
+    myJob._id=myJob._id.toString()
+    console.log(myJob)
+    return myJob;
+};
+
   const getJobById = async (jobId) => {
     if (typeof jobId=="undefined") throw { statusCode: 400, message: "jobId parameter not provjobIded" };
     if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string"};
@@ -136,30 +153,74 @@ const getUserById = async (parentId) => {
   };
 
 
-  const getAllApplicants = async (jobId) => {
+  const getAllApplicants = async (jobId,pageNum) => {
+    console.log(jobId,pageNum,"inside data see")
     if (typeof jobId=="undefined") throw { statusCode: 400, message:"jobId parameter not provided" };
     if (typeof jobId !== "string") throw { statusCode: 400, message:"jobId must be a string"};
     if (jobId.trim().length === 0) throw { statusCode: 400, message:"jobIdd cannot be an empty string or just spaces"};
     jobId = jobId.trim();
     if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     const jobCollection = await jobs();
-      let allApplications = await jobCollection.findOne(
-        { _id: ObjectId(jobId) },
-        { projection: { _id: 0, applications: 1 } }
-      );
-      if (allApplications === null) throw "No applications with that id";
-      allApplications = allApplications["applications"];
-      for (let i in allApplications) {
-        allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
-      }   
-      return allApplications;
-  };
+    // let allApplications = await jobCollection.findOne(
+    //   { _id: ObjectId(jobId) },
+    //   { projection: { _id: 0, applications: 1 } }
+    // );
+    console.log("hereeee before query")
+    let allApplications = await jobCollection.aggregate([
+      {$match:{_id:ObjectId(jobId)}},
+      {$unwind:'$applications'},
+      {$sort:{'applications.distance':1}},
+      {$group: {_id: null,applications: {$push: "$applications"}}}
+]).toArray()  //dont forget to remove sort
+console.log(allApplications,"this was for all applications")
+    if (allApplications === null) throw { statusCode: 400,message:"No applications with that id"};
+    allApplications = allApplications[0]["applications"];
+    console.log(allApplications,"--------------------")
+    for (let i in allApplications) {
+      console.log(allApplications[i])
+      allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
+    }   
+    return allApplications;
+};
 
-  const addApplication = async (jobId,nannyId,nannyName,distance,nannyAddress,whySelect,disability,shiftPuntuality,experience,attachment,expectedSalary) => {
+  const addApplication = async (jobId, nannyId, nannyName,contact,city,state,zipCode, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment) => {
+    console.log("idhaaarr")
+    ////////////Params validation
+    let {jobId,nannyId} = req.params;
+    jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+    if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
+    nannyId = await helpers.execValdnAndTrim(nannyId, "Nanny Id");
+    if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
+    /////////////
+    //////////Validations
+    nannyName = await helpers.execValdnAndTrim(nannyName, "Nanny Name");
+    await helpers.isNameValid(nannyName, "Nanny Name")
+    contact = await helpers.execValdnAndTrim(contact, "Phone Number");
+    await helpers.validatePhoneNumber(contact, "Phone Number")
+    nannyAddress = await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
+    await helpers.isNameValid(nannyAddress, "Nanny Address")
+    city = await helpers.execValdnAndTrim(city, "City");
+    await helpers.isCityParentValid(city, "City")
+    state = await helpers.execValdnAndTrim(state, "State");
+    await helpers.isStateParentValid(state, "State")
+    zipCode = await helpers.execValdnAndTrim(zipCode, "ZipCode");
+    await helpers.isZipCodeParentValid(zipCode, "ZipCode")
+    distance = await helpers.execValdnAndTrim(distance, "Distance from Job");
+    await helpers.isDistanceInputValid(distance, "Distance from Job")
+    if(shiftPuntuality){shiftPuntuality=shiftPuntuality.trim()}
+    if(description){description=description.trim()}
+    if(disability){disability=disability.trim()}
+    if(experience){experience=experience.trim()}
+    if(coverLetter){attachment=attachment.trim()}
+    ///////////////
     let newApplication = {
       _id:ObjectId(),
       nannyId:ObjectId(nannyId),
       nannyName:nannyName,
+      contact:contact,
+      city:city,
+      state:state,
+      zipCode:zipCode,
       distance:distance,
       nannyAddress:nannyAddress,
       whySelect:whySelect,
@@ -167,15 +228,15 @@ const getUserById = async (parentId) => {
       shiftPuntuality:shiftPuntuality,
       experience:experience,
       attachment:attachment,
-      expectedSalary:expectedSalary,
       applyDate: new Date()
     };
+    console.log("idhaaarr")
     const jobCollection = await jobs();
     const applicationCreated = await jobCollection.updateOne(
       { _id: ObjectId(jobId) },
       { $push: { applications: newApplication } }
     );
-    if (applicationCreated.modifiedCount === 0) {throw "could not create application successfully"};
+    if (applicationCreated.modifiedCount === 0) {throw { statusCode: 500, message:"could not create application successfully"}};
     const job = await getJobById(jobId);
     job["_id"] = job["_id"].toString();
     return job;
@@ -190,20 +251,14 @@ const getUserById = async (parentId) => {
     if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     const jobCollection = await jobs();
     let nanniesFound = await jobCollection.aggregate([
+      {$match:{_id:ObjectId(jobId)}},
       {$unwind:'$applications'},
-      {$match:{
-        'applications.nannyName':{$regex:searchTerm,$options:'i'}
-  }},{$group: {
-    _id: null,
-    applications: {
-      $push: "$applications"
-    }
-  }}
-]).toArray()
-    console.log("This was queried for search : ",nanniesFound)
-    if (nanniesFound === null) throw "No applications with that search term";
+      {$match:{'applications.nannyName':{$regex:searchTerm,$options:'i'}}},
+      {$skip:0},{$limit:3},
+      {$group: {_id: null,applications: {$push: "$applications"}}}
+    ]).toArray()
+    if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
     nanniesFound = nanniesFound[0].applications
-    // nanniesFound._id = nanniesFound._id.toString();
     return nanniesFound;
   };
 
@@ -228,6 +283,49 @@ const getUserById = async (parentId) => {
     job["_id"] = job["_id"].toString();
     return job;
   };
+//////////////////////////////////////////////////////
+  const getAllJobs = async (pageNum) => {
+    console.log("Inside getAllJobs dataFunction",pageNum)
+    const jobCollection = await jobs();
+    let nanniesFound = await jobCollection.find({},{ projection: { applications: 0 } }).skip( pageNum > 0 ? ( ( pageNum - 1 ) * 5) : 0 )
+    .limit( 5 ).toArray();
+    console.log("This was found for getAllJobs: ",nanniesFound)
+    if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
+    return nanniesFound;
+  };
+
+  const searchJobsBasedOnCity = async (searchTerm,pageNum) => {
+    console.log("Inside search Job dataFunction")
+    const jobCollection = await jobs();
+    let nanniesFound = await jobCollection.find(
+      { city: {$regex:searchTerm,$options:'i'} },
+      { projection: { applications: 0 } }
+    ).skip( pageNum > 0 ? ( ( pageNum - 1 ) * 5) : 0 )
+    .limit( 5 ).toArray();
+    console.log("This was queried for search Jobs: ",nanniesFound)
+    if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
+    // nanniesFound = nanniesFound[0].applications
+    // nanniesFound._id = nanniesFound._id.toString();
+    return nanniesFound;
+  };
+
+  const findMyAppliedJobs = async (nannyId) => {
+    console.log("Inside myAppliedJobs dataFunction",nannyId)
+    const jobCollection = await jobs();
+    // let nanniesFound = await jobCollection.find(
+    //   { state: {$regex:searchTerm,$options:'i'} },
+    //   { projection: { applications: 0 } }
+    // ).toArray();
+    let nanniesFound = await jobCollection.aggregate([
+      {$unwind:'$applications'},
+      {$match:{'applications.nannyId':ObjectId(nannyId)}}
+]).toArray()
+    console.log("This was queried for myJobApplications: ",nanniesFound)
+    if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
+    // nanniesFound = nanniesFound[0].applications
+    // nanniesFound._id = nanniesFound._id.toString();
+    return nanniesFound;
+  };
 
   module.exports = {
     createJob,
@@ -239,5 +337,9 @@ const getUserById = async (parentId) => {
     searchApplications,
     assignJobToChild,
     removeJobFromChild,
-    setNannytoJob
+    setNannytoJob,
+    getMyJob,
+    getAllJobs,
+    searchJobsBasedOnCity,
+    findMyAppliedJobs
   };

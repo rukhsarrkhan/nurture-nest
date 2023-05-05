@@ -24,6 +24,9 @@ import Home from "../components/Home";
 import Applicant from '../components/Applicant';
 import AllApplicants from '../components/AllApplicants';
 import Logout from "../components/Logout";
+import MyJob from "./MyJob";
+import ViewAllJobs from "./ViewAllJobs";
+import ViewJobDetails from "./ViewJobDetails";
 
 const Main = ({ userData }) => {
     console.log('userData-----', userData);
@@ -57,9 +60,12 @@ const Main = ({ userData }) => {
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
                     <Route path="/chat/:chatid" element={<Chat />} />
-                    <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
+                    <Route path='/job/allApplicantions/:pageNum' element={<AllApplicants />} />
                     <Route path='/job/applications/viewApplication' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
+                    <Route path="/myJob" element={<MyJob />} />
+                    <Route path='/job/viewAllJobs/:pageNum' element={<ViewAllJobs />} />
+                    <Route path='/job/viewJobDetails' element={<ViewJobDetails />} />
                 </Routes>
             </div>
         </div >

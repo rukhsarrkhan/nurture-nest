@@ -124,6 +124,16 @@ const isAddressParentValid = async (address, fieldName) => {
     if (!/^[a-zA-Z0-9 ,.-]+$/.test(address)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
+const isCityParentValid = async (city, fieldName) => {
+    if (city.trim().length < 5) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
+const isDistanceInputValid = async(distance,fieldName) => {
+    if (distance < 0) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (!/^[0-9. ]+$/.test(distance)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
+}
+
 const isStateParentValid = async (state, fieldName) => {
     let allStates = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
     if (state.trim().length < 4) return { statusCode: 400, message: `${fieldName} should atleast have 4 characters` };
@@ -189,5 +199,7 @@ module.exports = {
     isTime1BeforeTime2,
     isShiftLimitValid,
     isAddressValid,
-    validatePhoneNumber
+    validatePhoneNumber,
+    isCityParentValid,
+    isDistanceInputValid
 };

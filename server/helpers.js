@@ -17,21 +17,6 @@ const isDistanceInputValid = async(distance,fieldName) => {
     if (!/^[0-9. ]+$/.test(distance)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 }
 
-const phoneUtil = require("libphonenumbers").PhoneNumberUtil.getInstance();
-const validatePhoneNumber = async (phoneNumber, fieldName) => {
-    const number = phoneUtil.parseAndKeepRawInput(phoneNumber, "US");
-    if (!phoneUtil.isValidNumber(number, "US")) throw { statusCode: 400, message: `${fieldName} is not a valid number` };
-};
-
-const isCityParentValid = async (city, fieldName) => {
-    if (city.trim().length < 5) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
-    if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
-};
-
-const isDistanceInputValid = async(distance,fieldName) => {
-    if (distance < 0) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
-    if (!/^[0-9. ]+$/.test(distance)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
-}
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")

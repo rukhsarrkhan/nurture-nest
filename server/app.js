@@ -86,15 +86,15 @@ socketIO.on('connection', (socket) => {
     socketIO.emit('newUserResponse', users);
   });
 
-  // socket.on('disconnect', () => {
-  //   console.log('🔥: A user disconnected');
-  //   //Updates the list of users when a user disconnects from the server
-  //   users = users.filter((user) => user.socketID !== socket.id);
-  //   // console.log(users);
-  //   //Sends the list of users to the client
-  //   socketIO.emit('newUserResponse', users);
-  //   socket.disconnect();
-  // });
+  socket.on('disconnect', () => {
+    console.log('🔥: A user disconnected');
+    //Updates the list of users when a user disconnects from the server
+    users = users.filter((user) => user.socketID !== socket.id);
+    // console.log(users);
+    //Sends the list of users to the client
+    socketIO.emit('newUserResponse', users);
+    socket.disconnect();
+  });
 });
 
 configRoutes(app);
@@ -108,25 +108,3 @@ http.listen(3000, () => {
 //   console.log("We've now got a server!");
 //   console.log("Your routes will be running on http://localhost:3000");
 // });
-
-
-// var io = require('socket.io')(http);
-
-// io.on('connection', (socket) => {
-//   console.log('new client connected', socket.id);
-
-//   socket.on('user_join', (name) => {
-//     console.log('A user joined their name is ' + name);
-//     socket.broadcast.emit('user_join', name);
-//   });
-
-//   socket.on('message', ({ name, message }) => {
-//     console.log(name, message, socket.id);
-//     io.emit('message', { name, message });
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('Disconnect Fired');
-//   });
-// });
-

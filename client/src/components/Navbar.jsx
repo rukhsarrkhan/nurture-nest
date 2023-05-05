@@ -7,9 +7,9 @@ import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from './NavbarElement
 const Navbar = ({ userData }) => {
   const { currentUser } = useContext(AuthContext);
   let items;
-  if (currentUser) {
-    items = JSON.parse(localStorage.getItem('userData'));
-  }
+  // if (currentUser) {
+  // }
+  items = JSON.parse(localStorage.getItem('userData'));
   const profileLink = `/profile/${items?._id}`;
 
   return (
@@ -17,16 +17,16 @@ const Navbar = ({ userData }) => {
       <Nav>
         <Bars />
         <NavMenu>
-          {currentUser && <NavLink to='/home' id={items?._id} activeStyle>
+          {currentUser &&  <NavLink to='/home' id={items?._id} activeStyle>
             Home
           </NavLink>}
-          {currentUser && <NavLink to='/applications' activeStyle>
+          {/* {currentUser && items?.profile === "PARENT" && <NavLink to='/applications' activeStyle>
             Applications
-          </NavLink>}
+          </NavLink>} */}
           {currentUser && <NavLink to='/chat/:chatid' activeStyle>
             Inbox
           </NavLink>}
-          {currentUser && <NavLink to='/jobs' activeStyle>
+          {currentUser &&  items?.profile === "NANNY" &&<NavLink to='/jobs' activeStyle>
             Careers
           </NavLink>}
         </NavMenu>
@@ -57,7 +57,7 @@ const Navbar = ({ userData }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state.users
+    userData: state?.users
   };
 };
 

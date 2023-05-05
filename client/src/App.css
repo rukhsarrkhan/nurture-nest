@@ -1,6 +1,71 @@
+/* Avinash's Changes */
+.hero {
+	height: 500px; 
+	background-image: url('img/hero.jpeg');
+	background-position: center;
+	background-size: cover;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	color: #ffffff;
+	padding-left: 20px;
+	padding-left: 100px;
+	text-shadow: 6px 6px 14px #000000; 
+
+  }
+  
+ 
+.hero h1 {
+
+	font-size: 68px;
+	font-weight: bold;
+	text-align: center;
+	color: #ffffff; 
+	overflow: hidden; 
+	white-space: nowrap; 
+	margin: 0 auto; 
+	padding-bottom: 20px;
+	border-right: .1em solid orange;
+	animation: 
+    	typing 3.5s steps(40, end),
+    	blink-caret .75s step-end infinite;
+  }
+  @keyframes typing {
+	from { width: 0 }
+	to { width: 80% }
+  }
+  @keyframes blink-caret {
+	from, to { border-color: transparent }
+	50% { border-color: orange; }
+  }
+  
+  .hero blockquote {
+	color: white;
+	font-size: 24px;
+	margin: 0 auto;
+	overflow: hidden; 
+	font-weight: bold;
+	text-align: center;
+	font-style: italic;
+	opacity: 0;
+	animation: fade-in 1s ease-out 3s forwards; 
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0; 
+  }
+  100% {
+    opacity: 1; 
+  }
+}
+  
+/* Avinash Died here */
+
 .App {
 	text-align: center;
 }
+
 
 .center {
 	display: block;
@@ -268,19 +333,19 @@ dd {
 }
 
 h1 {
-	color: rgba(0, 0, 0, .2);
+	color: rgba(0, 0, 0, 0.868);
 	font-size: 48px;
 	margin-bottom: 20px;
 }
 
 h2 {
-	color: rgba(0, 0, 0, .2);
+	color: rgba(0, 0, 0, 0.559);
 	font-size: 32px;
 	margin-bottom: 20px;
 }
 
 p {
-	color: rgba(0, 0, 0, .2);
+	color: rgba(0, 0, 0, 0.904);
 	font-size: 16px;
 	line-height: 1.5;
 }
@@ -301,17 +366,51 @@ button:hover {
 	color: #fff;
 }
 
-.features {
+.card-container {
+	max-width: 1400px;
 	display: flex;
 	justify-content: space-between;
-	margin: 50px auto;
-	width: 80%;
-}
-
-.feature {
-	flex-basis: 30%;
-	text-align: center;
-}
+	align-items: center;
+	padding-top: 30px;
+	margin: 0 auto;
+  }
+  
+  .card {
+	max-width: 380px;
+	margin: 0 auto;
+	background-color: #2c3e50;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+	width: 30%;
+	height: 250px;
+	padding: 10px;
+	transition: all 0.3s ease-in-out;
+  }
+  
+  .card:hover {
+	transform: translateY(-5px);
+	box-shadow: 2px 15px 4px #f1c40f;
+  }
+  
+  .card h2 {
+	color: #fff;
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	padding-top: 10px;
+  }
+  
+  .card p {
+	color: #fff;
+	font-size: 1rem;
+	padding: 0 30px;
+  }
+  hr {
+	width: 60%;
+	height: 3px;
+	background-color: #f1c40f;
+	border: none;
+	margin: 20px auto;
+  }  
 
 .testimonials {
 	margin: 50px auto;

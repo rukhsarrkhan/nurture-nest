@@ -7,7 +7,7 @@ import {
     USER_REGISTER_FALIURE,
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
-    USER_ID_STORE
+    USER_ID_STORE,
 } from "./userActionTypes";
 
 export const userLogout = () => {
@@ -64,12 +64,13 @@ export const userIdStore = (id) => {
     };
 };
 
+
 export const userRegistrationAPICall = (obj) => {
     return async (dispatch) => {
         try {
             dispatch(userIdStore(obj.uuid));
             let resp = await axios.post("http://localhost:3000/users/signup", obj);
-            dispatch(userRegisterSuccess(resp.data));
+            dispatch(userRegisterSuccess(resp?.data));
             localStorage.setItem("userData", JSON.stringify(resp.data));
         } catch (error) {
             dispatch(userRegisterFailure(error));
@@ -82,7 +83,7 @@ export const userLoginAPICall = (uuId) => {
         try {
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
             localStorage.setItem("userData", JSON.stringify(resp.data));
-            dispatch(userLoginSuccess(resp.data));
+            dispatch(userLoginSuccess(resp?.data));
         } catch (error) {
             dispatch(userLoginFailure(error));
         }

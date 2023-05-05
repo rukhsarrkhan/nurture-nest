@@ -26,7 +26,7 @@ export const dashboardReducer = (state = initialState, action) => {
     case GET_DASHBOARD_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data,
       };
     case SET_DASHBOARD_SUCCESS:
       return {
@@ -38,7 +38,7 @@ export const dashboardReducer = (state = initialState, action) => {
     case SET_DASHBOARD_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data,
       };
     default:
       return state;

@@ -44,7 +44,6 @@ const Main = ({ userData }) => {
                     <Navbar />
                 </header>
             </div>
-            <br></br>
             <div className='App-body'>
                 <Routes>
                     <Route path="/" element={<Landing />} />
@@ -75,7 +74,7 @@ const Main = ({ userData }) => {
 
 const mapStateToProps = state => {
     return {
-        userData: state.users
+        userData: state?.users
     };
 };
 

@@ -86,12 +86,8 @@ export const userLoginAPICall = (uuId) => {
         try {
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
             localStorage.setItem("userData", JSON.stringify(resp.data));
-            console.log("resp", resp);
             localStorage.setItem('userName', resp?.data?.firstName);
-
-
             socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
-
             dispatch(userLoginSuccess(resp.data));
         } catch (error) {
             dispatch(userLoginFailure(error));

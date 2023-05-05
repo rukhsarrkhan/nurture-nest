@@ -28,21 +28,10 @@ import UploadImage from "./UploadImage";
 import socketIO from 'socket.io-client';
 
 const socket = socketIO.connect('http://localhost:3000');
-console.log("socket", socket);
 
 const Main = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
     let items = JSON.parse(localStorage.getItem('userData'));
-    console.log("items", items);
-
-    // if (currentUser) {
-    //     items = 
-    // }
-
-
-    // else {
-    //     return <Navigate to='/' />;
-    // }
 
     return (
         <div className='App'>

@@ -15,15 +15,12 @@ import childImage from '../img/childImage.png';
 import Loading from './Loading';
 
 const Home = ({ gethomeAPICall, childData, id }) => {
-  console.log(childData, "data aagya")
   let items = JSON.parse(localStorage.getItem("userData"))
-  let profile=items.profile
-  console.log(profile, "profile aayi")
+  let profile=items?.profile
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let card = null;
   const { currentUser } = useContext(AuthContext);
-  console.log("currentUser", currentUser);
 
   useEffect(() => {
     async function fetchData() {

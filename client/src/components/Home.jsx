@@ -7,18 +7,21 @@ import CardActions from '@mui/material/CardActions';
 import {
   Card,
   CardMedia,
-  Grid
+  Grid,
+  Button
 } from '@mui/material';
 import { AuthContext } from '../firebase/Auth';
 import { gethomeAPICall } from '../redux/home/homeActions';
 import childImage from '../img/childImage.png';
 import Loading from './Loading';
+import AddIcon from '@mui/icons-material/Add';
 
 const Home = ({ gethomeAPICall, childData, id }) => {
   let items = JSON.parse(localStorage.getItem("userData"))
   let profile=items?.profile
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // new state to control modal visibility
   let card = null;
   const { currentUser } = useContext(AuthContext);
 
@@ -84,6 +87,14 @@ const Home = ({ gethomeAPICall, childData, id }) => {
     });
   }
 
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
   if (!currentUser) {
     return <Navigate to='/' />;
   }
@@ -102,6 +113,9 @@ const Home = ({ gethomeAPICall, childData, id }) => {
   } else {
     return (
       <div>
+        <Button variant="contained" startIcon={<AddIcon />}>
+          Add Child
+        </Button>
         <Grid
           container
           spacing={2}

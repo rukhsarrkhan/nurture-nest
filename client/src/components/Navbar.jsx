@@ -6,10 +6,7 @@ import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from './NavbarElement
 
 const Navbar = ({ userData }) => {
   const { currentUser } = useContext(AuthContext);
-  let items;
-  if (currentUser) {
-    items = JSON.parse(localStorage.getItem('userData'));
-  }
+  let items = JSON.parse(localStorage.getItem('userData'));
   const profileLink = `/profile/${items?._id}`;
 
   return (

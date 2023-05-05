@@ -13,6 +13,7 @@ import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
 import appointmentImage from '../img/appointmentImage.png';
+import Loading from './Loading';
 
 const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
   } else if (error) {
@@ -60,7 +61,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   marginRight: 'auto',
                   borderRadius: 5,
                   boxShadow:
-                    '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    'none'
                 }}
                 component='img'
                 image={mealPlanImage}
@@ -75,8 +76,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                     marginRight: 'auto',
                     borderRadius: 5,
                     border: '1px solid #080a33',
-                    boxShadow:
-                      '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    boxShadow: 'none'
                   }}
                   gutterBottom
                   variant='h6'
@@ -85,8 +85,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Daily Meal Plans"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData && dashboardData.data && dashboardData.data.mealRequirements && dashboardData.data.mealRequirements[0]
-                    ? dashboardData.data.mealRequirements[0]
+                  {dashboardData?.data?.mealRequirements && dashboardData.data.mealRequirements[0].meal
+                    ? dashboardData.data.mealRequirements[0].meal
                     : 'No data to display'}
                   <br></br>
                   {"Click to view Details"}
@@ -98,7 +98,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
           </CardActionArea>
         </Grid>
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?._id?.toString()}>
-          <CardActionArea sx={{ transition: 'transform .2s' }}>
+          <CardActionArea sx={{ transition: 'none' }}>
             <Link to={`/vaccine/${dashboardData?.data?._id?.toString()}`}>
               <CardMedia
                 sx={{

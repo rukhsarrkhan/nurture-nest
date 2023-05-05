@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { Route, Routes } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { AuthContext } from '../firebase/Auth';
@@ -13,7 +13,6 @@ import AddChild from '../components/AddChild';
 import Dashboard from '../components/Dashboard';
 import JobList from '../components/JobList';
 import NannyList from '../components/NannyList';
-import NannyInfo from '../components/NannyInfo';
 import MealList from '../components/MealList';
 import VaccineList from '../components/VaccineList';
 import AppointmentList from '../components/AppointmentList';
@@ -27,13 +26,20 @@ import Logout from "../components/Logout";
 import MyJob from "./MyJob";
 import ViewAllJobs from "./ViewAllJobs";
 import ViewJobDetails from "./ViewJobDetails";
+import NannyDetails from "./NannyDetails";
+import UploadImage from "./UploadImage";
 
 const Main = ({ userData }) => {
-    console.log('userData-----', userData);
     const { currentUser } = useContext(AuthContext);
+    let items;
+    if (currentUser) {
+        items = JSON.parse(localStorage.getItem('userData'));
+    }
 
-    const items = JSON.parse(localStorage.getItem('userData'));
-    console.log("items-----", items);
+    // else {
+    //     return <Navigate to='/' />;
+    // }
+
     return (
         <div className='App'>
             <div>
@@ -55,7 +61,7 @@ const Main = ({ userData }) => {
                     <Route path="/dashboard/:childId" element={<Dashboard />} />
                     <Route path="/jobs" element={<JobList />} />
                     <Route path="/nannies" element={<NannyList />} />
-                    <Route path="/nanny/:id" element={<NannyInfo />} />
+                    <Route path="/nanny/:nannyId" element={<NannyDetails />} />
                     <Route path="/meal/:childId" element={<MealList />} />
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
@@ -66,6 +72,7 @@ const Main = ({ userData }) => {
                     <Route path="/myJob" element={<MyJob />} />
                     <Route path='/job/viewAllJobs/:pageNum' element={<ViewAllJobs />} />
                     <Route path='/job/viewJobDetails' element={<ViewJobDetails />} />
+                    <Route path="/uploadImage" element={<UploadImage/>} />
                 </Routes>
             </div>
         </div >

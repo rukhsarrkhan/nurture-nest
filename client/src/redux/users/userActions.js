@@ -7,7 +7,7 @@ import {
     USER_REGISTER_FALIURE,
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
-    USER_ID_STORE
+    USER_ID_STORE,
 } from "./userActionTypes";
 
 export const userLogout = () => {
@@ -65,7 +65,6 @@ export const userIdStore = (id) => {
 };
 
 export const userRegistrationAPICall = (obj) => {
-    console.log("obj", obj);
     return async (dispatch) => {
         try {
             dispatch(userIdStore(obj.uuid));
@@ -78,12 +77,11 @@ export const userRegistrationAPICall = (obj) => {
     };
 };
 
-export const userLoginAPICall = (id) => {
+export const userLoginAPICall = (uuId) => {
     return async (dispatch) => {
         try {
-            let resp = await axios.post(`http://localhost:3000/signin/${id}`);
-            // set token here
-            // sessionStorage.setItem("token", resp.data.token);
+            let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
+            localStorage.setItem("userData", JSON.stringify(resp.data));
             dispatch(userLoginSuccess(resp.data));
         } catch (error) {
             dispatch(userLoginFailure(error));
@@ -95,7 +93,6 @@ export const setUserProfileAPICall = (id) => {
     return async (dispatch) => {
         try {
             let { data } = await axios.get(`http://localhost:3000/users/${id}`);
-            console.log("data", data);
             dispatch(setProfileSuccess(data));
         } catch (error) {
             dispatch(setProfileFailure(error));
@@ -107,6 +104,16 @@ export const updateUserAPICall = (id, obj) => {
     return async (dispatch) => {
         try {
             let { data } = await axios.patch(`http://localhost:3000/users/${id}`, obj);
+            dispatch(setProfileSuccess(data));
+        } catch (error) {
+            dispatch(setProfileFailure(error));
+        }
+    };
+};
+export const updateProfileImageAPICall = (id, formData) => {
+    return async (dispatch) => {
+        try {
+            let { data } = await axios.put(`http://localhost:3000/users/image/${id}`, formData);
             dispatch(setProfileSuccess(data));
         } catch (error) {
             dispatch(setProfileFailure(error));

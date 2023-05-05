@@ -3,57 +3,123 @@ const router = express.Router();
 const userData = require("../data/users");
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
+require("dotenv").config();
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const gm = require("gm").subClass({ imageMagick: true });
+const mime = require("mime");
 
-router
-    .route("/signup").post(async (req, res) => {
-        let { firstName, lastName, email, profile, age, uuid } = req.body;
-        try {
-            firstName = await helper.execValdnAndTrim(firstName, "FirstName");
-            await helper.isNameValid(firstName, "FirstName");
-            lastName = await helper.execValdnAndTrim(lastName, "LastName");
-            await helper.isNameValid(lastName, "LastName");
-            email = await helper.execValdnAndTrim(email, "Email");
-            await helper.isEmailValid(email, "Email");
-            profile = await helper.execValdnAndTrim(profile, "Profile");
-            await helper.isProfileValid(profile, "Profile");
-            age = await helper.execValdnAndTrim(age, "Age");
-            await helper.isAgeValid(parseInt(age), "Age");
-            uuid = await helper.execValdnAndTrim(uuid, "Uuid");
-            // objectid validation
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-        try {
-            const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
-            if (!userCreated) {
-                throw { statusCode: 500, message: `Couldn't Create user` };
-            }
-            return res.json(userCreated);
-        } catch (e) {
-            console.log("e", e);
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-    });
+aws.config.update({
+    secretAccessKey: process.env.ACCESS_SECRET,
+    accessKeyId: process.env.ACCESS_KEY,
+    region: process.env.REGION,
+});
+console.log(process.env.BUCKET + " Bucket here");
+const BUCKET = process.env.BUCKET;
+const s3 = new aws.S3();
+const parseForm = multer();
+const upload = multer({
+    storage: multerS3({
+        bucket: BUCKET,
+        s3: s3,
+        acl: "public-read",
+        key: (req, file, cb) => {
+            cb(null, `image-${Date.now()}.jpeg`);
+        },
+    }),
+});
 
-router
-    .route("/signin/:uuId").post(async (req, res) => {
-        let uuId = req.params.uuId;
-        try {
-            uuId = await helper.execValdnAndTrim(uuId, "Uuid");
-            // objectid validation
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+router.route("/signup").post(async (req, res) => {
+    let { firstName, lastName, email, profile, age, uuid } = req.body;
+    try {
+        firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+        await helper.isNameValid(firstName, "FirstName");
+        lastName = await helper.execValdnAndTrim(lastName, "LastName");
+        await helper.isNameValid(lastName, "LastName");
+        email = await helper.execValdnAndTrim(email, "Email");
+        await helper.isEmailValid(email, "Email");
+        profile = await helper.execValdnAndTrim(profile, "Profile");
+        await helper.isProfileValid(profile, "Profile");
+        age = await helper.execValdnAndTrim(age, "Age");
+        await helper.isAgeValid(parseInt(age), "Age");
+        uuid = await helper.execValdnAndTrim(uuid, "Uuid");
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+    try {
+        const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
+        if (!userCreated) {
+            throw { statusCode: 500, message: `Couldn't Create user` };
         }
-        try {
-            const userFetched = await userData.getUserByFirebaseId(uuId);
-            if (!userFetched) {
-                throw { statusCode: 500, message: `Couldn't fetch user` };
-            }
-            return res.json(userFetched);
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        return res.json(userCreated);
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+});
+
+router.route("/signin/:uuId").post(async (req, res) => {
+    let uuId = req.params.uuId;
+    try {
+        uuId = await helper.execValdnAndTrim(uuId, "Uuid");
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+    try {
+        const userFetched = await userData.getUserByFirebaseId(uuId);
+        if (!userFetched) {
+            throw { statusCode: 500, message: `Couldn't fetch user` };
         }
-    });
+        return res.json(userFetched);
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+});
+router.route("/image/:userId").put(parseForm.single("image"), async (req, res) => {
+    try {
+        if (!req.file) {
+            throw { statusCode: 400, message: `No file uploaded` };
+        }
+        let userId = req.params.userId;
+        userId = await helper.execValdnAndTrim(userId, "User Id");
+        if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid object ID" };
+        const fileType = mime.getExtension(req.file.mimetype);
+        if (fileType !== "jpeg" && fileType !== "png" && fileType !== "gif") {
+            throw { statusCode: 400, message: `Invalid file type` };
+        }
+        gm(req.file.buffer)
+            .autoOrient() // fix image orientation if necessary
+            .resize(200, 200, "^") // resize the image to fit within 200x200 without distorting the aspect ratio
+            .gravity("Center") // center the crop on the resized image
+            .crop(200, 200) // crop the resized image to a 200x200 square
+            .toBuffer(async (err, buffer) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({ title: "Error", message: err.message });
+                } else {
+                    try {
+                        // const uploadImg = upload.single("image");
+                        req.file.buffer = buffer;
+                        const params = {
+                            Bucket: BUCKET,
+                            Key: `image-${Date.now()}.jpeg`, // add a timestamp to the filename to ensure it's unique
+                            Body: buffer,
+                            ContentType: req.file.mimetype,
+                        };
+                        const data = await s3.upload(params).promise();
+                        const updatedUserObj = await userData.updateUser(userId, { photoUrl: data.Location });
+                        if (!updatedUserObj || updatedUserObj === null || updatedUserObj === undefined)
+                            return res.status(500).json({ title: "Error", message: `An unexpected error occurred.` });
+                        return res.json(updatedUserObj);
+                    } catch (error) {
+                        return res.status(500).json({ title: "Error", message: "An unexpected error occurred" });
+                    }
+                }
+            });
+    } catch (e) {
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+    }
+});
 router
     .route("/:userId")
     .get(async (req, res) => {
@@ -84,8 +150,21 @@ router
     })
     .patch(async (req, res) => {
         try {
-            let { firstName, lastName, age, email, address, photoUrl, profile, n_yearsOfExperience, n_qualifications, n_certifications, n_skills } =
-                req.body;
+            let {
+                firstName,
+                lastName,
+                age,
+                email,
+                address,
+                photoUrl,
+                profile,
+                phone,
+                sex,
+                n_yearsOfExperience,
+                n_qualifications,
+                n_certifications,
+                n_skills,
+            } = req.body;
             let userId = req.params.userId;
             userId = await helper.execValdnAndTrim(userId, "User Id");
             if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid object ID" };
@@ -113,6 +192,16 @@ router
                 email = await helper.execValdnAndTrim(email, "Email");
                 await helper.isEmailValid(email, "Email");
                 if (cur_userObj.email != email) userObj.email = email;
+            }
+            if (sex) {
+                sex = await helper.execValdnAndTrim(sex, "Sex");
+                await helper.isSexValid(sex);
+                if (cur_userObj.sex != sex) userObj.sex = sex;
+            }
+            if (phone) {
+                phone = await helper.execValdnAndTrim(phone, "phone");
+                await helper.validatePhoneNumber(phone, "Phone number");
+                if (cur_userObj.phone != phone) userObj.phone = phone;
             }
 
             if (address) {
@@ -171,5 +260,11 @@ router
             return res.status(404).json({ error: e });
         }
     });
+
+router.route("/delete/:filename").delete(async (req, res) => {
+    const filename = req.params.filename;
+    await s3.deleteObject({ Bucket: BUCKET, Key: filename }).promise();
+    return res.status(200).json("File Deleted!");
+});
 
 module.exports = router;

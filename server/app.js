@@ -3,7 +3,9 @@ const app = express();
 const cors = require("cors");
 const session = require("express-session");
 const configRoutes = require("./routes");
+
 const static = express.static(__dirname + "/public");
+
 
 app.use("/public", static);
 app.use(express.json());
@@ -16,6 +18,7 @@ app.use(
         saveUninitialized: true,
     })
 );
+
 
 //globals here
 //This file contains all global variables
@@ -38,6 +41,9 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: true }));
+
+
+
 // app.use(async (req, res, next) => {
 //     const requestBody = JSON.parse(JSON.stringify(req.body));
 //     if (requestBody.password) {

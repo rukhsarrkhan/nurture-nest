@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate } from "react-router-dom";
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import {
   Card,
   CardMedia,
-  Grid
+  Grid,
+  Button
 } from '@mui/material';
+import { AuthContext } from '../firebase/Auth';
 import { gethomeAPICall } from '../redux/home/homeActions';
 import childImage from '../img/childImage.png';
+import Loading from './Loading';
+import AddIcon from '@mui/icons-material/Add';
 
 const Home = ({ gethomeAPICall, childData, id }) => {
-  console.log("id", id);
+  let items = JSON.parse(localStorage.getItem("userData"))
+  let profile=items?.profile
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // new state to control modal visibility
   let card = null;
+  const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -64,17 +71,38 @@ const Home = ({ gethomeAPICall, childData, id }) => {
     );
   };
 
+  if(profile === "NANNY"){
   card =
     childData?.data?.n_childIds?.map((child) => {
       if (child !== null) {
         return buildCard(child);
       }
     });
+  }else{
+    card =
+    childData?.data?.p_childIds?.map((child) => {
+      if (child !== null) {
+        return buildCard(child);
+      }
+    });
+  }
+
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
 
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
   } else if (error) {
@@ -85,6 +113,11 @@ const Home = ({ gethomeAPICall, childData, id }) => {
   } else {
     return (
       <div>
+        {profile === "PARENT"&& 
+        <Button variant="contained" startIcon={<AddIcon />}>
+          Add Child
+        </Button>
+  }
         <Grid
           container
           spacing={2}

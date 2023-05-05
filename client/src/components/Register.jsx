@@ -127,7 +127,6 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           password.trim(),
           firstName.trim()
         );
-        console.log("resp", resp);
         if (resp !== "") {
           uuid = resp;
         }
@@ -154,7 +153,8 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   };
 
   if (currentUser) {
-    return <Navigate to='/' />;
+    const items = JSON.parse(localStorage.getItem('userData'));
+    return <Navigate to='/home' id={items?._id} />;
   }
 
   return (

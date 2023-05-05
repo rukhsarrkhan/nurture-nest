@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
 import { Container } from '@mui/system';
+import image from '../../img/appointmentImage.png'
 
 const style = {
     position: 'absolute',
@@ -16,8 +17,8 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    borderRadius: '50px'
 };
-
 
 const AddAppointmentModal = (props) => {
 
@@ -27,6 +28,9 @@ const AddAppointmentModal = (props) => {
         var day = showdate.substring(8, 10);
         return month + '/' + day + '/' + year;
     };
+    const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
+    const todayTime = new Date().toISOString().slice(0, 16);
+
 
     const tConvert = (time) => {
         // Check correct time format and split into components
@@ -72,14 +76,17 @@ const AddAppointmentModal = (props) => {
             setErrorText(hospitalCheck.message)
             return
         }
-        let dateCheck = await helpers.isDateValid(date, "date")
-        if (dateCheck !== undefined) {
+        if (date < today) {
             setDateError(true);
-            setErrorText(dateCheck.message)
+            setErrorText('Please select a future date')
             return
         }
-        if (time === '') {
-            setTimeError(true);
+        if(time < todayTime){
+            setTimeError(true)
+            setErrorText("Please select a future time")
+            return
+        }else {
+            setTimeError(false)
         }
         if (doctor.trim() && hospital.trim() && date.trim() && time.trim() && errorText === "") {
             try {
@@ -106,13 +113,18 @@ const AddAppointmentModal = (props) => {
             >
                 <Container maxWidth="sm">
                     <Box className='appointmentForm' sx={style} >
-                        <form className="sign-form" autoComplete="off" onSubmit={handleSubmit}>
+                    <img
+                        src={image}
+                        alt="appointment description"
+                        className='vaccine-image'
+                   />
                             <p className='P-title-home' >
                                 Add Appointment
                             </p>
 
+                        <form autoComplete="off" onSubmit={handleSubmit}>
                             <TextField
-                                className="formField"
+                                className="appointmentField"
                                 label="Doctor"
                                 onChange={e => setDoctor(e.target.value)}
                                 required
@@ -124,7 +136,7 @@ const AddAppointmentModal = (props) => {
                                 error={doctorError}
                             />
                             <TextField
-                                className="formField"
+                                className="appointmentField"
                                 label="Hopital"
                                 onChange={e => setHospital(e.target.value)}
                                 required
@@ -136,8 +148,7 @@ const AddAppointmentModal = (props) => {
                                 error={hospitalErorr}
                             />
                             <TextField
-                                className="formField"
-                                label="Date"
+                                className="appointmentField"
                                 type='date'
                                 onChange={e => setDate(e.target.value)}
                                 required
@@ -148,19 +159,20 @@ const AddAppointmentModal = (props) => {
                                 value={date}
                                 error={dateError}
                             />
-                            <TextField
-                                className="formField"
-                                label="Doses"
+                              <TextField
+                             id="inline-picker"
+                                className="appointmentField"
                                 type='time'
                                 onChange={e => setTime(e.target.value)}
                                 required
                                 variant="filled"
                                 color="secondary"
                                 sx={{ mb: 3 }}
-                                // fullWidth
+                                helperText={timeError && errorText}
                                 value={time}
                                 error={timeError}
-                            />
+                            />  
+
                             <Button variant="outlined" color="secondary" type="submit" >
                                 Add
                             </Button>

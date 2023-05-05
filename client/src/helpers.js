@@ -1,10 +1,10 @@
 //moment = require("moment");
 // const { ObjectId } = require("mongodb");
 const phoneUtil = require("libphonenumbers").PhoneNumberUtil.getInstance();
-function validatePhoneNumber(phoneNumber, fieldName) {
+const validatePhoneNumber = async (phoneNumber, fieldName) => {
     const number = phoneUtil.parseAndKeepRawInput(phoneNumber, "US");
     if (!phoneUtil.isValidNumber(number, "US")) return { statusCode: 400, message: `${fieldName} is not a valid number` };
-}
+};
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -107,7 +107,6 @@ const onlyLettersAndSpaces = async (str, fieldName) => {
     if (!str.match(letCheck)) return { statusCode: 400, message: `${fieldName} should only be letters and spaces` };
 };
 
-
 const isSpecialcareParentValid = async (specialCare, fieldName) => {
     if (specialCare.trim().length < 2) return { statusCode: 400, message: `${fieldName} should atleast have 2 characters` };
     if (!/^[a-zA-Z0-9 ,.'-:]+$/.test(specialCare)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
@@ -135,10 +134,63 @@ const isDistanceInputValid = async(distance,fieldName) => {
 }
 
 const isStateParentValid = async (state, fieldName) => {
-    let allStates = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming"];
+    let allStates = [
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+    ];
     if (state.trim().length < 4) return { statusCode: 400, message: `${fieldName} should atleast have 4 characters` };
     if (!/^[a-zA-Z ]+$/.test(state)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
-    if (!allStates.includes(state)) { return { statusCode: 400, message: `${fieldName} contains a invalid state name selected` }; }
+    if (!allStates.includes(state)) {
+        return { statusCode: 400, message: `${fieldName} contains a invalid state name selected` };
+    }
 };
 
 const isZipCodeParentValid = async (zipCode, fieldName) => {
@@ -154,7 +206,9 @@ const isSalaryParentValid = async (salary, fieldName) => {
 const isTime1BeforeTime2 = async (time1, time2) => {
     if (new Date(time1) >= new Date(time2)) {
         return { statusCode: 400, message: `Shift-from time should be less than Shift-to time` };
-    } else { return ""; }
+    } else {
+        return "";
+    }
 };
 
 const isShiftLimitValid = async (start, end, daysNum) => {
@@ -162,8 +216,12 @@ const isShiftLimitValid = async (start, end, daysNum) => {
     const endTime = new Date(end);
     const diffMs = endTime - startTime;
     const diffMinutes = Math.floor(diffMs / 60000);
-    if (diffMinutes * daysNum > 2400) { return { statusCode: 400, message: `Shift times for a nanny cannot be more than 40hours per week` }; }
-    if (diffMinutes * daysNum < 120) { return { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week` }; }
+    if (diffMinutes * daysNum > 2400) {
+        return { statusCode: 400, message: `Shift times for a nanny cannot be more than 40hours per week` };
+    }
+    if (diffMinutes * daysNum < 120) {
+        return { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week` };
+    }
     return "";
 };
 // const isIdValid = (id,fieldName) => {

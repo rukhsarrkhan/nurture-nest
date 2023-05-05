@@ -15,7 +15,10 @@ import childImage from '../img/childImage.png';
 import Loading from './Loading';
 
 const Home = ({ gethomeAPICall, childData, id }) => {
-
+  console.log(childData, "data aagya")
+  let items = JSON.parse(localStorage.getItem("userData"))
+  let profile=items.profile
+  console.log(profile, "profile aayi")
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let card = null;
@@ -68,12 +71,21 @@ const Home = ({ gethomeAPICall, childData, id }) => {
     );
   };
 
+  if(profile === "NANNY"){
   card =
     childData?.data?.n_childIds?.map((child) => {
       if (child !== null) {
         return buildCard(child);
       }
     });
+  }else{
+    card =
+    childData?.data?.p_childIds?.map((child) => {
+      if (child !== null) {
+        return buildCard(child);
+      }
+    });
+  }
 
   if (!currentUser) {
     return <Navigate to='/' />;
@@ -103,7 +115,18 @@ const Home = ({ gethomeAPICall, childData, id }) => {
         >
           {card}
         </Grid>
+        <Grid
+          container
+          spacing={10}
+          sx={{
+            flexGrow: 1,
+            flexDirection: 'row'
+          }}
+        >
+          {card}
+        </Grid>
       </div>
+      
     );
   };
 

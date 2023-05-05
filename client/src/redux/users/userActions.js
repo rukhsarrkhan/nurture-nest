@@ -1,4 +1,6 @@
 import axios from "axios";
+import socketIO from 'socket.io-client';
+
 import {
     USER_LOGOUT,
     USER_LOGIN_SUCCESS,
@@ -9,6 +11,7 @@ import {
     SET_PROFILE_SUCCESS,
     USER_ID_STORE,
 } from "./userActionTypes";
+const socket = socketIO.connect('http://localhost:3000');
 
 export const userLogout = () => {
     return {
@@ -70,6 +73,7 @@ export const userRegistrationAPICall = (obj) => {
             dispatch(userIdStore(obj.uuid));
             let resp = await axios.post("http://localhost:3000/users/signup", obj);
             dispatch(userRegisterSuccess(resp.data));
+
             localStorage.setItem("userData", JSON.stringify(resp.data));
         } catch (error) {
             dispatch(userRegisterFailure(error));
@@ -81,7 +85,9 @@ export const userLoginAPICall = (uuId) => {
     return async (dispatch) => {
         try {
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
-            localStorage.setItem("userData", JSON.stringify(resp.data));
+            localStorage.setItem("userData", JSON.stringify(resp?.data));
+            localStorage.setItem('userName', resp?.data?.firstName);
+            socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
             dispatch(userLoginSuccess(resp.data));
         } catch (error) {
             dispatch(userLoginFailure(error));

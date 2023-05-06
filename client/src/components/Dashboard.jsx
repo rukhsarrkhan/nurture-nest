@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams,Navigate } from 'react-router-dom';
+import { AuthContext } from '../firebase/Auth';
+import { useNavigate } from 'react-router-dom';
 import {
   CardActionArea,
   CardContent,
@@ -16,6 +18,8 @@ import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
 const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
+  let navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
@@ -36,6 +40,10 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
     }
   }, [childId]);
 
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
       <div>
@@ -85,8 +93,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Daily Meal Plans"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData?.data?.mealRequirements && dashboardData.data.mealRequirements[0].meal
-                    ? dashboardData.data.mealRequirements[0].meal
+                  {dashboardData?.data?.mealRequirements && dashboardData?.data?.mealRequirements[0]?.meal
+                    ? dashboardData?.data?.mealRequirements[0]?.meal
                     : 'No data to display'}
                   <br></br>
                   {"Click to view Details"}
@@ -132,8 +140,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Vaccines"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData && dashboardData.data && dashboardData.data.vaccine && dashboardData.data.vaccine[0] && dashboardData.data.vaccine[0].name && dashboardData.data.vaccine[0].date
-                    ? dashboardData.data.vaccine[0].name + " due on " + dashboardData.data.vaccine[0].date
+                  {dashboardData && dashboardData?.data && dashboardData?.data?.vaccine && dashboardData?.data?.vaccine[0] && dashboardData?.data?.vaccine[0]?.name && dashboardData?.data?.vaccine[0]?.date
+                    ? dashboardData?.data?.vaccine[0]?.name + " due on " + dashboardData?.data?.vaccine[0]?.date
                     : 'No data to display'}
                   <br></br>
                   {"Click to view details"}
@@ -180,7 +188,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {"Doctor Appointments"}
                 </Typography>
                 <Typography variant='body2' color='textSecondary' component='p'>
-                  {dashboardData && dashboardData.data && dashboardData.data.appointments && dashboardData?.data?.appointments[0]
+                  {dashboardData && dashboardData?.data && dashboardData?.data?.appointments && dashboardData?.data?.appointments[0]
                     ? dashboardData?.data?.appointments[0]?.date + " : " + dashboardData?.data?.appointments[0]?.doctor
                     : 'No data to display'}
                   <br></br>
@@ -199,7 +207,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
 
 const mapStateToProps = state => {
   return {
-    dashboardData: state.dashboard
+    dashboardData: state?.dashboard
   };
 };
 

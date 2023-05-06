@@ -14,16 +14,16 @@ const Navbar = ({ userData }) => {
       <Nav>
         <Bars />
         <NavMenu>
-          {currentUser && <NavLink to='/home' id={items?._id} activeStyle>
+          {currentUser &&  <NavLink to='/home' id={items?._id} activeStyle>
             Home
           </NavLink>}
-          {currentUser && <NavLink to='/applications' activeStyle>
+          {/* {currentUser && items?.profile === "PARENT" && <NavLink to='/applications' activeStyle>
             Applications
-          </NavLink>}
+          </NavLink>} */}
           {currentUser && <NavLink to='/chat' activeStyle>
             Inbox
           </NavLink>}
-          {currentUser && <NavLink to='/jobs' activeStyle>
+          {currentUser &&  items?.profile === "NANNY" &&<NavLink to='/jobs' activeStyle>
             Careers
           </NavLink>}
         </NavMenu>
@@ -54,7 +54,7 @@ const Navbar = ({ userData }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state.users
+    userData: state?.users
   };
 };
 

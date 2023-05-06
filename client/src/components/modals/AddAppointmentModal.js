@@ -88,7 +88,7 @@ const AddAppointmentModal = (props) => {
         }else {
             setTimeError(false)
         }
-        if (doctor.trim() && hospital.trim() && date.trim() && time.trim() && errorText === "") {
+        if (doctor?.trim() && hospital?.trim() && date?.trim() && time?.trim() && errorText === "") {
             try {
                 const data = {
                     doctor: doctor,
@@ -96,7 +96,7 @@ const AddAppointmentModal = (props) => {
                     date: formatDate(date),
                     time: tConvert(time)
                 };
-                await props.addAppointment(data)
+                await props?.addAppointment(data)
             } catch (error) {
                 alert(error)
             }
@@ -106,8 +106,8 @@ const AddAppointmentModal = (props) => {
     return (
         <div >
             <Modal
-                open={props.open}
-                onClose={props.onClose}
+                open={props?.open}
+                onClose={props?.onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -176,7 +176,7 @@ const AddAppointmentModal = (props) => {
                             <Button variant="outlined" color="secondary" type="submit" >
                                 Add
                             </Button>
-                            <Button onClick={props.onClose}>
+                            <Button onClick={props?.onClose}>
                                 Close
                             </Button>
                         </form>

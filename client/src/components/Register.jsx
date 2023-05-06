@@ -119,13 +119,13 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
     }
 
-    if (firstName.trim() && lastName.trim() && email.trim() && password.trim() && errorText === "") {
+    if (firstName?.trim() && lastName?.trim() && email?.trim() && password?.trim() && errorText === "") {
       let uuid;
       try {
         const resp = await doCreateUserWithEmailAndPassword(
-          email.trim(),
-          password.trim(),
-          firstName.trim()
+          email?.trim(),
+          password?.trim(),
+          firstName?.trim()
         );
         if (resp !== "") {
           uuid = resp;
@@ -136,10 +136,10 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
       try {
         const data = {
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          email: email.trim(),
-          profile: profile.trim(),
+          firstName: firstName?.trim(),
+          lastName: lastName?.trim(),
+          email: email?.trim(),
+          profile: profile?.trim(),
           age: age,
           uuid: uuid
         };
@@ -237,8 +237,8 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             sx={{ mb: 3 }}
           >
             {profiles.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+              <MenuItem key={option?.value} value={option?.value}>
+                {option?.label}
               </MenuItem>
             ))}
           </TextField>
@@ -271,7 +271,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state.users
+    userData: state?.users
   };
 };
 

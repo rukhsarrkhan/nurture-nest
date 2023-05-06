@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../firebase/Auth';
+import Loading from './Loading';
 import {
   Card,
   CardMedia,
@@ -13,6 +17,8 @@ import {
 import { getNannyDetailsAPICall } from '../redux/nannyDetails/nannyDetailsActions';
 
 const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
+  let navigate = useNavigate();
+  const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { nannyId } = useParams();
@@ -32,11 +38,15 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
     if (nannyId !== undefined) { fetchData(); }
   }, [nannyId]);
 
-  if (loading) {
+ 
+  if (!currentUser) {
+    return <Navigate to='/' />;
+}
+if (loading) {
     return (
-      <div>
-        <h2>Loading....</h2>
-      </div>
+        <div>
+            <Loading />
+        </div>
     );
   } else if (error) {
     return (
@@ -67,23 +77,23 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
                   </Typography>
                   <Typography variant='body2' color='text.secondary' sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}>
                     {nannyData && nannyData.firstName
-                      ? "First Name: " + nannyData.firstName
+                      ? "First Name: " + nannyData?.firstName
                       : "First Name: " + 'No data to display'}
                     <br />
-                    {nannyData && nannyData.lastName
-                      ? "Last Name: " + nannyData.lastName
+                    {nannyData && nannyData?.lastName
+                      ? "Last Name: " + nannyData?.lastName
                       : "Last Name: " + 'No data to display'}
                     <br />
-                    {nannyData && nannyData.email
-                      ? "Email: " + nannyData.email
+                    {nannyData && nannyData?.email
+                      ? "Email: " + nannyData?.email
                       : "Email: " + 'No data to display'}
                     <br />
-                    {nannyData && nannyData.age
-                      ? "Age: " + nannyData.age
+                    {nannyData && nannyData?.age
+                      ? "Age: " + nannyData?.age
                       : "Age: " + 'No data to display'}
                     <br />
                     {nannyData && nannyData.address
-                      ? "Address: " + nannyData.address
+                      ? "Address: " + nannyData?.address
                       : "Address: " + 'No data to display'}
                   </Typography>
                 </CardContent>
@@ -99,7 +109,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
 const mapStateToProps = state => {
 
   return {
-    nannyData: state.nanny.data
+    nannyData: state?.nanny?.data
   };
 };
 

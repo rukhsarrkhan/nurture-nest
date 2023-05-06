@@ -22,7 +22,6 @@ import CreateJobModal from "./modals/CreateJobModal";
 import DeleteJobModal from "./modals/DeleteJobModal";
 
 
-
 const CreateJob = ({ jobData, userRegistrationAPICall }) => {
   const { job } = useSelector((state) => state.jobs);
   const dispatch = useDispatch();
@@ -37,7 +36,7 @@ const CreateJob = ({ jobData, userRegistrationAPICall }) => {
 
   const createJob = async (data,parentId,childId) => {
     dispatch(createJobAPICall(data,parentId,childId));
-    // handleCloseCreateJob();    //this is needed and is only temporarily commented
+    handleCloseCreateJob();   
   };
 
 const deleteJob = async (jobId) => {
@@ -49,8 +48,8 @@ const deleteJob = async (jobId) => {
     {openCreateJobModal && <CreateJobModal
                         open={openCreateJobModal}
                         onClose={handleCloseCreateJob}
-                        parentId={"6436383d0505b9072ef561bd"}
-                        childId={"642920ef07dd90f433291af2"}
+                        parentId={"644c51471284f55284689de9"}
+                        childId={"64293eb2348b0b33a7777b16"}
                         createJob={createJob}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
@@ -59,7 +58,7 @@ const deleteJob = async (jobId) => {
 {openDeleteJobModal && <DeleteJobModal
                         open={openDeleteJobModal}
                         onClose={handleCloseDeleteJob}
-                        jobId={"644c264c8c407bf6d08675a7"}
+                        jobId={"644e193264cd9d3f4c012f41"}
                         deleteJob={deleteJob}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"

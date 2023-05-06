@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import { Typography } from '@mui/material';
 import { purple } from "@mui/material/colors";
 
-const SearchApplicants = (props) => {
+const SearchJobs = (props) => {
   const [searchInput, setSearchInput] = React.useState("");
 
   const handleSearch = (e) => {
@@ -36,4 +36,4 @@ const SearchApplicants = (props) => {
   );
 };
 
-export default SearchApplicants;
+export default Searchjobs;

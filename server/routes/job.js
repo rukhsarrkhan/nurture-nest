@@ -10,7 +10,7 @@ const userCollection = data.users;
 
 
 router
-    .route("/:parentId/:childId/createJob")
+    .route("/createJob/:parentId/:childId")
     .post(async (req, res) => {
         //Create Job from Parent side
         console.log("inside create Job route")
@@ -90,13 +90,13 @@ router
             const updateChild = await jobCollection.removeJobFromChild(deletedJob.childId.toString());
             return res.json(deletedJob);
         } catch (e) {
-            throw e.message;
+            // throw e.message;
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     });
 
 router
-    .route('/:jobId/apply/:nannyId')
+    .route('/apply/:jobId/:nannyId')
     .put(async (req, res) => {
         //Add an Nanny Application to a Job
         try {
@@ -136,13 +136,13 @@ router
             if (!applicationCreated) { throw "Couldn't Create Application"; }
             return res.json(applicationCreated);
         } catch (e) {
-            throw e.message
+            // throw e.message
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     })
 
 router
-    .route('/:jobId/searchApplicants/:searchTerm/:pageNum')
+    .route('/searchApplicants/:jobId/:searchTerm/:pageNum')
     .get(async (req, res) => {
         // Searching Applicats from Parent side
         let { jobId, searchTerm, pageNum } = req.params;
@@ -151,13 +151,13 @@ router
             if (!searchedApplicants) { throw "Couldn't get applications"; }
             return res.json(searchedApplicants);
         } catch (e) {
-            throw e;
+            // throw e;
             return res.status(400).json({ error: e });
         }
     });
 
 router
-    .route('/:jobId/allApplicants/:pageNum')
+    .route('/allApplicants/:jobId/:pageNum')
     .get(async (req, res) => {
         // Find all Applicants from Parent side
         let {jobId,pageNum} = req.params;
@@ -167,13 +167,13 @@ router
             if (!allApplicants) { throw "Couldn't get applications"; }
             return res.json(allApplicants);
         } catch (e) {
-            throw e;
+            // throw e;
             return res.status(400).json({ error: e });
         }
     });
 
 router
-    .route('/:jobId/setNanny/:nannyId')
+    .route('/setNanny/:jobId/:nannyId')
     .post(async (req, res) => {
         // Assign nanny to a specific job
         console.log("inside setNannytoJob route")
@@ -196,7 +196,7 @@ router
               const setChildToNanny = await userCollection.addChildToUser(nannyId,nannyJobSet.childId.toString(),child.name);
               return res.json(nannyJobSet);
         } catch (e) { 
-            throw e.message
+            // throw e.message
               return res.status(400).json({ error: e }); 
         }
     });
@@ -246,7 +246,7 @@ router
     });
 
 router
-    .route('/:nannyId/applications/myApplications/appliedJobs')
+    .route('/applications/myApplications/appliedJobs/:nannyId')
     .get(async (req, res) => {
         // Searching Applicants from Parent side
         let { nannyId } = req.params;
@@ -255,7 +255,7 @@ router
             if (!searchedApplicants) { throw "Couldn't get applications"; }
             return res.json(searchedApplicants);
         } catch (e) {
-            throw e.message
+            // throw e.message
             return res.status(400).json({ error: e });
         }
     });

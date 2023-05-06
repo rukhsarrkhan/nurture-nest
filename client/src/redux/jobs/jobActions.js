@@ -168,7 +168,7 @@ export const createJobAPICall = (obj, parentId, childId) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.post(`http://localhost:3000/job/${parentId}/${childId}/createJob`, obj);
+      let resp = await axios.post(`http://localhost:3000/job/createJob/${parentId}/${childId}`, obj);
       console.log("resp", resp);
       dispatch(createJobSuccess(resp.data));
     } catch (error) {
@@ -197,7 +197,7 @@ export const showAllApplicantsAPICall = (jobId, pageNum) => {
   return async (dispatch) => {
     try {
       console.log(jobId, pageNum, "hallooo here in showAllApplicants");
-      let resp = await axios.get(`http://localhost:3000/job/${jobId}/allApplicants/${pageNum}`);
+      let resp = await axios.get(`http://localhost:3000/job/allApplicants/${jobId}/${pageNum}`);
       console.log("axios call got:", resp);
       dispatch(showAllApplicantsSuccess(resp.data));
     } catch (error) {
@@ -212,7 +212,7 @@ export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
     try {
       dispatch(searchInitiate());
       console.log(jobId, searchTerm, pageNum, "hallooo here");
-      let resp = await axios.get(`http://localhost:3000/job/${jobId}/searchApplicants/${searchTerm}/${pageNum}`);
+      let resp = await axios.get(`http://localhost:3000/job/searchApplicants/${jobId}/${searchTerm}/${pageNum}`);
       console.log("axios call got:", resp);
       dispatch(searchApplicantsSuccess(resp.data));
     } catch (error) {
@@ -226,7 +226,7 @@ export const selectNannyAPICall = (jobId, nannyId) => {
   return async (dispatch) => {
     try {
       console.log("jobId:", jobId, "nannyId:", nannyId, "hallooo here");
-      let resp = await axios.post(`http://localhost:3000/job/${jobId}/setNanny/${nannyId}`);
+      let resp = await axios.post(`http://localhost:3000/job/setNanny/${jobId}/${nannyId}`);
       console.log("axios call got:", resp);
       dispatch(selectNannySuccess(resp.data));
     } catch (error) {
@@ -286,7 +286,7 @@ export const applyToJobAPICall = (obj, nannyId, jobId) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.put(`http://localhost:3000/job/${jobId}/apply/${nannyId}`, obj);
+      let resp = await axios.put(`http://localhost:3000/job/apply/${jobId}/${nannyId}`, obj);
       console.log("resp", resp);
       dispatch(applyToJobSuccess(resp.data));
     } catch (error) {

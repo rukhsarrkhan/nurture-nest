@@ -25,7 +25,7 @@ const AllApplicants = ({
   let { pageNum } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  let jobId = location.state.jobId;
+  let jobId = location?.state?.jobId;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -52,7 +52,7 @@ const AllApplicants = ({
   useEffect(() => {
     if (searchTerm) {
       try {
-        setSearchData(job.applicantsData);
+        setSearchData(job?.applicantsData);
         console.log(searchData)
         setLoading(false)
         setError(false)
@@ -63,8 +63,8 @@ const AllApplicants = ({
       }
     } else {
       try {
-        setSearchData(job.applicantsData);
-        setShowsData(job.applicantsData);
+        setSearchData(job?.applicantsData);
+        setShowsData(job?.applicantsData);
         setLoading(false);
         setError(false);
       } catch (e) {
@@ -152,12 +152,12 @@ const AllApplicants = ({
                   <CardHeader
                     avatar={
                       <Avatar sx={{ bgcolor: purple[700] }} aria-label="recipe">
-                        {show.nannyName[0]}
+                        {show?.nannyName[0]}
                       </Avatar>
                     }
                     title={show.nannyName}
                     subheader={`Applied to job on ${getEDTTimeFromISOString(
-                      show.applyDate
+                      show?.applyDate
                     )}`}
                   />
                 </div>
@@ -171,7 +171,7 @@ const AllApplicants = ({
                     Why me:
                   </Typography>
                   <Typography color="text.secondary" paragraph>
-                    {show.whySelect}
+                    {show?.whySelect}
                   </Typography>
                 </div>
                 <div style={{ display: "flex" }}>
@@ -184,7 +184,7 @@ const AllApplicants = ({
                     Distance from your house:
                   </Typography>
                   <Typography color="text.secondary" paragraph>
-                    {show.distance}
+                    {show?.distance}
                   </Typography>
                 </div>
                 <div style={{ display: "flex" }}>
@@ -197,9 +197,9 @@ const AllApplicants = ({
                     Experience:
                   </Typography>
                   <Typography color="text.secondary" paragraph>
-                    {show.experience.length > 250
-                      ? show.experience.substring(0, 250) + " ..."
-                      : show.experience}
+                    {show?.experience?.length > 250
+                      ? show?.experience?.substring(0, 250) + " ..."
+                      : show?.experience}
                   </Typography>
                 </div>
               </CardContent>

@@ -8,12 +8,12 @@ const validatePhoneNumber = async (phoneNumber, fieldName) => {
 require("dotenv").config();
 
 const isCityParentValid = async (city, fieldName) => {
-    if (city.trim().length < 5) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (city.trim().length < 5) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
     if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
 const isDistanceInputValid = async(distance,fieldName) => {
-    if (distance < 0) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (distance < 0) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
     if (!/^[0-9. ]+$/.test(distance)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 }
 
@@ -50,7 +50,7 @@ const execValdnForArr = async (arr, fieldName) => {
 
 const isDateValid = async (str, fieldName) => {
     // if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-    if (new Date(str) === "Invalid Date" || isNaN(new Date(str))) return { statusCode: 400, message: `${fieldName} is an invalid date.` };
+    if (new Date(str) === "Invalid Date" || isNaN(new Date(str))) throw { statusCode: 400, message: `${fieldName} is an invalid date.` };
 };
 
 const isUserLoggedIn = async (req) => {

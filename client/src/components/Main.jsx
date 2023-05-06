@@ -23,6 +23,9 @@ import Home from "../components/Home";
 import Applicant from '../components/Applicant';
 import AllApplicants from '../components/AllApplicants';
 import Logout from "../components/Logout";
+import MyJob from "./MyJob";
+import ViewAllJobs from "./ViewAllJobs";
+import ViewJobDetails from "./ViewJobDetails";
 import NannyDetails from "./NannyDetails";
 import UploadImage from "./UploadImage";
 import socketIO from 'socket.io-client';
@@ -58,11 +61,13 @@ const Main = ({ userData }) => {
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
                     <Route path="/chat" element={<ChatPage socket={socket} />} />
-                    <Route path='/job/:jobId/allApplicants/:pageNum' element={<AllApplicants />} />
-                    <Route path='/job/:jobId/applicant/:applicantId' element={<Applicant />} />
+                    <Route path='/job/allApplicantions/:pageNum' element={<AllApplicants />} />
+                    <Route path='/job/applications/viewApplication' element={<Applicant />} />
                     <Route path="/createJob" element={<CreateJob />} />
-                    <Route path="/uploadImage" element={<UploadImage />} />
-
+                    <Route path="/myJob" element={<MyJob />} />
+                    <Route path='/job/viewAllJobs/:pageNum' element={<ViewAllJobs />} />
+                    <Route path='/job/viewJobDetails' element={<ViewJobDetails />} />
+                    <Route path="/uploadImage" element={<UploadImage/>} />
                 </Routes>
             </div>
         </div >

@@ -38,7 +38,7 @@ export const getDashboardAPICall = (childId) => {
   return async (dispatch) => {
     try {
       let resp = await axios.get(`http://localhost:3000/child/${childId}`);
-      dispatch(getDashboardSuccess(resp.data));
+      dispatch(getDashboardSuccess(resp?.data));
     } catch (error) {
       dispatch(getDashboardFailure(error));
     }

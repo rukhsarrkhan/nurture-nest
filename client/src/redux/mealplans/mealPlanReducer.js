@@ -35,7 +35,7 @@ import {
       case GET_MEALPLAN_FAILURE:
         return {
           ...state,
-          error: payload.response.data,
+          error: payload?.response?.data,
         };
         case SET_MEALPLAN_SUCCESS:
           return {
@@ -47,7 +47,7 @@ import {
         case SET_MEALPLAN_FAILURE:
           return {
             ...state,
-            error: payload.response.data,
+            error: payload?.response?.data,
           };
           case MEAL_DELETE_SUCCESS:
             return {
@@ -59,7 +59,7 @@ import {
             case MEAL_DELETE_FAILURE:
               return {
                 ...state,
-                error: payload.response.data,
+                error: payload?.response?.data,
               };
       default:
         return state;

@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Navigate } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Grid } from '@mui/material';
 import '../App.css';
@@ -15,24 +15,20 @@ import { appointmentSetAPICall } from '../redux/appointments/appointmentActions'
 import AddIcon from '@mui/icons-material/Add';
 import DeleteAppointmentModal from './modals/DeleteAppointmentModal';
 import Button from '@mui/material/Button';
-
+import { useNavigate } from 'react-router-dom';
 import image from '../img/appointmentImage.png';
 import AddAppointmentModal from './modals/AddAppointmentModal';
 import { delAppointmentAPICall } from '../redux/appointments/appointmentActions';
 import Loading from './Loading';
-
-const submitButton = {
-    position: 'absolute',
-    right: '5%',
-    top: '95%',
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-};
+import { AuthContext } from '../firebase/Auth';
 
 const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall }) => {
+    let navigate = useNavigate();
+    const { currentUser } = useContext(AuthContext);
     let card = null;
     let { childId } = useParams();
+    let items = JSON.parse(localStorage.getItem("userData"))
+    let profile = items?.profile
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -66,7 +62,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
     const buildCard = (appointments) => {
         return (
-            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={appointments && appointments._id}>
+            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={appointments && appointments?._id}>
                 <Card
                     variant='outlined'
                     sx={{
@@ -79,8 +75,8 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                             '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
                     }}>
                     <CardHeader
-                        title={appointments.doctor}
-                        subheader={" At " + appointments.hospital + " On " + appointments.date}
+                        title={appointments?.doctor}
+                        subheader={" At " + appointments?.hospital + " On " + appointments?.date}
                     />
                     <CardMedia
                         component="img"
@@ -88,9 +84,13 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         image={image}
                     />
                     <CardActions disableSpacing>
-                        <IconButton onClick={() => handleOpen2(appointments && appointments._id)} color='textSecondary' aria-label="Delete Appointment">
-                            <DeleteIcon />
-                        </IconButton>
+
+                        {profile === "PARENT" ? (
+                            <IconButton onClick={() => handleOpen2(appointments && appointments?._id)} color='textSecondary' aria-label="Delete Vaccine">
+                                <DeleteIcon />
+                            </IconButton>
+                        ) : null}
+
                     </CardActions>
                 </Card>
             </Grid >
@@ -101,34 +101,43 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
     card =
         appointmentData &&
-        appointmentData.data &&
-        appointmentData.data.map((appointments) => {
+        appointmentData?.data &&
+        appointmentData?.data?.map((appointments) => {
             if (appointments !== null) {
                 return buildCard(appointments);
 
             }
         });
 
+
+    if (!currentUser) {
+        return <Navigate to='/' />;
+    }
     if (loading) {
         return (
             <div>
                 <Loading />
             </div>
         );
-        // } else if (error) {
-        //     return (
-        //         <div>
-        //             <h2>Error 404: No data for this page</h2>
-        //         </div>
-        //     );
+    } else if (errorPage) {
+        return (
+            <div>
+                <h2>Error 404: No data for this page</h2>
+            </div>
+        );
 
     } else {
         return (
             <div>
                 <div>
                     <br />
-                    <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                        Add Appointment
+                    {profile === "PARENT" ? (
+                        <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
+                            Add Appointment
+                        </Button>
+                    ) : null}
+                    <Button variant="contained" onClick={() => { navigate(-1) }} sx={{ marginLeft: '10px' }}>
+                        Back
                     </Button>
                     <br />
                     <br />
@@ -171,8 +180,8 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
 const mapStateToProps = state => {
     return {
-        userData: state.users,
-        appointmentData: state.appointments
+        userData: state?.users,
+        appointmentData: state?.appointments
 
     };
 };

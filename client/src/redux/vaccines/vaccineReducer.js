@@ -35,7 +35,7 @@ export const vaccineReducer = (state = initialState, action) => {
     case GET_VACCINE_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data,
       };
     case SET_VACCINE_SUCCESS:
       return {
@@ -47,7 +47,7 @@ export const vaccineReducer = (state = initialState, action) => {
     case SET_VACCINE_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data,
       };
       case  VACCINE_DELETE_SUCCESS:
         return {
@@ -59,7 +59,7 @@ export const vaccineReducer = (state = initialState, action) => {
         case VACCINE_DELETE_FAILURE:
           return {
             ...state,
-            error: payload.response.data,
+            error: payload?.response?.data,
           };
     default:
       return state;

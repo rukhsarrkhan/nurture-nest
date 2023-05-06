@@ -20,8 +20,8 @@ const DeleteAppointmentModal = (props) => {
     return (
         <div>
             <Modal
-                open={props.open}
-                onClose={props.onClose}
+                open={props?.open}
+                onClose={props?.onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -29,10 +29,10 @@ const DeleteAppointmentModal = (props) => {
                     <p className='P-title-home'>
                         Are you sure you want to delete this?
                     </p>
-                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props.deleteAppointment(props._id)}>
+                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props?.deleteAppointment(props?._id)}>
                         Yes
                     </Button>
-                    <Button onClick={props.onClose}>
+                    <Button onClick={props?.onClose}>
                         No
                     </Button>
                 </Box>

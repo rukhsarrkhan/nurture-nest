@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
-import { useNavigate } from 'react-router-dom';
 import image from '../../img/vaccineimage.png'
 
 
@@ -39,7 +38,6 @@ const AddModal = (props) => {
     const [dateError, setDateError] = useState(false);
     const [dosesError, setDosesError] = useState(false);
     const [errorText, setErrorText] = useState("");
-    let navigate = useNavigate()
 
 
     const handleSubmit = async (event) => {
@@ -70,27 +68,26 @@ const AddModal = (props) => {
             return
         }
 
-        if (name.trim() && date.trim() && doses.trim() && errorText === "") {
+        if (name?.trim() && date?.trim() && doses?.trim() && errorText === "") {
             try {
                 const data = {
                     name: name,
                     date: formatDate(date),
                     doses: doses
                 };
-                await props.addVaccine(data)
+                await props?.addVaccine(data)
             } catch (error) {
                 alert(error)
             }
         }
-        navigate(`/vaccine/${props.childId}`)
     }
 
 
     return (
         <div>
             <Modal
-                open={props.open}
-                onClose={props.onClose}
+                open={props?.open}
+                onClose={props?.onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -144,7 +141,7 @@ const AddModal = (props) => {
                         <Button variant="outlined" color="secondary" type="submit">
                             Add
                         </Button>
-                        <Button onClick={props.onClose}>
+                        <Button onClick={props?.onClose}>
                             Close
                         </Button>
                     </form>

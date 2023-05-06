@@ -50,23 +50,6 @@ const AddChildModal = (props) => {
         }
     };
 
-    const handleImageSubmit = async () => {
-        try {
-            if (!imageFile) {
-                setImageError("No image available");
-                setImagePreview(null);
-                return;
-            }
-            const formData = new FormData();
-            formData.append("image", imageFile);
-            //TODO add reducer call
-            // await updateProfileImageAPICall(userId, formData);
-            // const response = await axios.put("http://localhost:3000/users/image", formData);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const validation = async (field, valFunc) => {
         //need to change valdn function.. it'll fail if str is empty spaces.
         let fieldVal = await helpers.execValdnAndTrim(field);
@@ -133,28 +116,6 @@ const AddChildModal = (props) => {
     return (
         <div>
             <Modal open={props?.open} onClose={props?.onClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
-                {/* <div className="profile" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        {image ? (
-                            <Avatar src={image} alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
-                        ) : imagePreview ? (
-                            <Avatar src={imagePreview} alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
-                        ) : (
-                            <Avatar alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
-                        )}
-                        <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }}>
-                            Upload Image
-                            <input type="file" hidden onChange={handleImageChange} accept="image/*" />
-                        </Button>
-                        {imageError && <Typography color="error">{imageError}</Typography>}
-                        {imagePreview && (
-                            <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit}>
-                                Save Image
-                            </Button>
-                        )}
-                    </Box>
-                </div> */}
-
                 <Container maxWidth="sm">
                     <Box className="appointmentForm" sx={style}>
                         <p className="P-title-home">Add Child</p>
@@ -167,10 +128,8 @@ const AddChildModal = (props) => {
                                 ) : (
                                     <Avatar alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
                                 )}
-                                <Button variant="contained" component="label" sx={{ mt: 1, fontSize: "0.8rem" }}>
-                                    Upload Image
-                                    <input type="file" hidden onChange={handleImageChange} accept="image/*" required />
-                                </Button>
+
+                                <input type="file" onChange={handleImageChange} accept="image/*" required />
                                 {imageError && <Typography color="error">{imageError}</Typography>}
                                 {/* {imagePreview && (
                                 <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit}>
@@ -232,7 +191,6 @@ const AddChildModal = (props) => {
                             <Button variant="outlined" color="secondary" type="submit">
                                 Add
                             </Button>
-                            {/* <Button onClick={props.onClose}>Close</Button> */}
                         </form>
                     </Box>
                 </Container>

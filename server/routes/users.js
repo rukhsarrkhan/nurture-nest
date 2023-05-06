@@ -9,6 +9,7 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const gm = require("gm").subClass({ imageMagick: true });
 const mime = require("mime");
+const { getChildrenByIds } = require("../data/child");
 
 aws.config.update({
     secretAccessKey: process.env.ACCESS_SECRET,
@@ -266,6 +267,34 @@ router.route("/delete/:filename").delete(async (req, res) => {
     const filename = req.params.filename;
     await s3.deleteObject({ Bucket: BUCKET, Key: filename }).promise();
     return res.status(200).json("File Deleted!");
+});
+
+router.route("/children/:userId").get(async (req, res) => {
+    try {
+        let userId = req.params.userId;
+        userId = await helper.execValdnAndTrim(userId, "userId");
+        if (!ObjectId.isValid(userId)) {
+            throw { statusCode: 400, message: "userId is not valid" };
+        }
+        const userObj = await userData.getUserById(userId);
+        if (!userObj || userObj === null || userObj === undefined) throw { statusCode: 404, message: `No user exists with that id` };
+        let childrenIdArr = [];
+        if (userObj.profile === global.userTypeNanny) {
+            childrenIdArr = userObj.n_childIds;
+        } else if (userObj.profile === global.userTypeParent) {
+            childrenIdArr = userObj.p_childIds;
+        }
+        if (childrenIdArr.length === 0) {
+            throw { statusCode: 404, message: `No children assigned to the user` };
+        }
+        const childrenObjArr = await getChildrenByIds(childrenIdArr);
+        if (childrenObjArr.length === 0) {
+            throw { statusCode: 404, message: `No children assigned to the user` };
+        }
+        return res.json(childrenObjArr);
+    } catch (e) {
+        return res.status(404).json({ error: e });
+    }
 });
 
 module.exports = router;

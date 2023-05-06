@@ -4,21 +4,22 @@ import { connect } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
 import CardHeader from "@mui/material/CardHeader";
 import CardActions from "@mui/material/CardActions";
-import { Card, CardMedia, Grid, Button } from "@mui/material";
+import { Card, CardMedia, Grid, Button, CardActionArea, CardContent, Typography } from "@mui/material";
 import { AuthContext } from "../firebase/Auth";
-import { gethomeAPICall } from "../redux/home/homeActions";
-import childImage from "../img/childImage.png";
 import Loading from "./Loading";
 import AddIcon from "@mui/icons-material/Add";
+import childImage from "../img/childImage.png";
 import AddChildModal from "./modals/AddChildModal";
-import { createChildAPICall, setChildSuccess, setChildFailure } from "../redux/child/childActions";
+import { createChildAPICall, setChildSuccess, setChildFailure, fetchChildrenAPICall } from "../redux/child/childActions";
+import { setUserProfileAPICall } from "../redux/users/userActions";
 
-const Home = ({ gethomeAPICall, childData, id, createChildAPICall }) => {
-    console.log(id, " parent Id");
-    let items = JSON.parse(localStorage.getItem("userData"));
-    let profile = items?.profile;
+const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall }) => {
+    console.log(childData, " ChildData");
+    const [userObjData, setuserObjData] = useState(undefined);
+    const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [errorText, setErrorText] = useState("");
     const [modalOpen, setModalOpen] = useState(false); // new state to control modal visibility
     let card = null;
     const { currentUser } = useContext(AuthContext);
@@ -26,57 +27,116 @@ const Home = ({ gethomeAPICall, childData, id, createChildAPICall }) => {
     useEffect(() => {
         async function fetchData() {
             try {
-                gethomeAPICall(id);
-                setLoading(false);
-                setError(false);
+                await setUserProfileAPICall(id);
             } catch (e) {
+                setuserObjData(undefined);
                 setLoading(false);
                 setError(true);
+                setErrorText(e.message ? e.message : e);
             }
         }
-        if (id !== undefined) {
-            fetchData();
+        async function fetchChildData() {
+            try {
+                await fetchChildrenAPICall(id);
+            } catch (e) {
+                setChildObjArr([]);
+                setLoading(false);
+                setError(true);
+                setErrorText(e.message ? e.message : e);
+            }
         }
-    }, [id]);
+        if (id !== undefined && userData.userProfile === null) {
+            fetchData();
+            fetchChildData();
+        }
+        if (userData.userProfile) {
+            setuserObjData(userData.userProfile);
+            setLoading(false);
+        }
+    }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
+    useEffect(() => {
+        if (childData) {
+            console.log(childData, " ChildData here");
+            setChildObjArr(childData);
+        }
+    }, [childData]);
 
     const buildCard = (child) => {
-        console.log(child, " CHild");
         return (
-            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={child}>
-                <Link to={`/dashboard/${child}`}>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            maxWidth: 345,
-                            height: "auto",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            borderRadius: 5,
-                            boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-                        }}
-                    >
-                        <CardHeader title={child} />
-                        <CardMedia component="img" height="194" src={child.photoUrl} />
-                        <CardActions disableSpacing></CardActions>
-                    </Card>
-                </Link>
+            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={child?._id}>
+                <Card
+                    variant="outlined"
+                    sx={{
+                        maxWidth: 345,
+                        height: "auto",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                        borderRadius: 5,
+                        boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
+                    }}
+                >
+                    <CardActionArea>
+                        <Link to={`/dashboard/${child?._id}`}>
+                            <CardMedia
+                                sx={{
+                                    height: "100%",
+                                    width: "100%",
+                                }}
+                                component="img"
+                                image={child?.photoUrl ? child?.photoUrl : childImage}
+                                title="show image"
+                            />
+
+                            <CardContent>
+                                <Typography
+                                    sx={{
+                                        borderBottom: "1px solid #1e8678",
+                                        fontWeight: "bold",
+                                        color: "#000000",
+                                    }}
+                                    gutterBottom
+                                    variant="h6"
+                                    component="h2"
+                                >
+                                    {child?.name}
+                                </Typography>
+                                <Typography
+                                    variant="body3"
+                                    color="textSecondary"
+                                    component="span"
+                                    sx={{
+                                        borderBottom: "1px solid #1e8678",
+                                        color: "#000000",
+                                    }}
+                                >
+                                    {child?.age}
+                                </Typography>
+                                <br />
+                                <Typography
+                                    variant="body3"
+                                    color="textSecondary"
+                                    component="span"
+                                    sx={{
+                                        borderBottom: "1px solid #1e8678",
+                                        color: "#000000",
+                                    }}
+                                >
+                                    {child?.sex}
+                                </Typography>
+                            </CardContent>
+                        </Link>
+                    </CardActionArea>
+                </Card>
             </Grid>
         );
     };
-    //Child only contains id, will need to check how to get objects
-    if (profile === "NANNY") {
-        card = childData?.data?.n_childIds?.map((child) => {
-            if (child !== null) {
-                return buildCard(child);
-            }
+
+    card =
+        childObjArr &&
+        childObjArr.length > 0 &&
+        childObjArr.map((child) => {
+            return buildCard(child);
         });
-    } else {
-        card = childData?.data?.p_childIds?.map((child) => {
-            if (child !== null) {
-                return buildCard(child);
-            }
-        });
-    }
 
     const handleModalOpen = () => {
         setModalOpen(true);
@@ -108,7 +168,7 @@ const Home = ({ gethomeAPICall, childData, id, createChildAPICall }) => {
         };
         return (
             <div>
-                {profile === "PARENT" && (
+                {userObjData?.profile === "PARENT" && (
                     <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddChildClick}>
                         Add Child
                     </Button>
@@ -141,14 +201,16 @@ const Home = ({ gethomeAPICall, childData, id, createChildAPICall }) => {
 
 const mapStateToProps = (state) => {
     return {
-        childData: state?.home,
+        userData: state.users,
+        childData: state.child.childObjs,
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        gethomeAPICall: (id) => dispatch(gethomeAPICall(id)),
+        setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
         createChildAPICall: (obj) => dispatch(createChildAPICall(obj)),
+        fetchChildrenAPICall: (id) => dispatch(fetchChildrenAPICall(id)),
     };
 };
 

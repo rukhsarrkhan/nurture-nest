@@ -99,11 +99,12 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
                         if (!childCreated) {
                             throw { statusCode: 500, message: "Internal Server error" };
                         }
+                        childCreated._id = childCreated._id.toString();
                         let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString());
                         if (userUpdated) {
-                            parentObj = await userData.getUserById(parentId);
+                            // parentObj = await userData.getUserById(parentId);
                         }
-                        return res.json(parentObj);
+                        return res.json(childCreated);
                     } catch (error) {
                         return res.status(500).json({ title: "Error", message: "An unexpected error occurred" });
                     }

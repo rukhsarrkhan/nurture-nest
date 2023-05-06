@@ -164,7 +164,7 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
         <br />
         {profile === "PARENT" ? (
                         <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                        Add Vaccine
+                        Add Meal
                     </Button>
                     ) : null}
 

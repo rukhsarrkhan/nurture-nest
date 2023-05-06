@@ -79,7 +79,7 @@ const Login = ({ userData, userLoginAPICall }) => {
   };
 
   if (currentUser) {
-    return <Navigate to='/' />;
+    return <Navigate to='/home' />;
   }
 
   return (

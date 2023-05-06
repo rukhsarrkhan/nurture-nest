@@ -133,7 +133,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                     <br />
                     {profile === "PARENT" ? (
                         <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                            Add Vaccine
+                            Add Appointment
                         </Button>
                     ) : null}
                     <Button variant="contained" onClick={() => { navigate(-1) }} sx={{ marginLeft: '10px' }}>

@@ -1,5 +1,30 @@
 import axios from "axios";
-import { CREATE_JOB, CREATE_JOB_SUCCESS, CREATE_JOB_FALIURE, DELETE_JOB_SUCCESS, DELETE_JOB_FALIURE, SHOW_ALL_APPLICANTS_SUCCESS, SEARCH_INITIATE, SHOW_ALL_APPLICANTS_FAILURE, SEARCH_APPLICANTS_SUCCESS, SEARCH_APPLICANTS_FAILURE, SELECT_NANNY_SUCCESS, SELECT_NANNY_FAILURE, GET_MY_JOB_SUCCESS, GET_MY_JOB_FAILURE, GET_ALL_JOBS_SUCCESS, GET_ALL_JOBS_FAILURE, SEARCH_JOBS_SUCCESS, SEARCH_JOBS_FAILURE, APPLY_TO_JOB_SUCCESS, APPLY_TO_JOB_FAILURE,VIEW_ALL_MY_APPLIED_JOBS_SUCCESS,VIEW_ALL_MY_APPLIED_JOBS_FAILURE ,EXIT_JOB_SUCCESS ,EXIT_JOB_FAILURE } from "./jobActionTypes";
+import {
+  CREATE_JOB,
+  CREATE_JOB_SUCCESS,
+  CREATE_JOB_FALIURE,
+  DELETE_JOB_SUCCESS,
+  DELETE_JOB_FALIURE,
+  SHOW_ALL_APPLICANTS_SUCCESS,
+  SEARCH_INITIATE,
+  SHOW_ALL_APPLICANTS_FAILURE,
+  SEARCH_APPLICANTS_SUCCESS,
+  SEARCH_APPLICANTS_FAILURE,
+  SELECT_NANNY_SUCCESS,
+  SELECT_NANNY_FAILURE,
+  GET_MY_JOB_SUCCESS,
+  GET_MY_JOB_FAILURE,
+  GET_ALL_JOBS_SUCCESS,
+  GET_ALL_JOBS_FAILURE,
+  SEARCH_JOBS_SUCCESS,
+  SEARCH_JOBS_FAILURE,
+  APPLY_TO_JOB_SUCCESS,
+  APPLY_TO_JOB_FAILURE,
+  VIEW_ALL_MY_APPLIED_JOBS_SUCCESS,
+  VIEW_ALL_MY_APPLIED_JOBS_FAILURE,
+  EXIT_JOB_SUCCESS,
+  EXIT_JOB_FAILURE,
+} from "./jobActionTypes";
 
 export const searchInitiate = () => {
   return {
@@ -34,8 +59,6 @@ export const deleteJobFailure = (error) => {
   };
 };
 
-
-
 export const showAllApplicantsSuccess = (job) => {
   return {
     type: SHOW_ALL_APPLICANTS_SUCCESS,
@@ -63,7 +86,6 @@ export const searchApplicantsFailure = (error) => {
     payload: error,
   };
 };
-
 
 export const selectNannySuccess = (job) => {
   return {
@@ -121,7 +143,7 @@ export const searchJobsFailure = (error) => {
   };
 };
 
-export const  viewAllMyAppliedJobsSuccess = (job) => {
+export const viewAllMyAppliedJobsSuccess = (job) => {
   return {
     type: VIEW_ALL_MY_APPLIED_JOBS_SUCCESS,
     payload: job,
@@ -149,7 +171,7 @@ export const exitJobFailure = (error) => {
   };
 };
 
-export const  applyToJobSuccess = (job) => {
+export const applyToJobSuccess = (job) => {
   return {
     type: APPLY_TO_JOB_SUCCESS,
     payload: job,
@@ -168,7 +190,10 @@ export const createJobAPICall = (obj, parentId, childId) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.post(`http://localhost:3000/job/createJob/${parentId}/${childId}`, obj);
+      let resp = await axios.post(
+        `http://localhost:3000/job/createJob/${parentId}/${childId}`,
+        obj
+      );
       console.log("resp", resp);
       dispatch(createJobSuccess(resp.data));
     } catch (error) {
@@ -197,7 +222,9 @@ export const showAllApplicantsAPICall = (jobId, pageNum) => {
   return async (dispatch) => {
     try {
       console.log(jobId, pageNum, "hallooo here in showAllApplicants");
-      let resp = await axios.get(`http://localhost:3000/job/allApplicants/${jobId}/${pageNum}`);
+      let resp = await axios.get(
+        `http://localhost:3000/job/allApplicants/${jobId}/${pageNum}`
+      );
       console.log("axios call got:", resp);
       dispatch(showAllApplicantsSuccess(resp.data));
     } catch (error) {
@@ -212,7 +239,9 @@ export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
     try {
       dispatch(searchInitiate());
       console.log(jobId, searchTerm, pageNum, "hallooo here");
-      let resp = await axios.get(`http://localhost:3000/job/searchApplicants/${jobId}/${searchTerm}/${pageNum}`);
+      let resp = await axios.get(
+        `http://localhost:3000/job/searchApplicants/${jobId}/${searchTerm}/${pageNum}`
+      );
       console.log("axios call got:", resp);
       dispatch(searchApplicantsSuccess(resp.data));
     } catch (error) {
@@ -226,7 +255,9 @@ export const selectNannyAPICall = (jobId, nannyId) => {
   return async (dispatch) => {
     try {
       console.log("jobId:", jobId, "nannyId:", nannyId, "hallooo here");
-      let resp = await axios.post(`http://localhost:3000/job/setNanny/${jobId}/${nannyId}`);
+      let resp = await axios.post(
+        `http://localhost:3000/job/setNanny/${jobId}/${nannyId}`
+      );
       console.log("axios call got:", resp);
       dispatch(selectNannySuccess(resp.data));
     } catch (error) {
@@ -256,7 +287,9 @@ export const getallJobsAPICall = (pageNum) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.get(`http://localhost:3000/job/getJobs/AllJobs/${pageNum}`);
+      let resp = await axios.get(
+        `http://localhost:3000/job/getJobs/AllJobs/${pageNum}`
+      );
       console.log("resp", resp);
       dispatch(getAllJobsSuccess(resp.data));
     } catch (error) {
@@ -271,7 +304,9 @@ export const searchJobsAPICall = (searchTerm, pageNum) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.get(`http://localhost:3000/job/searchJobs/${searchTerm}/${pageNum}`);
+      let resp = await axios.get(
+        `http://localhost:3000/job/searchJobs/${searchTerm}/${pageNum}`
+      );
       console.log("resp", resp);
       dispatch(searchJobsSuccess(resp.data));
     } catch (error) {
@@ -286,7 +321,10 @@ export const applyToJobAPICall = (obj, nannyId, jobId) => {
   return async (dispatch) => {
     try {
       console.log("now");
-      let resp = await axios.put(`http://localhost:3000/job/apply/${jobId}/${nannyId}`, obj);
+      let resp = await axios.put(
+        `http://localhost:3000/job/apply/${jobId}/${nannyId}`,
+        obj
+      );
       console.log("resp", resp);
       dispatch(applyToJobSuccess(resp.data));
     } catch (error) {

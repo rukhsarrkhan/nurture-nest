@@ -30,7 +30,7 @@ const initialState = {
   data: {},
   applicantsData: [],
   jobsData: [],
-  myAppliedJobs:[],
+  myAppliedJobs: [],
   error: "",
   status: "",
 };
@@ -180,18 +180,18 @@ export const jobReducer = (state = initialState, action) => {
         ...state,
         error: payload.response.data,
       };
-      case EXIT_JOB_SUCCESS:
-        return {
-          ...state,
-          error: "",
-          status: payload,
-        };
-      case EXIT_JOB_FAILURE:
-        console.log(payload);
-        return {
-          ...state,
-          error: payload.response.data,
-        };
+    case EXIT_JOB_SUCCESS:
+      return {
+        ...state,
+        error: "",
+        status: payload,
+      };
+    case EXIT_JOB_FAILURE:
+      console.log(payload);
+      return {
+        ...state,
+        error: payload.response.data,
+      };
     default:
       return state;
   }

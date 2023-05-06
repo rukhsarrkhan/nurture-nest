@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
-import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography,} from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "react-redux";
 import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
@@ -15,7 +22,6 @@ import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import Loading from "./Loading";
 import Container from "@mui/material/Container";
 import "../App.css";
-
 
 const AllApplicants = ({
   job,
@@ -40,7 +46,7 @@ const AllApplicants = ({
   useEffect(() => {
     try {
       if (pageNum && jobId) {
-        setLoading(true)
+        setLoading(true);
         showAllApplicantsAPICall(jobId, pageNum);
       }
     } catch (e) {
@@ -53,13 +59,13 @@ const AllApplicants = ({
     if (searchTerm) {
       try {
         setSearchData(job?.applicantsData);
-        console.log(searchData)
-        setLoading(false)
-        setError(false)
+        console.log(searchData);
+        setLoading(false);
+        setError(false);
       } catch (e) {
-        setError(true)
-        setErrorMsg(e)
-        setLoading(false)
+        setError(true);
+        setErrorMsg(e);
+        setLoading(false);
       }
     } else {
       try {
@@ -68,9 +74,9 @@ const AllApplicants = ({
         setLoading(false);
         setError(false);
       } catch (e) {
-        setError(true)
-        setErrorMsg(e)
-        setLoading(false)
+        setError(true);
+        setErrorMsg(e);
+        setLoading(false);
       }
     }
   }, [job]);
@@ -84,9 +90,9 @@ const AllApplicants = ({
           searchApplicantsAPICall(jobId, searchTerm, pageNum);
         }
       } catch (e) {
-        setError(true)
-        setErrorMsg(e)
-        setLoading(false)
+        setError(true);
+        setErrorMsg(e);
+        setLoading(false);
         console.log(e);
       }
     }
@@ -247,7 +253,7 @@ const AllApplicants = ({
   if (loading) {
     return (
       <div>
-        <Loading/>
+        <Loading />
       </div>
     );
   } else if (error) {

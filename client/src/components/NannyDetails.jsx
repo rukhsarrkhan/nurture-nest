@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -15,19 +15,23 @@ import {
   Typography
 } from '@mui/material';
 import { getNannyDetailsAPICall } from '../redux/nannyDetails/nannyDetailsActions';
+import { useLocation } from 'react-router-dom';
 
-const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
+const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
+
+  const location = useLocation();
   let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [activeChild, setActiveChild] = useState("");
   let { nannyId } = useParams();
   let card = null;
-
+  let childData = location.state.childId;
   useEffect(() => {
     async function fetchData() {
       try {
-        getNannyDetailsAPICall(nannyId);
+        getNannyDetailsAPICall(nannyId, childData);
         setLoading(false);
         setError(false);
       } catch (e) {
@@ -38,15 +42,15 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
     if (nannyId !== undefined) { fetchData(); }
   }, [nannyId]);
 
- 
+
   if (!currentUser) {
     return <Navigate to='/' />;
-}
-if (loading) {
+  }
+  if (loading) {
     return (
-        <div>
-            <Loading />
-        </div>
+      <div>
+        <Loading />
+      </div>
     );
   } else if (error) {
     return (
@@ -56,7 +60,7 @@ if (loading) {
     );
   } else {
     return (
-      <div>
+      <div>;
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={nannyData?.firstName?.toString()}>
             <Card sx={{ maxWidth: 345, borderRadius: 16 }}>
@@ -115,9 +119,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getNannyDetailsAPICall: (nannyId) => dispatch(getNannyDetailsAPICall(nannyId)),
+    getNannyDetailsAPICall: (nannyId, childId) => dispatch(getNannyDetailsAPICall(nannyId, childId)),
   };
-}
+};
 
 export default connect(
   mapStateToProps,

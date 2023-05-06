@@ -125,6 +125,7 @@ router
             }
             return res.json(childObj);
         } catch (e) {
+            console.log("e",e)
             return res.status(e.statusCode).json({ message: e.message });
         }
     })

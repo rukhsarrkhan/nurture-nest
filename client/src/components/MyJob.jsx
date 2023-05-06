@@ -17,7 +17,8 @@ const MyJob = ({ job, getMyJobAPICall }) => {
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setError] = useState(true);
+  const [error, setError] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(true);
   console.log(location.state,"appID heree")
 //   let application = location.state.application
   let jobId = "6444dc31477d85ad6f7103db"
@@ -30,11 +31,11 @@ useEffect(() => {
       console.log("1st use effect fired", jobId, pageNum);
       if (jobId) {
         getMyJobAPICall(jobId);
-        console.log()
       }
     } catch (e) {
       console.log("error===>", e);
       setError(true);
+      setErrorMsg(e)
       setLoading(false);
     }
   }, [jobId]);
@@ -45,27 +46,20 @@ useEffect(() => {
         setShowData(job.data);
         setLoading(false);
         setError(false);
-      } catch (e) {
-
+      }catch (e) {
+        setError(true)
+        setErrorMsg(e)
+        setLoading(false)
       }
-
   }, [job]);
 
-
   if (loading) {
-    if(errorMsg){
-      return (
-        <div>
-          <h2>Error404: No data found</h2>
-        </div>
-      );
-    }
     return (
       <div>
         <h2>Loading....</h2>
       </div>
     );
-  }else if(errorMsg){
+  }else if(error){
     return (
       <div>
         <h2>Error404: No data found</h2>
@@ -96,7 +90,7 @@ useEffect(() => {
       </CardContent>
       <CardContent>
         <div style={{ display: "flex" }}>
-        <Typography paragraph color="text.primary">
+        <Typography paragraph color="text.primary"> 
           Description:
         </Typography>
         <Typography paragraph color="text.secondary" sx={{paddingLeft:"7px"}}>

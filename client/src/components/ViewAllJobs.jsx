@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-  getAlertTitleUtilityClass,
-} from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, getAlertTitleUtilityClass,} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from 'react-redux';
-// import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
-// import { searchApplicantsAPICall } from "../redux/jobs/jobActions";
 import CardHeader from "@mui/material/CardHeader";
 import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
-import { Navigate, useNavigate } from "react-router-dom";
-import Container from "@mui/material/Container";
+import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
 
@@ -32,7 +21,8 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
   // const job = useSelector((state) => state.jobs);
   // const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setError] = useState(true);
+  const [error, setError] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
   const [searchData, setSearchData] = useState(undefined);
   const [showsData, setShowsData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,8 +39,8 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
         getallJobsAPICall(pageNum);
       }
     } catch (e) {
-      console.log("error===>", e);
       setError(true);
+      setErrorMsg(e)
       setLoading(false);
     }
   }, [pageNum]);
@@ -63,18 +53,23 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
     if (searchTerm) {
       try {
         setSearchData(job.jobsData);
+        setLoading(false);
+        setError(false);
       } catch (e) {
-
+        setError(true);
+        setErrorMsg(e)
+        setLoading(false);
       }
     } else {
       try {
         setSearchData(job.jobsData);
-
         setShowsData(job.jobsData);
         setLoading(false);
         setError(false);
       } catch (e) {
-
+        setError(true);
+        setErrorMsg(e)
+        setLoading(false);
       }
     }
   }, [job]);
@@ -86,9 +81,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
     async function fetchData() {
       try {
         console.log("search use effect fired", pageNum);
-        if (pageNum) {
-          searchJobsAPICall(searchTerm,1);
-        }
+        if (pageNum) {searchJobsAPICall(searchTerm,1)}
       } catch (e) {
         console.log(e);
       }
@@ -106,24 +99,6 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
   }
 
   const buildCard = (show) => {
-    
-    // const date = new Date(
-    //   show.applyDate.toLocaleString("en-US", {
-    //     timeZone: "America/New_York",
-    //     hour: "numeric",
-    //     minute: "numeric",
-    //   })
-    // );
-    // const options = {
-    //   year: "numeric",
-    //   month: "long",
-    //   day: "numeric",
-    //   hour: "numeric",
-    //   minute: "numeric",
-    //   second: "numeric",
-    //   hour12: false,
-    // };
-    // const formattedDate = date.toLocaleString("en-US", options);
     console.log(show);
     let shiftDays=""
     let daysArr = show?.shifts?.days
@@ -132,7 +107,6 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
         else shiftDays=shiftDays+daysArr[i]
     }
     return (
-      // <Container fixed maxWidth="70%">
       <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
         <Card
           sx={{
@@ -156,16 +130,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
-
                 <div style={{ display: "flex" }}>
-                  {/* <Typography
-                    variant="body"
-                    color="text.secondary"
-                    fontWeight="bold"
-                    sx={{ paddingRight: "10px" }}
-                  >
-                    City:
-                  </Typography> */}
                   <Typography variant="h4" color="text.secondary" paragraph>{show.city+", "}</Typography>
                   <Typography variant="h4" color="text.secondary" sx={{ paddingLeft: "10px" }} paragraph>{show.zipCode}</Typography>
                 </div>
@@ -223,17 +188,14 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
                 disableSpacing
                 style={{ position: "absolute", bottom: 0, right: 0 }}
               >
-                {/* <Link to={{pathname:"/job/applications/viewApplication" ,state:show._id }}> */}
                 <Button variant="contained" onClick={() => { navigate('/job/viewJobDetails', { state: { job: show } }); }} sx={{ bgcolor: purple[700] }}>
                   View Job
                 </Button>
-                {/* </Link> */}
               </CardActions>
             </Grid>
           </Grid>
         </Card>
       </Grid>
-      // </Container>
     );
   };
 
@@ -261,10 +223,10 @@ const ViewAllJobs = ({ job, getallJobsAPICall,searchJobsAPICall }) => {
         <h2>Loading....</h2>
       </div>
     );
-  } else if (errorMsg) {
+  } else if (error) {
     return (
       <div>
-        <h2>Error404: No data found</h2>
+        <h2>{errorMsg}</h2>
       </div>
     );
   } else {

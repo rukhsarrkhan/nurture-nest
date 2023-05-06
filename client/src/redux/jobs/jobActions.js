@@ -196,7 +196,7 @@ export const deleteJobAPICall = (jobId) => {
 export const showAllApplicantsAPICall = (jobId, pageNum) => {
   return async (dispatch) => {
     try {
-      console.log(jobId, pageNum, "hallooo here");
+      console.log(jobId, pageNum, "hallooo here in showAllApplicants");
       let resp = await axios.get(`http://localhost:3000/job/${jobId}/allApplicants/${pageNum}`);
       console.log("axios call got:", resp);
       dispatch(showAllApplicantsSuccess(resp.data));

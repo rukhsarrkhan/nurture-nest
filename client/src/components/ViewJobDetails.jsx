@@ -19,7 +19,8 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
   // console.log(props, "yaha dekhleee")
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setError] = useState(true);
+  const [error, setError] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
  
   console.log(location.state,"appID heree")
   let jobData = location.state.job
@@ -31,7 +32,8 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
 
   const applyToJob = async (data,nannyId,jobId) => {
     applyToJobAPICall(data,nannyId,jobId);
-    // handleCloseApplyToJob();   
+    handleCloseApplyToJob();
+    navigate('/job/viewAllJobs/1')
   };
 
   useEffect(() => {
@@ -47,19 +49,13 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
     }}catch(e){
       console.log(e)
       setError(true)
+      setErrorMsg(e)
       setLoading(false)
     }
   },[])
 
 
   if (loading) {
-    if(errorMsg){
-      return (
-        <div>
-          <h2>Error404: No data found</h2>
-        </div>
-      );
-    }
     return (
       <div>
         <h2>Loading....</h2>

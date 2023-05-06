@@ -13,6 +13,7 @@ router
     .route("/:parentId/:childId/createJob")
     .post(async (req, res) => {
         //Create Job from Parent side
+        console.log("inside create Job route")
         let { parentId, childId } = req.params;
         let { shifts, description, address, specialCare, salary, state, zipCode } = req.body;
         try {
@@ -207,11 +208,19 @@ router
         let { pageNum } = req.params;
         console.log("in getAllJobs route with pageNUM:",pageNum)
         try {
+            if(pageNum){
+            if(isNaN(pageNum)){throw { statusCode: 400, message: "Invalid page number argument"}}
+            // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+          }else{
+            pageNum = 1
+          }
+          if(pageNum<1){ throw { statusCode: 400, message: "Invalid negative page number argument"}}
             const searchedApplicants = await jobCollection.getAllJobs(pageNum);
-            if (!searchedApplicants) { throw "Couldn't get applications"; }
+            if (!searchedApplicants) { throw  {statusCode: 400, message:"No applications for this search"} }
+            console.log(searchedApplicants,"in routeee for getAllApplications")
             return res.json(searchedApplicants);
         } catch (e) {
-            throw e.message
+            // throw e.message
             return res.status(400).json({ error: e });
         }
     });
@@ -219,14 +228,19 @@ router
 router
     .route('/searchJobs/:searchTerm/:pageNum')
     .get(async (req, res) => {
-        // Searching Applicants from Parent side
+        ///// Searching Applicants from Parent side
         let { pageNum, searchTerm } = req.params;
         try {
+            if(pageNum){
+                if(isNaN(pageNum)){throw { statusCode: 400, message: "Invalid page number argument"}}
+                ///// pageNo = parseInt(req.query.page)/////Check if it works with convert to int,if yes then do it
+              }else{ pageNum = 1 }
+              if(pageNum<1){ throw { statusCode: 400, message: "Invalid negative page number argument"}}
             const searchedApplicants = await jobCollection.searchJobsBasedOnCity(searchTerm,pageNum);
             if (!searchedApplicants) { throw "Couldn't get applications"; }
             return res.json(searchedApplicants);
         } catch (e) {
-            throw e.message
+            // throw e.message
             return res.status(400).json({ error: e });
         }
     });

@@ -81,6 +81,7 @@ const createJob = async (parentId, childId, shifts, description, address, specia
         throw { statusCode: 400, message: `Incorrect child and parent combination` };
     }
     const child = await childData.getChildById(childId);
+    console.log(child)
     if (child.jobId) {
         throw { statusCode: 400, message: `Job already exists for the child.Please remove the current job to create new Job` };
     }
@@ -171,19 +172,15 @@ const updateJob = async () => {};
     jobId = jobId.trim();
     if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message:"invalid object ID"};
     const jobCollection = await jobs();
-    // let allApplications = await jobCollection.findOne(
-    //   { _id: ObjectId(jobId) },
-    //   { projection: { _id: 0, applications: 1 } }
-    // );
     console.log("hereeee before query")
     let allApplications = await jobCollection.aggregate([
       {$match:{_id:ObjectId(jobId)}},
       {$unwind:'$applications'},
-      {$sort:{'applications.distance':1}},
       {$group: {_id: null,applications: {$push: "$applications"}}}
-]).toArray()  //dont forget to remove sort
-console.log(allApplications,"this was for all applications")
-    if (allApplications === null) throw { statusCode: 400,message:"No applications with that id"};
+  ]).toArray()
+  console.log(allApplications,"this was for all applications")
+  console.log("-----------------------")
+    if (allApplications === null) throw { statusCode: 400,message:"No applications till now"};
     allApplications = allApplications[0]["applications"];
     console.log(allApplications,"--------------------")
     for (let i in allApplications) {
@@ -196,7 +193,6 @@ console.log(allApplications,"this was for all applications")
   const addApplication = async (jobId, nannyId, nannyName,contact,city,state,zipCode, distance, nannyAddress, whySelect, disability, shiftPuntuality, experience, attachment) => {
     console.log("idhaaarr")
     ////////////Params validation
-    let {jobId,nannyId} = req.params;
     jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
     if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
     nannyId = await helpers.execValdnAndTrim(nannyId, "Nanny Id");
@@ -264,11 +260,11 @@ console.log(allApplications,"this was for all applications")
       {$match:{_id:ObjectId(jobId)}},
       {$unwind:'$applications'},
       {$match:{'applications.nannyName':{$regex:searchTerm,$options:'i'}}},
-      {$skip:0},{$limit:3},
+      {$skip:(pageNum-1)*5},{$limit:5},
       {$group: {_id: null,applications: {$push: "$applications"}}}
     ]).toArray()
     if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
-    nanniesFound = nanniesFound[0].applications
+    nanniesFound = nanniesFound[0]?.applications
     return nanniesFound;
   };
 
@@ -295,6 +291,12 @@ console.log(allApplications,"this was for all applications")
   };
 //////////////////////////////////////////////////////
   const getAllJobs = async (pageNum) => {
+    if(pageNum){
+      if(isNaN(pageNum)){throw { statusCode: 400, message: "Invalid page number argument"}}
+      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+    }else{
+      pageNum = 1
+    }
     console.log("Inside getAllJobs dataFunction",pageNum)
     const jobCollection = await jobs();
     let nanniesFound = await jobCollection.find({},{ projection: { applications: 0 } }).skip( pageNum > 0 ? ( ( pageNum - 1 ) * 5) : 0 )
@@ -306,16 +308,18 @@ console.log(allApplications,"this was for all applications")
 
   const searchJobsBasedOnCity = async (searchTerm,pageNum) => {
     console.log("Inside search Job dataFunction")
+    if(pageNum){
+      if(isNaN(pageNum)){throw { statusCode: 400, message: "Invalid page number argument"}}
+      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+    }else{ pageNum = 1 }
+    if(pageNum<1){ throw { statusCode: 400, message: "Invalid negative page number argument"}}
     const jobCollection = await jobs();
     let nanniesFound = await jobCollection.find(
       { city: {$regex:searchTerm,$options:'i'} },
       { projection: { applications: 0 } }
     ).skip( pageNum > 0 ? ( ( pageNum - 1 ) * 5) : 0 )
     .limit( 5 ).toArray();
-    console.log("This was queried for search Jobs: ",nanniesFound)
     if (nanniesFound === null) throw { statusCode: 500, message:"No applications with that search term"};
-    // nanniesFound = nanniesFound[0].applications
-    // nanniesFound._id = nanniesFound._id.toString();
     return nanniesFound;
 };
 

@@ -88,7 +88,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData?.data?.mealRequirements && dashboardData.data.mealRequirements[0].meal
                     ? dashboardData.data.mealRequirements[0].meal
                     : 'No data to display'}
-                  <br></br>
+                 
                   {"Click to view Details"}
                 </Typography>
                 <dl>
@@ -135,7 +135,6 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData.data && dashboardData.data.vaccine && dashboardData.data.vaccine[0] && dashboardData.data.vaccine[0].name && dashboardData.data.vaccine[0].date
                     ? dashboardData.data.vaccine[0].name + " due on " + dashboardData.data.vaccine[0].date
                     : 'No data to display'}
-                  <br></br>
                   {"Click to view details"}
                 </Typography>
                 <dl>
@@ -183,7 +182,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData.data && dashboardData.data.appointments && dashboardData?.data?.appointments[0]
                     ? dashboardData?.data?.appointments[0]?.date + " : " + dashboardData?.data?.appointments[0]?.doctor
                     : 'No data to display'}
-                  <br></br>
+        
                   {"Click to view details"}
                 </Typography>
                 <dl>

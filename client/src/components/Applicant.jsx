@@ -10,6 +10,7 @@ import '../App.css';
 import Container from "@mui/material/Container";
 import Box, { BoxProps } from '@mui/material/Box';
 import { selectNannyAPICall } from '../redux/jobs/jobActions';
+import Loading from './Loading';
 
 
 const Application = ({ job, selectNannyAPICall }) => {
@@ -18,7 +19,8 @@ const Application = ({ job, selectNannyAPICall }) => {
   // console.log(props, "yaha dekhleee")
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setError] = useState(true);
+  const [error, setError] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
  
   console.log(location.state,"appID heree")
   let application = location.state.application
@@ -47,6 +49,7 @@ const Application = ({ job, selectNannyAPICall }) => {
         setLoading(false)
     }}catch(e){
       console.log(e)
+      setErrorMsg(e)
       setError(true)
       setLoading(false)
     }
@@ -54,22 +57,15 @@ const Application = ({ job, selectNannyAPICall }) => {
 
 
   if (loading) {
-    if(errorMsg){
-      return (
-        <div>
-          <h2>Error404: No data found</h2>
-        </div>
-      );
-    }
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading/>
       </div>
     );
-  }else if(errorMsg){
+  }else if(error){
     return (
       <div>
-        <h2>Error404: No data found</h2>
+        <h2>{errorMsg}</h2>
       </div>
     );
   } else {

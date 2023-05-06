@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography,} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
 import { searchApplicantsAPICall } from "../redux/jobs/jobActions";
 import CardHeader from "@mui/material/CardHeader";
@@ -18,22 +11,24 @@ import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
-import { Navigate, useNavigate,useLocation } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import Loading from "./Loading";
 import Container from "@mui/material/Container";
 import "../App.css";
 
-let noImage = "noImage";
 
-const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall }) => {
+const AllApplicants = ({
+  job,
+  showAllApplicantsAPICall,
+  searchApplicantsAPICall,
+}) => {
   let { pageNum } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  let jobId = location.state.jobId
-  console.log(jobId,pageNum,"hoogaya")
-  // const job = useSelector((state) => state.jobs);
-  // const dispatch = useDispatch();
+  let jobId = location.state.jobId;
   const [loading, setLoading] = useState(true);
-  const [errorMsg, setError] = useState(true);
+  const [error, setError] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
   const [searchData, setSearchData] = useState(undefined);
   const [showsData, setShowsData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,48 +36,46 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
   let card = null;
   let pagenum = pageNum;
 
-
   //View Applicants useEffect for apiCall
   useEffect(() => {
     try {
-      console.log("1st use effect fired", jobId, pageNum);
-      if (pageNum) {
+      if (pageNum && jobId) {
+        setLoading(true)
         showAllApplicantsAPICall(jobId, pageNum);
       }
     } catch (e) {
-      console.log("error===>", e);
       setError(true);
       setLoading(false);
     }
   }, [pageNum, jobId]);
 
-
-// Common useEffect for setting data for rendering
   useEffect(() => {
-    console.log("2nd use effect fired", job);
-
     if (searchTerm) {
       try {
         setSearchData(job.applicantsData);
+        console.log(searchData)
+        setLoading(false)
+        setError(false)
       } catch (e) {
-
+        setError(true)
+        setErrorMsg(e)
+        setLoading(false)
       }
     } else {
       try {
         setSearchData(job.applicantsData);
-
         setShowsData(job.applicantsData);
         setLoading(false);
         setError(false);
       } catch (e) {
-
+        setError(true)
+        setErrorMsg(e)
+        setLoading(false)
       }
     }
   }, [job]);
 
-
-
-    //Search Applicants useEffect for apiCall
+  //Search Applicants useEffect for apiCall
   useEffect(() => {
     async function fetchData() {
       try {
@@ -91,6 +84,9 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
           searchApplicantsAPICall(jobId, searchTerm, pageNum);
         }
       } catch (e) {
+        setError(true)
+        setErrorMsg(e)
+        setLoading(false)
         console.log(e);
       }
     }
@@ -99,12 +95,9 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
     }
   }, [searchTerm]);
 
-  
   const searchValue = async (value) => {
     setSearchTerm(value);
   };
-
-
 
   const buildCard = (show) => {
     const date = new Date(
@@ -125,8 +118,8 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
     };
     function getEDTTimeFromISOString(dateString) {
       const date = new Date(dateString);
-      const options = { timeZone: 'America/New_York', hour12: true };
-      return date.toLocaleString('en-US', options);
+      const options = { timeZone: "America/New_York", hour12: true };
+      return date.toLocaleString("en-US", options);
     }
     const formattedDate = date.toLocaleString("en-US", options);
     console.log(show);
@@ -163,7 +156,9 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
                       </Avatar>
                     }
                     title={show.nannyName}
-                    subheader={`Applied to job on ${getEDTTimeFromISOString(show.applyDate)}`}
+                    subheader={`Applied to job on ${getEDTTimeFromISOString(
+                      show.applyDate
+                    )}`}
                   />
                 </div>
                 <div style={{ display: "flex" }}>
@@ -175,7 +170,9 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
                   >
                     Why me:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>{show.whySelect}</Typography>
+                  <Typography color="text.secondary" paragraph>
+                    {show.whySelect}
+                  </Typography>
                 </div>
                 <div style={{ display: "flex" }}>
                   <Typography
@@ -186,7 +183,9 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
                   >
                     Distance from your house:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>{show.distance}</Typography>
+                  <Typography color="text.secondary" paragraph>
+                    {show.distance}
+                  </Typography>
                 </div>
                 <div style={{ display: "flex" }}>
                   <Typography
@@ -209,7 +208,15 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
                 style={{ position: "absolute", bottom: 0, right: 0 }}
               >
                 {/* <Link to={{pathname:"/job/applications/viewApplication" ,state:show._id }}> */}
-                <Button variant="contained" onClick={() => { navigate('/job/applications/viewApplication', { state: { application: show,jobId:jobId } }); }} sx={{ bgcolor: purple[700] }}>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    navigate("/job/applications/viewApplication", {
+                      state: { application: show, jobId: jobId },
+                    });
+                  }}
+                  sx={{ bgcolor: purple[700] }}
+                >
                   Select
                 </Button>
                 {/* </Link> */}
@@ -237,56 +244,63 @@ const AllApplicants = ({ job, showAllApplicantsAPICall, searchApplicantsAPICall 
       });
   }
 
-
-
-
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading/>
       </div>
     );
-  } else if (errorMsg) {
+  } else if (error) {
     return (
       <div>
-        <h2>Error404: No data found</h2>
+        <h2>{errorMsg}</h2>
       </div>
     );
   } else {
     return (
       <div>
         <SearchApplicants searchValue={searchValue} />
-        <br />
-        <br />
+
         <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
           {card}
         </Grid>
-        <br />
-        <br />
-        {pagenum > 1 && (<Link className="showlink" to={`/job/${jobId}/allApplicants/${pagenum - 1}`}>Previous</Link>)}
-        {nextButton && (<Link className="showlink" to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}>Next</Link>)}
+
+        {pagenum > 1 && (
+          <Link
+            className="showlink"
+            to={`/job/${jobId}/allApplicants/${pagenum - 1}`}
+          >
+            Previous
+          </Link>
+        )}
+        {nextButton && (
+          <Link
+            className="showlink"
+            to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}
+          >
+            Next
+          </Link>
+        )}
       </div>
-      
     );
   }
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    job: state.jobs
+    job: state.jobs,
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    showAllApplicantsAPICall: (jobId, pageNum) => dispatch(showAllApplicantsAPICall(jobId, pageNum)),
-    searchApplicantsAPICall: (jobId, searchTerm, pageNum) => dispatch(searchApplicantsAPICall(jobId, searchTerm, pageNum))
+    showAllApplicantsAPICall: (jobId, pageNum) =>
+      dispatch(showAllApplicantsAPICall(jobId, pageNum)),
+    searchApplicantsAPICall: (jobId, searchTerm, pageNum) =>
+      dispatch(searchApplicantsAPICall(jobId, searchTerm, pageNum)),
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AllApplicants);
+export default connect(mapStateToProps, mapDispatchToProps)(AllApplicants);
 
 // export default EventList;

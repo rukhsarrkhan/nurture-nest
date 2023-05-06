@@ -128,10 +128,10 @@ const isCityParentValid = async (city, fieldName) => {
     if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
-const isDistanceInputValid = async(distance,fieldName) => {
+const isDistanceInputValid = async (distance, fieldName) => {
     if (distance < 0) return { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
     if (!/^[0-9. ]+$/.test(distance)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
-}
+};
 
 const isStateParentValid = async (state, fieldName) => {
     let allStates = [
@@ -224,6 +224,13 @@ const isShiftLimitValid = async (start, end, daysNum) => {
     }
     return "";
 };
+const isChildAgeValid = (age) => {
+    if (isNaN(age)) {
+        return { statusCode: 400, message: `Age should be a number` };
+    }
+    if (parseInt(age) > 12) return { statusCode: 400, message: "child cannnot be more than 12 years old" };
+};
+
 // const isIdValid = (id,fieldName) => {
 //     if(!ObjectId.isValid(id))
 //     return {statusCode : 400, message: 'invalid object id'}
@@ -258,6 +265,7 @@ module.exports = {
     isShiftLimitValid,
     isAddressValid,
     validatePhoneNumber,
+    isChildAgeValid,
     isCityParentValid,
-    isDistanceInputValid
+    isDistanceInputValid,
 };

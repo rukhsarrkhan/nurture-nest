@@ -12,11 +12,10 @@ const isCityParentValid = async (city, fieldName) => {
     if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
-const isDistanceInputValid = async(distance,fieldName) => {
+const isDistanceInputValid = async (distance, fieldName) => {
     if (distance < 0) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
     if (!/^[0-9. ]+$/.test(distance)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
-}
-
+};
 
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
@@ -235,6 +234,16 @@ const isShiftLimitValid = async (start, end, daysNum) => {
         throw { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week` };
     }
 };
+const validateImageUrl = async (photoUrl) => {
+    // Get the file extension from the photoUrl string
+    var fileExtension = photoUrl.split(".").pop().toLowerCase();
+
+    var validExtensions = ["jpg", "jpeg", "png", "gif", "bmp"];
+
+    if (validExtensions.indexOf(fileExtension) == -1) {
+        throw { statusCode: 400, message: `"Invalid image file. Please provide a valid image file."` };
+    }
+};
 
 module.exports = {
     description: "This is the helper function",
@@ -265,6 +274,7 @@ module.exports = {
     isTime1BeforeTime2,
     isShiftLimitValid,
     validatePhoneNumber,
+    validateImageUrl,
     isCityParentValid,
-    isDistanceInputValid
+    isDistanceInputValid,
 };

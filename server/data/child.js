@@ -3,7 +3,7 @@ const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 
-const createChild = async (name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr) => {
+const createChild = async (photoUrl, name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr) => {
     name = await helper.execValdnAndTrim(name, "Name");
     await helper.isNameValid(name, "Name");
     age = await helper.execValdnAndTrim(age, "Age");
@@ -34,6 +34,11 @@ const createChild = async (name, age, sex, mealRequirementsArr, vaccineArr, appo
     if (appointmentsArr) {
         await helper.execValdnForArr(appointmentsArr, "Appointments");
         newChild.appointments = appointmentsArr;
+    }
+    if (photoUrl) {
+        photoUrl = await helper.execValdnAndTrim(photoUrl, "PhotoUrl");
+        await helper.validateImageUrl(photoUrl);
+        newChild.photoUrl = photoUrl;
     }
     const childCollection = await childs();
     const insertedChild = await childCollection.insertOne(newChild);
@@ -285,6 +290,25 @@ const removeMeal = async (mealId) => {
     }
 };
 
+const getChildrenByIds = async (arrIds) => {
+    await helper.execValdnForArr(arrIds, "Ids");
+    const badInput = (str) => str === undefined || str === null || str === "" || !ObjectId.isValid(str);
+    if (arrIds.some(badInput)) {
+        throw { statusCode: 400, message: `Invalid id` };
+    }
+    const objectIdArr = arrIds.map((id) => new ObjectId(id));
+    const childCollection = await childs();
+    let childObjArr = await childCollection.find({ _id: { $in: objectIdArr } }).toArray();
+    if (childObjArr.length === 0) throw { statusCode: 404, message: "No children found" };
+    childObjArr = childObjArr.map((childObj) => {
+        return {
+            ...childObj,
+            _id: childObj._id.toString(),
+        };
+    });
+    return childObjArr;
+};
+
 module.exports = {
     createChild,
     getChildById,
@@ -299,4 +323,5 @@ module.exports = {
     getMealPlans,
     addAMealPlan,
     removeMeal,
+    getChildrenByIds,
 };

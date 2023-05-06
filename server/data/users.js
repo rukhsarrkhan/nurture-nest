@@ -34,7 +34,7 @@ const createUser = async (firstName, lastName, email, profile, age, sex, uuid) =
     const userMatch = await userCollection.findOne({
         email: email.toLowerCase(),
     });
-    if (userMatch !== null) throw {statusCode: 401, message: "User already exists with given username"};
+    if (userMatch !== null) throw { statusCode: 401, message: "User already exists with given username" };
     const insertedUser = await userCollection.insertOne(newUser);
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw { statusCode: 500, message: `Couldn't Create user` };
     const user = await getUserById(insertedUser.insertedId.toString());
@@ -111,6 +111,7 @@ const updateUser = async (userId, userObj) => {
     }
     if (userObj.photoUrl) {
         userObj.photoUrl = await helper.execValdnAndTrim(userObj.photoUrl, "PhotoUrl");
+        await helper.validateImageUrl(userObj.photoUrl);
         if (cur_userObj.photoUrl != userObj.photoUrl) updatedUser.photoUrl = userObj.photoUrl;
     }
     if (userObj.profile) {
@@ -144,17 +145,17 @@ const updateUser = async (userId, userObj) => {
 };
 
 const removeUser = async (userId) => {
-    if (typeof userId == "undefined") throw { statusCode: 401, message:"userId must be provided" };
-    if (typeof userId !== "string") throw { statusCode: 401, message:"userId must be a string" } ;
-    if (userId.trim().length === 0) throw { statusCode: 401, message:"userId must be a string" };
+    if (typeof userId == "undefined") throw { statusCode: 401, message: "userId must be provided" };
+    if (typeof userId !== "string") throw { statusCode: 401, message: "userId must be a string" };
+    if (userId.trim().length === 0) throw { statusCode: 401, message: "userId must be a string" };
     userId = userId.trim();
-    if (!ObjectId.isValid(userId)) throw { statusCode: 401, message:"invalid object ID"};
+    if (!ObjectId.isValid(userId)) throw { statusCode: 401, message: "invalid object ID" };
     const userCollection = await users();
     const deletedUser = await userCollection.findOneAndDelete({
         _id: ObjectId(userId),
     });
     if (deletedUser.value == null) {
-        throw { statusCode: 500, message:`Could not delete user with id of ${userId}`};
+        throw { statusCode: 500, message: `Could not delete user with id of ${userId}` };
     }
     deletedUser.value._id = deletedUser.value._id.toString();
     return `User: ${deletedUser.value.username} has been successfully deleted!`;

@@ -19,16 +19,32 @@ export const getNannyDetailsFailure = (error) => {
   };
 };
 
-export const getNannyDetailsAPICall = (nannyId) => {
+export const getNannyDetailsAPICall = (nannyId, childId) => {
   return async (dispatch) => {
     try {
-        console.log(nannyId, "nannyyyyyyyyyyyyyyyy")
       let resp = await axios.get(`http://localhost:3000/nanny/${nannyId}`);
-      console.log(resp.data, "response ye rha")
+      let resp2 = await axios.get(`http://localhost:3000/job/findjob/${childId}`);
+
+      let newObj = {
+        firstName: resp.data.firstName,
+        lastName: resp.data.LastName,
+        image: resp.data.photoUrl,
+        email: resp.data.email,
+        age: resp.data.age,
+        distance: resp2.data.distance,
+        address: resp2.data.nannyAddress,
+        reasonToSelect: resp2.data.whySelect,
+        experience: resp2.data.experience,
+        disability: resp2.data.disability,
+        attachment: resp2.data.attachment,
+        punctuality: resp2.data.shiftPunctuality
+      }
+
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(getNannyDetailsSuccess(resp.data));
+      dispatch(getNannyDetailsSuccess(newObj));
     } catch (error) {
+      console.log(error)
       dispatch(getNannyDetailsFailure(error));
     }
   };

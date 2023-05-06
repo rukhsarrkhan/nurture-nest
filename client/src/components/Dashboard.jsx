@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
 import { Link, useParams } from 'react-router-dom';
+import { Button } from '@mui/material';
 import {
+  Card,
   CardActionArea,
   CardContent,
   CardMedia,
   Grid,
   Typography
 } from '@mui/material';
+import { Navigate, useNavigate,useLocation } from "react-router-dom";
 import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
@@ -19,6 +22,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {
@@ -192,6 +196,50 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </Link>
           </CardActionArea>
         </Grid>
+        <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
+              <CardActionArea>
+                <CardMedia
+                  component='img'
+                  height='200'
+                  alt=''
+                />
+                <CardContent>
+                  <Typography
+                    gutterBottom
+                    variant='h5'
+                    component='div'
+                    sx={{ fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}
+                  >
+                    Nanny Details
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary' sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}>
+                    {dashboardData && dashboardData.data.nannyId
+                      ? "First Name: " + dashboardData.nannyId
+                      : "First Name: " + 'No data to display'}
+                    <br />
+                    {/* {nannyData && nannyData.lastName
+                      ? "Last Name: " + nannyData.lastName
+                      : "Last Name: " + 'No data to display'}
+                    <br />
+                    {nannyData && nannyData.email
+                      ? "Email: " + nannyData.email
+                      : "Email: " + 'No data to display'}
+                    <br />
+                    {nannyData && nannyData.age
+                      ? "Age: " + nannyData.age
+                      : "Age: " + 'No data to display'}
+                    <br />
+                    {nannyData && nannyData.address
+                      ? "Address: " + nannyData.address
+                      : "Address: " + 'No data to display'} */}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+              <Button variant='contained' color='primary' onClick={() => 
+            { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, {state: { childId: dashboardData?.data?._id}})}}>
+         View Nanny Details
+        </Button>
+          </Grid>
       </Grid>
     );
   };

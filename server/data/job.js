@@ -253,6 +253,24 @@ const getApplication = async (jobId, applicationId) => {
     return applicationFound;
 };
 
+const getJobByChildId = async(childId) => {
+    childId = await helpers.execValdnAndTrim(childId, "Child Id");
+    if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID for Child" };
+    const jobCollection = await jobs();
+    let jobFound = await jobCollection.findOne({ childId: ObjectId(childId) });
+    let nannyId = jobFound.nannyId.toString();
+    let nannyFromApplicants = null;
+    let applicantData = jobFound.applications;
+    for(let i in applicantData){
+        if(applicantData[i].nannyId.toString() == nannyId){
+            nannyFromApplicants = applicantData[i];
+        }
+    }
+    if (nannyFromApplicants === null) throw { statusCode: 400, message: "No job found with that id" };
+    nannyFromApplicants["_id"] = nannyFromApplicants["_id"].toString();
+    return nannyFromApplicants;
+}
+
 module.exports = {
     createJob,
     getJobById,
@@ -264,4 +282,5 @@ module.exports = {
     assignJobToChild,
     removeJobFromChild,
     getApplication,
+    getJobByChildId
 };

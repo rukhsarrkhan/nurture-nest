@@ -155,4 +155,17 @@ router
         }
     });
 
+    router
+    .route('/findjob/:childId')
+    .get(async (req, res) => {
+        let childId = req.params.childId;
+        try {
+            const jobWithChildId = await jobCollection.getJobByChildId(childId);
+            if (!jobWithChildId) { throw "Couldn't get jobId"; }
+            return res.json(jobWithChildId);
+        } catch (e) {
+            return res.status(400).json({ error: e });
+        }
+    });
+
 module.exports = router;

@@ -53,8 +53,9 @@ router
             if (!childObj || childObj === null || childObj === undefined) {
                 throw { statusCode: 404, message: "No child found with that id" };
             }
-            return res.json(childFound);
+            return res.json(childObj);
         } catch (e) {
+            console.log("e",e)
             return res.status(e.statusCode).json({ message: e.message });
         }
     })

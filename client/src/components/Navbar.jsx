@@ -6,10 +6,7 @@ import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from './NavbarElement
 
 const Navbar = ({ userData }) => {
   const { currentUser } = useContext(AuthContext);
-  let items;
-  // if (currentUser) {
-  // }
-  items = JSON.parse(localStorage.getItem('userData'));
+  let items = JSON.parse(localStorage.getItem('userData'));
   const profileLink = `/profile/${items?._id}`;
 
   return (
@@ -23,7 +20,7 @@ const Navbar = ({ userData }) => {
           {/* {currentUser && items?.profile === "PARENT" && <NavLink to='/applications' activeStyle>
             Applications
           </NavLink>} */}
-          {currentUser && <NavLink to='/chat/:chatid' activeStyle>
+          {currentUser && <NavLink to='/chat' activeStyle>
             Inbox
           </NavLink>}
           {currentUser &&  items?.profile === "NANNY" &&<NavLink to='/jobs' activeStyle>

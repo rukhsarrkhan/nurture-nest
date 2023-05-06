@@ -71,7 +71,7 @@ const Main = ({ userData }) => {
 
 const mapStateToProps = state => {
     return {
-        userData: state.users
+        userData: state?.users
     };
 };
 

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
@@ -17,9 +17,16 @@ import DeleteModal from './modals/DeleteVaccineModal';
 import Button from '@mui/material/Button';
 import image from '../img/vaccineimage.png';
 import AddModal from './modals/AddVaccineModal';
+import { useNavigate } from 'react-router-dom';
 import Loading from './Loading';
+import { AuthContext } from '../firebase/Auth';
+import { Navigate } from "react-router-dom";
 
 const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall }) => {
+    let navigate = useNavigate();
+    let items = JSON.parse(localStorage.getItem("userData"))
+    let profile = items?.profile
+    const { currentUser } = useContext(AuthContext);
     let card = null;
     let { childId } = useParams();
 
@@ -57,7 +64,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
 
     const buildCard = (vaccines) => {
         return (
-            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={vaccines && vaccines._id}>
+            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={vaccines && vaccines?._id}>
                 <Card
                     variant='outlined'
                     sx={{
@@ -70,8 +77,8 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                             '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
                     }}>
                     <CardHeader
-                        title={vaccines.name}
-                        subheader={vaccines.date}
+                        title={vaccines?.name}
+                        subheader={vaccines?.date}
                     />
                     <CardMedia
                         component="img"
@@ -79,9 +86,12 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         image={image}
                     />
                     <CardActions disableSpacing>
-                        <IconButton onClick={() => handleOpen2(vaccines && vaccines._id)} color='textSecondary' aria-label="Delete Vaccine">
-                            <DeleteIcon />
-                        </IconButton>
+
+                        {profile === "PARENT" ? (
+                            <IconButton onClick={() => handleOpen2(vaccines && vaccines?._id)} color='textSecondary' aria-label="Delete Vaccine">
+                                <DeleteIcon />
+                            </IconButton>
+                        ) : null}
                     </CardActions>
                 </Card>
             </Grid >
@@ -92,13 +102,17 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
 
     card =
         vaccineData &&
-        vaccineData.data &&
-        vaccineData.data.map((vaccines) => {
+        vaccineData?.data &&
+        vaccineData?.data?.map((vaccines) => {
             if (vaccines !== null) {
                 return buildCard(vaccines);
 
             }
         });
+
+    if (!currentUser) {
+        return <Navigate to='/' />;
+    }
 
     if (loading) {
         return (
@@ -106,20 +120,25 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                 <Loading />
             </div>
         );
-        // } else if (error) {
-        //     return (
-        //         <div>
-        //             <h2>Error 404: No data for this page</h2>
-        //         </div>
-        //     );
+    } else if (errorPage) {
+        return (
+            <div>
+                <h2>Error 404: No data for this page</h2>
+            </div>
+        );
 
     } else {
         return (
             <div>
                 <div>
                     <br />
-                    <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                        Add Vaccine
+                    {profile === "PARENT" ? (
+                        <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
+                            Add Vaccine
+                        </Button>
+                    ) : null}
+                    <Button variant="contained" onClick={() => { navigate(-1) }} sx={{ marginLeft: '10px' }}>
+                        Back
                     </Button>
                     <br />
                     <br />
@@ -163,8 +182,8 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
 
 const mapStateToProps = state => {
     return {
-        userData: state.users,
-        vaccineData: state.vaccines
+        userData: state?.users,
+        vaccineData: state?.vaccines
     };
 };
 

@@ -48,11 +48,11 @@ const Login = ({ userData, userLoginAPICall }) => {
       return;
     }
 
-    if (email.trim() && password.trim() && errorText === "") {
+    if (email?.trim() && password?.trim() && errorText === "") {
       try {
         const resp = await doSignInWithEmailAndPassword(
-          email.trim(),
-          password.trim()
+          email?.trim(),
+          password?.trim()
         );
         if (resp !== "") {
           await userLoginAPICall(resp);
@@ -79,7 +79,7 @@ const Login = ({ userData, userLoginAPICall }) => {
   };
 
   if (currentUser) {
-    return <Navigate to='/' />;
+    return <Navigate to='/home' />;
   }
 
   return (
@@ -132,7 +132,7 @@ const Login = ({ userData, userLoginAPICall }) => {
 
 const mapStateToProps = state => {
   return {
-    userData: state.users
+    userData: state?.users
   };
 };
 

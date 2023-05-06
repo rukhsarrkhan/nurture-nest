@@ -15,7 +15,6 @@ import {
   
     switch (type) {
       case GET_NANNYDETAILS_SUCCESS:
-        console.log(payload, "sgbdkdshhsd")
         return {
           ...state,
           data: payload,
@@ -25,7 +24,7 @@ import {
       case GET_NANNYDETAILS_FAILURE:
         return {
           ...state,
-          error: payload.response.data,
+          error: payload?.response?.data,
         };
       default:
         return state;

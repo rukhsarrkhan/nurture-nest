@@ -141,7 +141,7 @@ const Home = ({ gethomeAPICall, childData, id, createChildAPICall }) => {
 
 const mapStateToProps = (state) => {
     return {
-        childData: state.home,
+        childData: state?.home,
     };
 };
 

@@ -67,13 +67,13 @@ export const userIdStore = (id) => {
     };
 };
 
+
 export const userRegistrationAPICall = (obj) => {
     return async (dispatch) => {
         try {
             dispatch(userIdStore(obj.uuid));
             let resp = await axios.post("http://localhost:3000/users/signup", obj);
-            dispatch(userRegisterSuccess(resp.data));
-
+            dispatch(userRegisterSuccess(resp?.data));
             localStorage.setItem("userData", JSON.stringify(resp.data));
         } catch (error) {
             dispatch(userRegisterFailure(error));
@@ -88,7 +88,7 @@ export const userLoginAPICall = (uuId) => {
             localStorage.setItem("userData", JSON.stringify(resp?.data));
             localStorage.setItem('userName', resp?.data?.firstName);
             socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
-            dispatch(userLoginSuccess(resp.data));
+            dispatch(userLoginSuccess(resp?.data));
         } catch (error) {
             dispatch(userLoginFailure(error));
         }

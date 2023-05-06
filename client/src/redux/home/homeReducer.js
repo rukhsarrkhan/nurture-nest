@@ -24,7 +24,7 @@ export const homeReducer = (state = initialState, action) => {
     case GET_HOME_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data,
       };
     default:
       return state;

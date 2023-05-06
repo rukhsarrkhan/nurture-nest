@@ -7,6 +7,16 @@ const validatePhoneNumber = async (phoneNumber, fieldName) => {
 };
 require("dotenv").config();
 
+const isCityParentValid = async (city, fieldName) => {
+    if (city.trim().length < 5) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
+const isDistanceInputValid = async (distance, fieldName) => {
+    if (distance < 0) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (!/^[0-9. ]+$/.test(distance)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
+};
+
 const validateInput = async (str, fieldName) => {
     if (str === undefined || str === null || str === "")
         throw { statusCode: 400, message: `No parameter was passed in the ${fieldName} field of the function.` };
@@ -39,7 +49,7 @@ const execValdnForArr = async (arr, fieldName) => {
 
 const isDateValid = async (str, fieldName) => {
     // if (new Date(str) == "Invalid Date" || isNaN(new Date(str)) || !moment(str, "MM/DD/YYYY", true).isValid())
-    if (new Date(str) === "Invalid Date" || isNaN(new Date(str))) return { statusCode: 400, message: `${fieldName} is an invalid date.` };
+    if (new Date(str) === "Invalid Date" || isNaN(new Date(str))) throw { statusCode: 400, message: `${fieldName} is an invalid date.` };
 };
 
 const isUserLoggedIn = async (req) => {
@@ -224,6 +234,16 @@ const isShiftLimitValid = async (start, end, daysNum) => {
         throw { statusCode: 400, message: `Shift times for a nanny cannot be less than 2 hours per week` };
     }
 };
+const validateImageUrl = async (photoUrl) => {
+    // Get the file extension from the photoUrl string
+    var fileExtension = photoUrl.split(".").pop().toLowerCase();
+
+    var validExtensions = ["jpg", "jpeg", "png", "gif", "bmp"];
+
+    if (validExtensions.indexOf(fileExtension) == -1) {
+        throw { statusCode: 400, message: `"Invalid image file. Please provide a valid image file."` };
+    }
+};
 
 module.exports = {
     description: "This is the helper function",
@@ -254,4 +274,7 @@ module.exports = {
     isTime1BeforeTime2,
     isShiftLimitValid,
     validatePhoneNumber,
+    validateImageUrl,
+    isCityParentValid,
+    isDistanceInputValid,
 };

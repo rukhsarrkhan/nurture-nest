@@ -24,7 +24,7 @@ import {
       case GET_NANNYDETAILS_FAILURE:
         return {
           ...state,
-          error: payload.response.data,
+          error: payload?.response?.data,
         };
         default:
           return state;

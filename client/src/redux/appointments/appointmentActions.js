@@ -63,7 +63,7 @@ export const getAppointmentAPICall = (childId) => {
       let resp = await axios.get('http://localhost:3000/child/appointment/'+childId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(getAppointmentSuccess(resp.data));
+      dispatch(getAppointmentSuccess(resp?.data));
     } catch (error) {
       dispatch(getAppointmentFailure(error));
     }
@@ -77,7 +77,7 @@ export const appointmentSetAPICall = (obj,childId) => {
       let resp = await axios.post('http://localhost:3000/child/appointment/'+childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch( appointmentSetSuccess(resp.data));
+      dispatch( appointmentSetSuccess(resp?.data));
     } catch (error) {
       dispatch(appointmentSetFailure(error));
     }
@@ -91,7 +91,7 @@ export const delAppointmentAPICall = (appointmentId) => {
       let resp = await axios.delete('http://localhost:3000/child/appointment/'+appointmentId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-       dispatch(appointmentDeleteSuccess(resp.data));
+       dispatch(appointmentDeleteSuccess(resp?.data));
     } catch (error) {
        dispatch(appointmentDeleteFailure(error));
     }

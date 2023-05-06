@@ -22,12 +22,7 @@ const style = {
 
 const AddMealModal = (props) => {
 
-    // const formatDate = (showdate) => {
-    //     var year = showdate.substring(0, 4);
-    //     var month = showdate.substring(5, 7);
-    //     var day = showdate.substring(8, 10);
-    //     return month + '/' + day + '/' + year;
-    // };
+  
     const today = new Date().toISOString().slice(0, 16);
 
 
@@ -81,14 +76,14 @@ const AddMealModal = (props) => {
         if (time === '') {
             setTimeError(true);
         }
-        if (meal.trim() && time.trim() && errorText === "") {
+        if (meal?.trim() && time?.trim() && errorText === "") {
             try {
                 const data = {
                     meal: meal,
                     time: tConvert(time),
                     directions: directions
                 };
-                await props.addMeal(data)
+                await props?.addMeal(data)
             } catch (error) {
                 alert(error)
             }
@@ -98,8 +93,8 @@ const AddMealModal = (props) => {
     return (
         <div >
             <Modal
-                open={props.open}
-                onClose={props.onClose}
+                open={props?.open}
+                onClose={props?.onClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
@@ -159,7 +154,7 @@ const AddMealModal = (props) => {
                             <Button variant="outlined" color="secondary" type="submit" >
                                 Add
                             </Button>
-                            <Button onClick={props.onClose}>
+                            <Button onClick={props?.onClose}>
                                 Close
                             </Button>
                         </form>

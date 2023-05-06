@@ -5,7 +5,6 @@ import {
 } from "./nannyDetailsActionTypes";
 
 export const getNannyDetailsSuccess = (nanny) => {
-    console.log(nanny, "ye rahi nanny")
   return {
     type: GET_NANNYDETAILS_SUCCESS,
     payload: nanny,

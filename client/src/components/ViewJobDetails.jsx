@@ -16,10 +16,10 @@ import { connect } from "react-redux";
 import "../App.css";
 import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
-import { selectNannyAPICall } from "../redux/jobs/jobActions";
-import Loading from "./Loading";
+import { applyToJobAPICall } from "../redux/jobs/jobActions";
+import ApplyToJobModal from "./modals/ApplyToJobModal";
 
-const Application = ({ job, selectNannyAPICall }) => {
+const JobDetails = ({ job, applyToJobAPICall }) => {
   const navigate = useNavigate();
   const location = useLocation();
   // console.log(props, "yaha dekhleee")
@@ -29,24 +29,24 @@ const Application = ({ job, selectNannyAPICall }) => {
   const [errorMsg, setErrorMsg] = useState("");
 
   console.log(location.state, "appID heree");
-  let application = location.state.application;
-  let jobId = location.state.jobId;
+  let jobData = location.state.job;
+  // let jobId = location.state.jobId
 
-  const [selectNannyModal, setSelectNannyModal] = React.useState(false);
-  const handleOpenSelectNanny = () => setSelectNannyModal(true);
-  const handleCloseSelectNanny = () => setSelectNannyModal(false);
+  const [openApplyToJobModal, setOpenApplyToJobModal] = React.useState(false);
+  const handleOpenApplyToJob = () => setOpenApplyToJobModal(true);
+  const handleCloseApplyToJob = () => setOpenApplyToJobModal(false);
 
-  const selectNanny = async (jobId, nannyId) => {
-    console.log("something is hapenning", jobId, nannyId);
-    selectNannyAPICall(jobId, nannyId);
-    setSelectNannyModal(false);
+  const applyToJob = async (data, nannyId, jobId) => {
+    applyToJobAPICall(data, nannyId, jobId);
+    handleCloseApplyToJob();
+    navigate("/job/viewAllJobs/1");
   };
 
   useEffect(() => {
     console.log("1st use effect fired");
     try {
-      if (application) {
-        setShowData(application);
+      if (jobData) {
+        setShowData(jobData);
         setLoading(false);
         setError(false);
       } else {
@@ -55,8 +55,8 @@ const Application = ({ job, selectNannyAPICall }) => {
       }
     } catch (e) {
       console.log(e);
-      setErrorMsg(e);
       setError(true);
+      setErrorMsg(e);
       setLoading(false);
     }
   }, []);
@@ -64,21 +64,28 @@ const Application = ({ job, selectNannyAPICall }) => {
   if (loading) {
     return (
       <div>
-        <Loading />
+        <h2>Loading....</h2>
       </div>
     );
-  } else if (error) {
+  } else if (errorMsg) {
     return (
       <div>
-        <h2>{errorMsg}</h2>
+        <h2>Error404: No data found</h2>
       </div>
     );
   } else {
-    function getEDTTimeFromISOString(dateString) {
+    const getEDTTimeFromISOString = (dateString) => {
       const date = new Date(dateString);
-      const options = { timeZone: "America/New_York", hour12: true };
+      const options = {
+        timeZone: "America/New_York",
+        hour12: true,
+        minute: "numeric",
+        hour: "numeric",
+      };
       return date.toLocaleString("en-US", options);
-    }
+    };
+    // const date = new Date(showData?.applyDate?.toLocaleString("en-US", {timeZone: "America/New_York",hour: "numeric",minute: "numeric"}));
+    // const formattedDate = date.toLocaleString("en-US", {year: "numeric",month: "long",day: "numeric",hour: "numeric",minute: "numeric",second: "numeric",hour12: false});
     return (
       <Container sx={{ justifyContent: "center" }}>
         <Button
@@ -92,136 +99,105 @@ const Application = ({ job, selectNannyAPICall }) => {
         </Button>{" "}
         <br />
         <br />
-        <Card sx={{ maxWidth: "50%", marginLeft: "25%", marginRight: "25%" }}>
-          <CardHeader
-            avatar={
-              <Avatar sx={{ bgcolor: purple[500] }} aria-label="recipe">
-                {showData?.nannyName[0]}
-              </Avatar>
-            }
-            title={showData?.nannyName}
-            subheader={`Applied to job on ${getEDTTimeFromISOString(
-              showData?.applyDate
-            )}`}
-          />
+        <Card sx={{ maxWidth: "70%", marginLeft: "15%", marginRight: "15%" }}>
+          <CardHeader />
           <CardMedia
             component="img"
             height="50%"
-            width="50%"
             image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
             alt="Nanny Image"
           />
-          <CardContent></CardContent>
           <CardContent>
             <div style={{ display: "flex" }}>
               <Typography color="text.secondary" fontWeight="bold" paragraph>
-                Why Mee:
+                Description:
               </Typography>
               <Typography
                 color="text.secondary"
                 paragraph
                 sx={{ paddingLeft: "7px" }}
               >
-                {showData?.whySelect}
+                {showData?.description}
               </Typography>
             </div>
+            <div style={{ display: "flex" }}>
+              <Typography color="text.secondary" fontWeight="bold" paragraph>
+                Special Care:
+              </Typography>
+              <Typography
+                color="text.secondary"
+                paragraph
+                sx={{ paddingLeft: "7px" }}
+              >
+                {showData?.specialCare}
+              </Typography>
+            </div>
+            <div style={{ display: "flex" }}>
+              <Typography color="text.secondary" fontWeight="bold" paragraph>
+                Shift Time From:
+              </Typography>
+              <Typography
+                color="text.secondary"
+                paragraph
+                sx={{ paddingLeft: "7px" }}
+              >
+                {getEDTTimeFromISOString(showData?.shifts?.timeFrom)}
+              </Typography>
+            </div>
+            <div style={{ display: "flex" }}>
+              <Typography color="text.secondary" fontWeight="bold" paragraph>
+                Shift Time To:
+              </Typography>
+              <Typography
+                color="text.secondary"
+                paragraph
+                sx={{ paddingLeft: "7px" }}
+              >
+                {getEDTTimeFromISOString(showData?.shifts?.timeTo)}
+              </Typography>
+            </div>
+            <div style={{ display: "flex" }}>
+              <Typography color="text.secondary" fontWeight="bold" paragraph>
+                Shift days:
+              </Typography>
 
-            <div style={{ display: "flex" }}>
-              <Typography color="text.secondary" fontWeight="bold" paragraph>
-                Experience
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.experience}
+              <Typography color="text.secondary" paragraph>
+                {showData?.shifts?.days?.map((item) => item + ", ")}
               </Typography>
             </div>
             <div style={{ display: "flex" }}>
               <Typography color="text.secondary" fontWeight="bold" paragraph>
-                Cover Letter:
+                Salary:
               </Typography>
               <Typography
-                color="text.secondary"
                 paragraph
+                color="text.secondary"
                 sx={{ paddingLeft: "7px" }}
               >
-                {showData?.attachment}
+                {showData?.salary + " USD per week"}
               </Typography>
             </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.secondary" fontWeight="bold" paragraph>
-                Disability:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.disability}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.secondary" fontWeight="bold" paragraph>
-                Shift Punctuality:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.shiftPuntuality}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.secondary" fontWeight="bold" paragraph>
-                My Address:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.nannyAddress}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.secondary" fontWeight="bold" paragraph>
-                How far do I stay:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.distance}
-              </Typography>
-            </div>
+            <Button
+              onClick={handleOpenApplyToJob}
+              variant="filled"
+              sx={{ bgcolor: "purple[700]", textcolor: "white" }}
+            >
+              Apply
+            </Button>
 
-            {selectNannyModal && (
-              <SelectNanny
-                open={selectNannyModal}
-                onClose={handleCloseSelectNanny}
-                jobId={jobId}
-                nannyId={showData?.nannyId}
-                nannyName={showData?.nannyName}
-                selectNanny={selectNanny}
+            {openApplyToJobModal && (
+              <ApplyToJobModal
+                open={openApplyToJobModal}
+                onClose={handleCloseApplyToJob}
+                nannyId={"644c52061284f55284689dea"}
+                jobId={showData._id}
+                applyToJob={applyToJob}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               />
             )}
           </CardContent>
         </Card>
-        <br />
-        <Button
-          onClick={handleOpenSelectNanny}
-          variant="filled"
-          sx={{ bgcolor: purple[700] }}
-        >
-          Select this Nanny for Job
-        </Button>
-        <br />
         <br />
       </Container>
     );
@@ -236,11 +212,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectNannyAPICall: (jobId, nannyId) =>
-      dispatch(selectNannyAPICall(jobId, nannyId)),
+    applyToJobAPICall: (obj, nannyId, jobId) =>
+      dispatch(applyToJobAPICall(obj, nannyId, jobId)),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Application);
+export default connect(mapStateToProps, mapDispatchToProps)(JobDetails);
 
 // export default Application;

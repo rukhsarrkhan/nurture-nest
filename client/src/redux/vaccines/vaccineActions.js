@@ -63,7 +63,7 @@ export const getVaccineAPICall = (childId) => {
       let resp = await axios.get('http://localhost:3000/child/vaccine/'+childId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(getVaccinesSuccess(resp.data));
+      dispatch(getVaccinesSuccess(resp?.data));
     } catch (error) {
       dispatch(getVaccinesFailure(error));
     }
@@ -77,7 +77,7 @@ export const vaccineSetAPICall = (obj,childId) => {
       let resp = await axios.post('http://localhost:3000/child/vaccine/'+childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(vaccinesSetSuccess(resp.data));
+      dispatch(vaccinesSetSuccess(resp?.data));
     } catch (error) {
       dispatch(vaccinesSetFailure(error));
     }
@@ -91,7 +91,7 @@ export const delVaccineAPICall = (vaccineId) => {
       let resp = await axios.delete('http://localhost:3000/child/vaccine/'+vaccineId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(vaccineDeleteSuccess(resp.data));
+      dispatch(vaccineDeleteSuccess(resp?.data));
     } catch (error) {
       dispatch(vaccinesDeleteFailure(error));
     }

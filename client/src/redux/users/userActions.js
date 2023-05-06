@@ -1,5 +1,7 @@
 import axios from "axios";
 import socketIO from 'socket.io-client';
+// import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../../firebase/FirebaseFunctions';
+
 
 import {
     USER_LOGOUT,
@@ -10,9 +12,16 @@ import {
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
     USER_ID_STORE,
+    USER_INITIATE
 } from "./userActionTypes";
 const socket = socketIO.connect('http://localhost:3000');
 
+
+export const userInitiate = () => {
+    return {
+        type: USER_INITIATE,
+    };
+};
 export const userLogout = () => {
     return {
         type: USER_LOGOUT,
@@ -84,12 +93,14 @@ export const userRegistrationAPICall = (obj) => {
 export const userLoginAPICall = (uuId) => {
     return async (dispatch) => {
         try {
+            dispatch(userInitiate());
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
             localStorage.setItem("userData", JSON.stringify(resp?.data));
             localStorage.setItem('userName', resp?.data?.firstName);
             socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
             dispatch(userLoginSuccess(resp?.data));
         } catch (error) {
+            console.log("error", error);
             dispatch(userLoginFailure(error));
         }
     };

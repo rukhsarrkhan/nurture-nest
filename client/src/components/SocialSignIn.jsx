@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { doSocialSignIn } from '../firebase/FirebaseFunctions';
 import { Navigate } from "react-router-dom";
 import { userLoginAPICall } from '../redux/users/userActions';
@@ -6,13 +6,19 @@ import { connect } from 'react-redux';
 
 
 const SocialSignIn = ({ userLoginAPICall }) => {
+  const [serverError, setServerError] = useState(false);
+
+  const [errorText, setErrorText] = useState("");
+
   const socialSignOn = async (provider) => {
-    try {
-      const resp = await doSocialSignIn(provider);
-      await userLoginAPICall(resp);
-      return <Navigate to='/home' id={resp} />;
-    } catch (error) {
-      alert(error);
+    const { uid, error, code } = await doSocialSignIn(provider);
+    if (uid !== "") {
+      await userLoginAPICall(uid);
+      // what if this fails
+      return <Navigate to='/home' id={uid} />;
+    } else {
+      setServerError(true);
+      setErrorText(`Internal Server Error. Please Retry.`);
     }
   };
   return (
@@ -24,6 +30,10 @@ const SocialSignIn = ({ userLoginAPICall }) => {
         alt='google signin'
         src='/images/btn_google_signin.png'
       />
+      <br />
+
+      {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
+
     </div>
   );
 };

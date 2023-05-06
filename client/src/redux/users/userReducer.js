@@ -9,15 +9,9 @@ import {
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
     USER_ID_STORE,
+    USER_INITIATE,
 } from "./userActionTypes";
-
-// const initalState = [
-//     {
-//         id: uuid(),
-//         name: 'Patrick Hill',
-//         email: 'phill@stevens.edu'
-//     }
-// ];
+import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../../firebase/FirebaseFunctions';
 
 const initialState = {
     userLoggedIn: false,
@@ -30,8 +24,15 @@ const initialState = {
 };
 
 export const userReducer = (state = initialState, action) => {
+
     const { type, payload } = action;
     switch (type) {
+        case USER_INITIATE:
+            return {
+                ...state,
+                data: {},
+                error: ""
+            };
         case USER_LOGIN_SUCCESS:
             return {
                 ...state,
@@ -42,10 +43,14 @@ export const userReducer = (state = initialState, action) => {
                 userProfile: payload,
             };
         case USER_LOGIN_FALIURE:
+            console.log("payload", payload);
+            console.log("error", payload?.response?.data?.message);
+            doSignOut(payload?.response?.data?.message);
+
             return {
                 ...state,
                 userLoggedIn: false,
-                error: payload?.response?.data,
+                error: payload?.response?.data?.message,
             };
         case USER_LOGOUT:
             return {
@@ -82,7 +87,7 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: payload?.response?.data,
-            };   
+            };
         default:
             return state;
     }

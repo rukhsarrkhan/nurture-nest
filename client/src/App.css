@@ -560,3 +560,8 @@ footer {
 .reciever__name {
 	text-align: left;
 }
+
+.errorText {
+	color: red;
+	font-weight: bold;
+}

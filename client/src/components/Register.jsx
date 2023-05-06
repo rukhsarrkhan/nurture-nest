@@ -40,9 +40,14 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [errorText, setErrorText] = useState("");
 
   const validation = async (field, valFunc) => {
-    await helpers.execValdnAndTrim(field);
-    let check = await valFunc;
-    if (check && check.statusCode === 400) {
+    let fieldVal = await helpers.execValdnAndTrim(field);
+    let check = "";
+    if (valFunc) {
+      check = await valFunc;
+    }
+    if (fieldVal && fieldVal.statusCode === 400) {
+      return fieldVal.message;
+    } else if (check && check.statusCode === 400) {
       return check.message;
     } else {
       return "";
@@ -121,17 +126,26 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
     if (firstName?.trim() && lastName?.trim() && email?.trim() && password?.trim() && errorText === "") {
       let uuid;
-      try {
-        const resp = await doCreateUserWithEmailAndPassword(
-          email?.trim(),
-          password?.trim(),
-          firstName?.trim()
-        );
-        if (resp !== "") {
-          uuid = resp;
+
+      const { uid, error, code } = await doCreateUserWithEmailAndPassword(
+        email?.trim(),
+        password?.trim(),
+        firstName?.trim()
+      );
+
+      if (uid !== "") {
+        uuid = uid;
+      } else {
+        if (code === 'auth/weak-password') {
+          setPasswordError(true);
+          setErrorText("The password is too weak.");
+        } else if (code === 'auth/email-already-in-use') {
+          setEmailError(true);
+          setErrorText("Email already in use.");
+        } else {
+          setEmailError(true);
+          setErrorText(`Failed with error code: ${code}`);
         }
-      } catch (error) {
-        alert(error);
       }
 
       try {

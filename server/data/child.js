@@ -3,7 +3,7 @@ const childs = mongoCollections.child;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 
-const createChild = async (name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr) => {
+const createChild = async (photoUrl, name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr) => {
     name = await helper.execValdnAndTrim(name, "Name");
     await helper.isNameValid(name, "Name");
     age = await helper.execValdnAndTrim(age, "Age");
@@ -34,6 +34,11 @@ const createChild = async (name, age, sex, mealRequirementsArr, vaccineArr, appo
     if (appointmentsArr) {
         await helper.execValdnForArr(appointmentsArr, "Appointments");
         newChild.appointments = appointmentsArr;
+    }
+    if (photoUrl) {
+        photoUrl = await helper.execValdnAndTrim(photoUrl, "PhotoUrl");
+        await helper.validateImageUrl(photoUrl);
+        newChild.photoUrl = photoUrl;
     }
     const childCollection = await childs();
     const insertedChild = await childCollection.insertOne(newChild);

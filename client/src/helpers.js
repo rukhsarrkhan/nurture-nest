@@ -214,6 +214,13 @@ const isShiftLimitValid = async (start, end, daysNum) => {
     }
     return "";
 };
+const isChildAgeValid = (age) => {
+    if (isNaN(age)) {
+        return { statusCode: 400, message: `Age should be a number` };
+    }
+    if (parseInt(age) > 12) return { statusCode: 400, message: "child cannnot be more than 12 years old" };
+};
+
 // const isIdValid = (id,fieldName) => {
 //     if(!ObjectId.isValid(id))
 //     return {statusCode : 400, message: 'invalid object id'}
@@ -248,4 +255,5 @@ module.exports = {
     isShiftLimitValid,
     isAddressValid,
     validatePhoneNumber,
+    isChildAgeValid,
 };

@@ -5,11 +5,40 @@ const childCollection = data.child;
 const userData = data.users;
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
+require("dotenv").config();
+const aws = require("aws-sdk");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const gm = require("gm").subClass({ imageMagick: true });
+const mime = require("mime");
+aws.config.update({
+    secretAccessKey: process.env.ACCESS_SECRET,
+    accessKeyId: process.env.ACCESS_KEY,
+    region: process.env.REGION,
+});
+const BUCKET = process.env.BUCKET;
+const s3 = new aws.S3();
+const parseForm = multer();
+const upload = multer({
+    storage: multerS3({
+        bucket: BUCKET,
+        s3: s3,
+        acl: "public-read",
+        key: (req, file, cb) => {
+            cb(null, `image-${Date.now()}.jpeg`);
+        },
+    }),
+});
 
-router.route("/").post(async (req, res) => {
+router.route("/").post(parseForm.single("image"), async (req, res) => {
     try {
+        if (!req.file) {
+            throw { statusCode: 400, message: `No file uploaded` };
+        }
+        let photoUrl = "";
         let { name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr, parentId } = req.body;
         name = await helper.execValdnAndTrim(name, "Name");
+        await helper.isNameValid(name, "Name");
         age = await helper.execValdnAndTrim(age, "Age");
         if (isNaN(age)) {
             throw { statusCode: 400, message: `${fieldName} should be a number` };
@@ -27,18 +56,59 @@ router.route("/").post(async (req, res) => {
             await helper.execValdnForArr(appointmentsArr, "Appointments");
         }
         let parentObj = await userData.getUserById(parentId);
+        if (!parentObj) throw { statusCode: 404, message: "No parent with that id" };
         if (parseInt(parentObj.age) - parseInt(age) < 16) {
             throw { statusCode: 400, message: "Invalid age difference between parent and child" };
         }
-        const childCreated = await childCollection.createChild(name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr);
-        if (!childCreated) {
-            throw { statusCode: 500, message: "Internal Server error" };
+        if (parentObj.profile !== global.userTypeParent) {
+            throw { statusCode: 400, message: "ParentId doesn't belong to a parent." };
         }
-        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString());
-        if (userUpdated) {
-            parentObj = await userData.getUserById(parentId);
+        const fileType = mime.getExtension(req.file.mimetype);
+        if (fileType !== "jpeg" && fileType !== "png" && fileType !== "gif") {
+            throw { statusCode: 400, message: `Invalid file type` };
         }
-        return res.json(parentObj);
+        gm(req.file.buffer)
+            .autoOrient() // fix image orientation if necessary
+            .resize(200, 200, "^") // resize the image to fit within 200x200 without distorting the aspect ratio
+            .gravity("Center") // center the crop on the resized image
+            .crop(200, 200) // crop the resized image to a 200x200 square
+            .toBuffer(async (err, buffer) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({ title: "Error", message: err.message });
+                } else {
+                    try {
+                        req.file.buffer = buffer;
+                        const params = {
+                            Bucket: BUCKET,
+                            Key: `image-${Date.now()}.jpeg`, // add a timestamp to the filename to ensure it's unique
+                            Body: buffer,
+                            ContentType: req.file.mimetype,
+                        };
+                        const data = await s3.upload(params).promise();
+                        photoUrl = data.Location;
+                        const childCreated = await childCollection.createChild(
+                            photoUrl,
+                            name,
+                            age,
+                            sex,
+                            mealRequirementsArr,
+                            vaccineArr,
+                            appointmentsArr
+                        );
+                        if (!childCreated) {
+                            throw { statusCode: 500, message: "Internal Server error" };
+                        }
+                        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString());
+                        if (userUpdated) {
+                            parentObj = await userData.getUserById(parentId);
+                        }
+                        return res.json(parentObj);
+                    } catch (error) {
+                        return res.status(500).json({ title: "Error", message: "An unexpected error occurred" });
+                    }
+                }
+            });
     } catch (e) {
         return res.status(e.statusCode).json({ message: e.message });
     }

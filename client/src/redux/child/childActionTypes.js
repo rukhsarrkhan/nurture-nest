@@ -1,0 +1,3 @@
+export const ADD_CHILD = "ADD_CHILD";
+export const ADD_CHILD_SUCCESS = "ADD_CHILD_SUCCESS";
+export const ADD_CHILD_FAILURE = "ADD_CHILD_FAILURE";

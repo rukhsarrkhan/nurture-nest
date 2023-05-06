@@ -64,7 +64,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     const handleImageSubmit = async () => {
-        console.log("Here in image submit");
         try {
             if (!imageFile) {
                 setImageError("No image available");

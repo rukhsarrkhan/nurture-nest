@@ -211,6 +211,7 @@ router
 
             if (photoUrl) {
                 photoUrl = await helper.execValdnAndTrim(photoUrl, "PhotoUrl");
+                await helper.validateImageUrl(photoUrl);
                 if (cur_userObj.photoUrl != photoUrl) userObj.photoUrl = photoUrl;
             }
 

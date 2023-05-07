@@ -59,12 +59,6 @@ const AddMealModal = (props) => {
             setErrorText(MealCheck.message)
             return
         }
-        // let dateCheck = await helpers.isDateValid(date, "date")
-        // if (dateCheck !== undefined) {
-        //     setDateError(true);
-        //     setErrorText(dateCheck.message)
-        //     return
-        // }
 
         if (time === '') {
             setTimeError(true);

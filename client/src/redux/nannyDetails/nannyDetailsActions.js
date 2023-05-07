@@ -43,7 +43,7 @@ export const getNannyDetailsAPICall = (nannyId, childId) => {
       // sessionStorage.setItem("token", resp.data.token);
       dispatch(getNannyDetailsSuccess(newObj));
     } catch (error) {
-      console.log(error)
+      console.log(error);
       dispatch(getNannyDetailsFailure(error));
     }
   };

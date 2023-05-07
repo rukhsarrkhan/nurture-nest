@@ -1,8 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { TextField, Button, MenuItem } from "@mui/material";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
-import { doSignInWithEmailAndPassword, doPasswordReset } from '../firebase/FirebaseFunctions';
+import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
 import { userLoginAPICall } from '../redux/users/userActions';
 
@@ -15,12 +15,36 @@ const Login = ({ userData, userLoginAPICall }) => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [success, setSuccess] = useState(false);
+  let items;
+
+  useEffect(() => {
+    setSuccess(false);
+    if (userData !== undefined) {
+      if (userData?.error !== "") {
+        setServerError(true);
+        setErrorText(userData?.error);
+        doSignOut(userData?.error);
+      } else {
+        if (Object.keys(userData?.data).length !== 0) {
+          items = JSON.parse(localStorage.getItem('userData'));
+          setSuccess(true);
+        }
+      }
+    }
+  }, [userData]);
 
   const validation = async (field, valFunc) => {
     let fieldVal = await helpers.execValdnAndTrim(field);
-    let check = await valFunc;
-    if (check && check.statusCode === 400) {
+    let check = "";
+    if (valFunc) {
+      check = await valFunc;
+    }
+    if (fieldVal && fieldVal.statusCode === 400) {
+      return fieldVal.message;
+    } else if (check && check.statusCode === 400) {
       return check.message;
     } else {
       return "";
@@ -46,41 +70,51 @@ const Login = ({ userData, userLoginAPICall }) => {
       setPasswordError(true);
       setErrorText(passwordCheck);
       return;
-    }
+    };
 
     if (email?.trim() && password?.trim() && errorText === "") {
-      try {
-        const resp = await doSignInWithEmailAndPassword(
-          email?.trim(),
-          password?.trim()
-        );
-        if (resp !== "") {
-          await userLoginAPICall(resp);
-          return <Navigate to='/home' id={resp} />;
+      const { uid, error, code } = await doSignInWithEmailAndPassword(
+        email?.trim(),
+        password?.trim()
+      );
+      if (uid !== "") {
+        await userLoginAPICall(uid);
+      } else {
+        if (code === 'auth/wrong-password') {
+          setPasswordError(true);
+          setErrorText("Wrong password.");
+        } else if (code === 'auth/user-not-found') {
+          setEmailError(true);
+          setErrorText("User not found.");
+        } else {
+          setEmailError(true);
+          setErrorText(`Failed with error code: ${code}`);
         }
-      } catch (error) {
-        alert(error);
       }
     }
-    return <Navigate to='/' />;
-
   };
 
   const passwordReset = async (event) => {
     event.preventDefault();
     if (email) {
-      doPasswordReset(email);
-      alert('Password reset email was sent');
+      const { resp, error, code } = await doPasswordReset(email);
+      if (resp !== undefined) {
+        alert('Password reset email was sent');
+      } else {
+        if (code === 'auth/user-not-found') {
+          setEmailError(true);
+          setErrorText("User not found.");
+        } else {
+          setEmailError(true);
+          setErrorText(`Failed with error code: ${code}`);
+        }
+      }
     } else {
-      alert(
-        'Please enter an email address below before you click the forgot password link'
-      );
+      setEmailError(true);
+      setErrorText('Please enter an email address below before you click the forgot password link');
+      return;
     }
   };
-
-  if (currentUser) {
-    return <Navigate to='/home' />;
-  }
 
   return (
     <React.Fragment>
@@ -113,20 +147,20 @@ const Login = ({ userData, userLoginAPICall }) => {
           />
           <br />
           <br />
-
           <div className="centerLogin">
             <Button variant="outlined" color="secondary" type="submit" >Login</Button>
             <Button variant="outlined" color="secondary" type="submit" onClick={passwordReset} >Forgot Password</Button>
           </div>
+          <br />
+          {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
         </form>
         <br />
-
         <small>Don't have an account? <Link to="/register">Register here</Link></small>
         <br />
         <SocialSignIn />
       </div>
-
-    </React.Fragment>
+      {success === true && currentUser && <Navigate to='/home' id={items?._id} />}
+    </React.Fragment >
   );
 };
 

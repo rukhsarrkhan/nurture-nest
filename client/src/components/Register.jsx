@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import { TextField, Button, MenuItem } from "@mui/material";
 import { userRegistrationAPICall } from '../redux/users/userActions';
-import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions';
+import { doCreateUserWithEmailAndPassword, doSignOut } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
 import SocialSignIn from './SocialSignIn';
 import helpers from '../helpers';
@@ -37,12 +37,36 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [profileError, setProfileError] = useState(false);
   const [ageError, setAgeError] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [success, setSuccess] = useState(false);
+  let items;
+
+  useEffect(() => {
+    setSuccess(false);
+    if (userData !== undefined) {
+      if (userData?.error !== "") {
+        setServerError(true);
+        setErrorText(userData?.error);
+        doSignOut(userData?.error);
+      } else {
+        if (Object.keys(userData?.data).length !== 0) {
+          items = JSON.parse(localStorage.getItem('userData'));
+          setSuccess(true);
+        }
+      }
+    }
+  }, [userData]);
 
   const validation = async (field, valFunc) => {
-    await helpers.execValdnAndTrim(field);
-    let check = await valFunc;
-    if (check && check.statusCode === 400) {
+    let fieldVal = await helpers.execValdnAndTrim(field);
+    let check = "";
+    if (valFunc) {
+      check = await valFunc;
+    }
+    if (fieldVal && fieldVal.statusCode === 400) {
+      return fieldVal.message;
+    } else if (check && check.statusCode === 400) {
       return check.message;
     } else {
       return "";
@@ -121,20 +145,15 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
     if (firstName?.trim() && lastName?.trim() && email?.trim() && password?.trim() && errorText === "") {
       let uuid;
-      try {
-        const resp = await doCreateUserWithEmailAndPassword(
-          email?.trim(),
-          password?.trim(),
-          firstName?.trim()
-        );
-        if (resp !== "") {
-          uuid = resp;
-        }
-      } catch (error) {
-        alert(error);
-      }
 
-      try {
+      const { uid, error, code } = await doCreateUserWithEmailAndPassword(
+        email?.trim(),
+        password?.trim(),
+        firstName?.trim()
+      );
+
+      if (uid !== "") {
+        uuid = uid;
         const data = {
           firstName: firstName?.trim(),
           lastName: lastName?.trim(),
@@ -144,18 +163,29 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           uuid: uuid
         };
         await userRegistrationAPICall(data);
-      } catch (error) {
-        alert(error);
+      } else {
+        if (code === 'auth/weak-password') {
+          setPasswordError(true);
+          setErrorText("The password is too weak.");
+        } else if (code === 'auth/email-already-in-use') {
+          setEmailError(true);
+          setErrorText("Email already in use.");
+        } else {
+          setEmailError(true);
+          setErrorText(`Failed with error code: ${code}`);
+        }
       }
 
-      return <Navigate to='/login' />;
+
+
+      // return <Navigate to='/login' />;
     }
   };
 
-  if (currentUser) {
-    const items = JSON.parse(localStorage.getItem('userData'));
-    return <Navigate to='/home' id={items?._id} />;
-  }
+  // if (currentUser) {
+  //   const items = JSON.parse(localStorage.getItem('userData'));
+  //   return <Navigate to='/home' id={items?._id} />;
+  // }
 
   return (
     <React.Fragment>
@@ -256,15 +286,15 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           />
           <br />
           <br />
-
           <Button variant="outlined" color="secondary" type="submit" className="center">Register</Button>
-
+          <br />
+          {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
         </form>
         <small>Already have an account? <Link to="/login">Login here</Link></small>
         <br />
         <SocialSignIn />
       </div>
-
+      {success === true && currentUser && <Navigate to='/home' id={items?._id} />}
     </React.Fragment>
   );
 };

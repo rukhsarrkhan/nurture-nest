@@ -246,6 +246,17 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
       </Button>
   </CardActionArea>
 </Grid>
+<Button
+  variant="contained"
+  onClick={() => {navigate(-1)}}
+  sx={{
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    display: 'block'
+  }}
+>
+  Back
+</Button>
       </Grid>
     );
   };

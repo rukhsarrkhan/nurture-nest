@@ -29,7 +29,7 @@ const AddModal = (props) => {
         var day = showdate.substring(8, 10);
         return month + '/' + day + '/' + year;
     };
-    const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
+    // const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
@@ -53,13 +53,6 @@ const AddModal = (props) => {
             setnameError(true);
             setErrorText(nameCheck.message)
             return;
-        }
-        if(date < today) {
-            setDateError(true)
-            setErrorText('Please select a future date')
-            return
-        } else {
-            setDateError(false)
         }
         let dosesCheck = await helpers.onlyNumbers(doses, "doses")
         if (dosesCheck !== undefined) {

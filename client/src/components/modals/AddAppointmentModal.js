@@ -29,7 +29,6 @@ const AddAppointmentModal = (props) => {
         return month + '/' + day + '/' + year;
     };
     const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
-    const todayTime = new Date().toISOString().slice(0, 16);
 
 
     const tConvert = (time) => {
@@ -80,13 +79,6 @@ const AddAppointmentModal = (props) => {
             setDateError(true);
             setErrorText('Please select a future date')
             return
-        }
-        if(time < todayTime){
-            setTimeError(true)
-            setErrorText("Please select a future time")
-            return
-        }else {
-            setTimeError(false)
         }
         if (doctor?.trim() && hospital?.trim() && date?.trim() && time?.trim() && errorText === "") {
             try {
@@ -162,6 +154,7 @@ const AddAppointmentModal = (props) => {
                               <TextField
                              id="inline-picker"
                                 className="appointmentField"
+                                label="Time"
                                 type='time'
                                 onChange={e => setTime(e.target.value)}
                                 required

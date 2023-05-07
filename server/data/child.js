@@ -1,5 +1,6 @@
 const mongoCollections = require("../config/mongo-collections");
 const childs = mongoCollections.child;
+const users = mongoCollections.users;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 
@@ -82,15 +83,34 @@ const removeChild = async (childId) => {
     childId = childId.trim();
     if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID" };
     const childCollection = await childs();
+    let currentChild = await getChildById(childId)
+
     const deletedChild = await childCollection.findOneAndDelete({
-        _id: ObjectId(childId),
-    });
+        _id: ObjectId(childId)
+    }, { projection: { _id: 1 } });
     if (deletedChild.value == null) {
         throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
-    deletedChild.value._id = deletedChild.value._id.toString();
-    return `${deletedChild.value.name} has been successfully deleted!`;
+    return deletedChild.value._id;
 };
+
+const removeChildFromUser = async (parentId, childId) => {
+    parentId = await helper.execValdnAndTrim(parentId, "Child Id");
+    if (!ObjectId.isValid(parentId)) {
+        throw { statusCode: 400, message: "Child Id is not valid" };
+    }
+    const userCollection = await users();
+    // let getUser = userCollection.findOne({ _id: ObjectId(parentId) })
+    const removeChildId = await userCollection.updateOne({ _id: ObjectId(parentId), p_childIds: { $elemMatch: { $eq: childId } } },
+        { $pull: { p_childIds: childId } });
+    if (!removeChildId.acknowledged || removeChildId.modifiedCount == 0)
+        throw {
+            statusCode: 400,
+            message: "Couldn't update child from user collection",
+        };
+    return removeChildId;
+}
+
 
 const addVaccine = async (name, date, doses, childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");
@@ -153,7 +173,7 @@ const addAppointment = async (doctor, hospital, date, time, childId) => {
         throw { statusCode: 400, message: "Child Id is not valid" };
     }
     doctor = await helper.execValdnAndTrim(doctor, "doctor");
-    await helper.onlyLettersNumbersAndSpaces(doctor, "doctor");
+    await helper.isNameValid(doctor, "doctor");
 
     hospital = await helper.execValdnAndTrim(hospital, "hospital");
     await helper.onlyLettersNumbersAndSpaces(hospital, "hospital");
@@ -315,6 +335,7 @@ module.exports = {
     getChildById,
     updateChild,
     removeChild,
+    removeChildFromUser,
     addVaccine,
     getVaccines,
     getAppointments,

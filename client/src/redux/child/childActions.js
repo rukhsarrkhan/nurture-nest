@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS } from "./childActionTypes";
+import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS,DELETE_CHILD_SUCCESS,DELETE_CHILD_FAILURE } from "./childActionTypes";
 
 export const setChildSuccess = (userObj) => {
     return {
@@ -47,6 +47,31 @@ export const fetchChildrenAPICall = (userId) => {
             dispatch(setFetchChildSuccess(data));
         } catch (error) {
             dispatch(setFetchChildFailure(error));
+        }
+    };
+};
+
+export const deleteChildSuccess = (data) => {
+    return {
+        type: DELETE_CHILD_SUCCESS,
+        payload: data,
+    };
+};
+
+export const deleteChildFailure = (error) => {
+    return {
+        type: DELETE_CHILD_FAILURE,
+        payload: error,
+    };
+};
+
+export const deleteChilDAPICall = (childId,obj) => {
+    return async (dispatch) => {
+        try {
+            let { data } = await axios.delete('http://localhost:3000/child/removeChild/' + childId, { data: obj } );
+            dispatch(deleteChildSuccess(data));
+        } catch (error) {
+            dispatch(deleteChildFailure(error));
         }
     };
 };

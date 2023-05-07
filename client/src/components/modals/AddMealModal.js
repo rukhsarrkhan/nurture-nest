@@ -59,19 +59,6 @@ const AddMealModal = (props) => {
             setErrorText(MealCheck.message)
             return
         }
-        if (time < today) {
-            setTimeError(true)
-            setErrorText("Please select a future time")
-            return
-        } else {
-            setTimeError(false)
-        }
-        // let dateCheck = await helpers.isDateValid(date, "date")
-        // if (dateCheck !== undefined) {
-        //     setDateError(true);
-        //     setErrorText(dateCheck.message)
-        //     return
-        // }
 
         if (time === '') {
             setTimeError(true);
@@ -140,6 +127,7 @@ const AddMealModal = (props) => {
                                 id="inline-picker"
                                 className="mealField"
                                 type='time'
+                                label="Time"
                                 onChange={e => setTime(e.target.value)}
                                 required
                                 variant="filled"
@@ -148,7 +136,6 @@ const AddMealModal = (props) => {
                                 helperText={timeError && errorText}
                                 value={time}
                                 error={timeError}
-                                inputProps={{ min: today }}
                             />
 
                             <Button variant="outlined" color="secondary" type="submit" >

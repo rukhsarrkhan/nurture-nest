@@ -4,7 +4,6 @@ import '../App.css';
 import { Button } from '@mui/material';
 import { Link, useParams, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 
 import {
@@ -16,7 +15,6 @@ import {
   Grid,
   Typography
 } from '@mui/material';
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
@@ -30,7 +28,6 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchData() {

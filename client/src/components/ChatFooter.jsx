@@ -8,7 +8,6 @@ const ChatFooter = ({ socket }) => {
     const handleSendMessage = (e) => {
         e.preventDefault();
         if (message.trim() && localStorage.getItem('userName')) {
-            console.log("message", message);
             socket.emit('message', {
                 text: message,
                 name: localStorage.getItem('userName'),

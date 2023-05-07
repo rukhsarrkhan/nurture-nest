@@ -1,9 +1,10 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
 import { Button } from '@mui/material';
-import { Link, useParams,Navigate, useNavigate,useLocation  } from 'react-router-dom';
+import { Link, useParams, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
+
 import {
   Card,
   CardActions,
@@ -16,7 +17,7 @@ import {
 import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
-import nannyImage from '../img/nanny.png'
+import nannyImage from '../img/nanny.png';
 import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
@@ -99,7 +100,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData?.data?.mealRequirements && dashboardData?.data?.mealRequirements[0]?.meal
                     ? dashboardData?.data?.mealRequirements[0]?.meal
                     : 'No data to display'}
-                 <br></br>
+                  <br></br>
                   {"Click to view Details"}
                 </Typography>
                 <dl>
@@ -146,7 +147,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData?.data && dashboardData?.data?.vaccine && dashboardData?.data?.vaccine[0] && dashboardData?.data?.vaccine[0]?.name && dashboardData?.data?.vaccine[0]?.date
                     ? dashboardData?.data?.vaccine[0]?.name + " due on " + dashboardData?.data?.vaccine[0]?.date
                     : 'No data to display'}
-                    <br></br>
+                  <br></br>
                   {"Click to view details"}
                 </Typography>
                 <dl>
@@ -204,59 +205,58 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
           </CardActionArea>
         </Grid>
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
-  <CardActionArea>
-      <CardMedia
-        sx={{
-          maxWidth: 345,
-          height: 'auto',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          borderRadius: 5,
-          boxShadow: 'none'
-        }}
-        component='img'
-        image={nannyImage}
-        title='Nanny Details'
-      />
-      <CardContent>
-        <Typography
+          <CardActionArea>
+            <CardMedia
+              sx={{
+                maxWidth: 345,
+                height: 'auto',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                borderRadius: 5,
+                boxShadow: 'none'
+              }}
+              component='img'
+              image={nannyImage}
+              title='Nanny Details'
+            />
+            <CardContent>
+              <Typography
+                sx={{
+                  maxWidth: 345,
+                  height: 'auto',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  borderRadius: 5,
+                  border: '1px solid #080a33',
+                  boxShadow: 'none'
+                }}
+                gutterBottom
+                variant='h6'
+                component='h2'
+              >
+                {"Nanny Details"}
+              </Typography>
+              <Typography variant='body2' color='textSecondary' component='p'>
+              </Typography>
+            </CardContent>
+            <CardActions>
+            </CardActions>
+            <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, { state: { childId: dashboardData?.data?._id } }) }}>
+              View Nanny Details
+            </Button>
+          </CardActionArea>
+        </Grid>
+        <Button
+          variant="contained"
+          onClick={() => { navigate(-1) }}
           sx={{
-            maxWidth: 345,
-            height: 'auto',
             marginLeft: 'auto',
             marginRight: 'auto',
-            borderRadius: 5,
-            border: '1px solid #080a33',
-            boxShadow: 'none'
+            display: 'block'
           }}
-          gutterBottom
-          variant='h6'
-          component='h2'
         >
-          {"Nanny Details"}
-        </Typography>
-        <Typography variant='body2' color='textSecondary' component='p'>
-        </Typography>
-      </CardContent>
-    <CardActions>
-    </CardActions>
-    <Button variant='contained' color='primary' onClick={() => 
-        { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, {state: { childId: dashboardData?.data?._id}})}}>
-        View Nanny Details
-      </Button>
-  </CardActionArea>
-</Grid>
-<Button
-  variant="contained"
-  onClick={() => {navigate(-1)}}
-  sx={{
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    display: 'block'
-  }}
->
-  Back
-</Button>
+          Back
+        </Button>
       </Grid>
     );
   };

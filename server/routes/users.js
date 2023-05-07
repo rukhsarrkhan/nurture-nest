@@ -16,7 +16,7 @@ aws.config.update({
     accessKeyId: process.env.ACCESS_KEY,
     region: process.env.REGION,
 });
-console.log(process.env.BUCKET + " Bucket here");
+
 const BUCKET = process.env.BUCKET;
 const s3 = new aws.S3();
 const parseForm = multer();
@@ -95,7 +95,6 @@ router.route("/image/:userId").put(parseForm.single("image"), async (req, res) =
             .crop(200, 200) // crop the resized image to a 200x200 square
             .toBuffer(async (err, buffer) => {
                 if (err) {
-                    console.log(err);
                     return res.status(500).json({ title: "Error", message: err.message });
                 } else {
                     try {

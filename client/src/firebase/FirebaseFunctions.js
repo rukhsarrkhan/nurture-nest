@@ -3,11 +3,28 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 const auth = getAuth();
 
+async function doSignOut(error) {
+  if (error !== "") {
+    await firebase.auth().signOut();
+    localStorage.removeItem("userData");
+    localStorage.clear();
+  } else {
+    await firebase.auth().signOut();
+    localStorage.removeItem("userData");
+    localStorage.clear();
+    window.location.href = "/";
+  }
+}
+
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
-  const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
-  if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
-    await firebase.auth().currentUser.updateProfile({ displayName: firstName });
-    return resp?.user?.multiFactor?.user?.uid;
+  try {
+    const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
+    if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
+      await firebase.auth().currentUser.updateProfile({ displayName: firstName });
+      return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
+    }
+  } catch (e) {
+    return { uid: "", code: e?.code, error: e?.message };
   }
 }
 
@@ -22,9 +39,13 @@ async function doChangePassword(email, oldPassword, newPassword) {
 }
 
 async function doSignInWithEmailAndPassword(email, password) {
-  const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
-  if (resp?.user?.multiFactor?.user?.uid !== "") {
-    return resp?.user?.multiFactor?.user?.uid;
+  try {
+    const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
+    if (resp?.user?.multiFactor?.user?.uid !== "") {
+      return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
+    }
+  } catch (e) {
+    return { uid: "", code: e?.code, error: e?.message };
   }
 }
 
@@ -35,27 +56,31 @@ async function doSocialSignIn(provider) {
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
   }
-  const resp = await firebase.auth().signInWithPopup(socialProvider);
-  if (resp?.user?.multiFactor?.user?.uid !== "") {
-    return resp?.user?.multiFactor?.user?.uid;
+  try {
+    const resp = await firebase.auth().signInWithPopup(socialProvider);
+    if (resp?.user?.multiFactor?.user?.uid !== "") {
+      return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
+    }
+  } catch (e) {
+    return { uid: "", code: e?.code, error: e?.message };
   }
+
 }
 
 async function doPasswordReset(email) {
-  return sendPasswordResetEmail(auth, email).then((a) => {
-  });
+  try {
+    const resp = await sendPasswordResetEmail(auth, email);
+    return { resp: "success" };
+  } catch (e) {
+    return { code: e?.code, error: e?.message };
+  }
 }
 
 async function doPasswordUpdate(password) {
   await firebase.auth().updatePassword(password);
 }
 
-async function doSignOut() {
-  // let navigate = useNavigate();
-  await firebase.auth().signOut();
-  localStorage.removeItem("userData");
-  window.location.href = "/";
-}
+
 
 export {
   doCreateUserWithEmailAndPassword,

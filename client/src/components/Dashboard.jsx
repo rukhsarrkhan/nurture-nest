@@ -241,11 +241,22 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </CardContent>
             <CardActions>
             </CardActions>
-            <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, { state: { childId: dashboardData?.data?._id } }); }}>
+            <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, { state: { childId: dashboardData?.data?._id } }) }}>
               View Nanny Details
             </Button>
           </CardActionArea>
         </Grid>
+        <Button
+          variant="contained"
+          onClick={() => { navigate(-1) }}
+          sx={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block'
+          }}
+        >
+          Back
+        </Button>
       </Grid>
     );
   };

@@ -133,6 +133,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
               </CardActionArea>
             </Card>
           </Grid>
+          </Grid> 
       </div>
     );
   };

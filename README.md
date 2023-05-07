@@ -5,6 +5,21 @@ Nurture-Nest allows a user to manage their child with their meal plans, vaccine 
 
 This project is developed by Group Status 418. 
 
+### Requirements
+
+Both Server and Client side require .env file which the team 'Status 418' must have provided seperately. If you face issues accessing the same, please contact the team!
+
+You would also have to install ImageMagick on your machine to make things work as it is one of our independent technologies that we have used in our project. 
+Below are the links to download the same:
+
+Windows: https://imagemagick.org/script/download.php#windows
+
+Mac: https://imagemagick.org/script/download.php#macosx
+
+Lastly, make sure that you have all the latest packages of Visual Studio Code downloaded on your machine.
+
+For reference, visit https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170 
+
 ## Available Scripts
 
 In the project directory, you can open an integrated terminal on both client and server and run the following commands:
@@ -34,17 +49,6 @@ Both the parent side and nanny side would have a chat functionality to chat with
 ### Database - Mongo SRV URL
 
 mongodb+srv://swarajsingpatil:Password%401@cluster0.68unpvh.mongodb.net/test
-
-### IMPORTANT INFORMATION
-
-Both Server and Client side require .env file which the team 'Status 418' must have provided seperately. If you face issues accessing the same, please contact the team!
-
-You would also have to install ImageMagick on your machine to make things work as it is one of our independent technologies that we have used in our project. 
-Below are the links to download the same:
-
-Windows: https://imagemagick.org/script/download.php#windows
-
-Mac: https://imagemagick.org/script/download.php#macosx
  
 ## NOTE
 

@@ -266,7 +266,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
                   }}
                   gutterBottom
                   variant='h6'
-                  component='h2'
+                  component='h1'
                 >
                   {"Nanny Details"}
                 </Typography>

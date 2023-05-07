@@ -92,7 +92,7 @@ export const ProfileBtn = styled.button`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #2c3e50;
-    color: #fff;
+    color: #ffffff;
   }
   @media screen and (max-width: 768px) {
     margin-left: 0;

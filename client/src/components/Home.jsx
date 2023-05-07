@@ -110,7 +110,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                                     }}
                                     gutterBottom
                                     variant="h6"
-                                    component="h2"
+                                    component="h1"
                                 >
                                     {child?.name}
                                 </Typography>

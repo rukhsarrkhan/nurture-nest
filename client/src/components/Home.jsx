@@ -44,17 +44,17 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                 setErrorText(e.message ? e.message : e);
             }
         }
-        if (id !== undefined && userData.userProfile === null) {
+        if (id !== undefined && userData?.userProfile === null) {
             fetchData();
             fetchChildData();
         }
-        if (userData.userProfile) {
-            setuserObjData(userData.userProfile);
+        if (userData?.userProfile !== null && userData?.userProfile !== undefined) {
+            setuserObjData(userData?.userProfile);
             setLoading(false);
         }
     }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
     useEffect(() => {
-        if (childData) {
+        if (childData && childData.length > 0) {
             setChildObjArr(childData);
         }
     }, [childData]);
@@ -107,19 +107,16 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                                         color: "#000000",
                                     }}
                                 >
-                                    {child?.age}
-                                </Typography>
-                                <br />
-                                <Typography
-                                    variant="body3"
-                                    color="textSecondary"
-                                    component="span"
-                                    sx={{
-                                        borderBottom: "1px solid #1e8678",
-                                        color: "#000000",
-                                    }}
-                                >
-                                    {child?.sex}
+                                    <dl>
+                                        <p>
+                                            <dt className="title">Age: </dt>
+                                            {child?.age ? <dd>{child.age}</dd> : <dd>N/A</dd>}
+                                        </p>
+                                        <p>
+                                            <dt className="title">Sex: </dt>
+                                            {child?.sex ? <dd>{child.sex}</dd> : <dd>N/A</dd>}
+                                        </p>
+                                    </dl>
                                 </Typography>
                             </CardContent>
                         </Link>
@@ -171,17 +168,15 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         Add Child
                     </Button>
                 )}
-                {/* <AddChildModal open={modalOpen} onClose={handleModalClose} /> */}
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        flexGrow: 1,
-                        flexDirection: "row",
-                    }}
-                >
-                    {card}
-                </Grid>
+                {childObjArr.length === 0 ? (
+                    <Typography variant="h1" component="h2">
+                        No childs found
+                    </Typography>
+                ) : (
+                    <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
+                        {card}
+                    </Grid>
+                )}
                 {modalOpen && (
                     <AddChildModal
                         open={modalOpen}

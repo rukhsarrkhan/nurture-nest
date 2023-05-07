@@ -98,7 +98,6 @@ const Login = ({ userData, userLoginAPICall }) => {
     event.preventDefault();
     if (email) {
       const { resp, error, code } = await doPasswordReset(email);
-      console.log("resp, error, code", resp, error, code);
       if (resp !== undefined) {
         alert('Password reset email was sent');
       } else {

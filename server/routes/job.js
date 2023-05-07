@@ -10,7 +10,6 @@ const userCollection = data.users;
 
 router.route("/createJob/:parentId/:childId").post(async (req, res) => {
   //Create Job from Parent side
-  console.log("inside create Job route");
   let { parentId, childId } = req.params;
   let { shifts, description, address, specialCare, salary, state, zipCode } =
     req.body;
@@ -125,7 +124,6 @@ router
     // Parent deleting a job
     let jobId = req.params.jobId;
     try {
-      console.log("insideee route");
       jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
       if (typeof jobId == "undefined")
         throw { statusCode: 400, message: "jobId parameter not provided" };
@@ -170,11 +168,6 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     if (!ObjectId.isValid(nannyId))
       throw { statusCode: 400, message: "invalid object ID for Nanny" };
     /////////////
-    console.log(
-      "inside applytoJob route with jobId and nannyId:",
-      jobId,
-      nannyId
-    );
     jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
     if (!ObjectId.isValid(jobId))
       throw { statusCode: 400, message: "invalid object ID for Job" };
@@ -280,7 +273,6 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
   let { jobId, pageNum } = req.params;
   try {
     const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
-    console.log(allApplicants, "outside datafunc");
     if (!allApplicants) {
       throw "Couldn't get applications";
     }
@@ -293,7 +285,6 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
 
 router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
   // Assign nanny to a specific job
-  console.log("inside setNannytoJob route");
   let { jobId, nannyId } = req.params;
   try {
     jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
@@ -346,7 +337,6 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
 router.route("/getJobs/AllJobs/:pageNum").get(async (req, res) => {
   // Searching Applicats from Parent side
   let { pageNum } = req.params;
-  console.log("in getAllJobs route with pageNUM:", pageNum);
   try {
     if (pageNum) {
       if (isNaN(pageNum)) {
@@ -366,7 +356,6 @@ router.route("/getJobs/AllJobs/:pageNum").get(async (req, res) => {
     if (!searchedApplicants) {
       throw { statusCode: 400, message: "No applications for this search" };
     }
-    console.log(searchedApplicants, "in routeee for getAllApplications");
     return res.json(searchedApplicants);
   } catch (e) {
     // throw e.message

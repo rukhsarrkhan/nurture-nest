@@ -14,7 +14,6 @@ import { createChildAPICall, setChildSuccess, setChildFailure, fetchChildrenAPIC
 import { setUserProfileAPICall } from "../redux/users/userActions";
 
 const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall }) => {
-    console.log(childData, " ChildData");
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -56,7 +55,6 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
     }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
     useEffect(() => {
         if (childData) {
-            console.log(childData, " ChildData here");
             setChildObjArr(childData);
         }
     }, [childData]);

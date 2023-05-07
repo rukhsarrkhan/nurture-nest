@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import { TextField, Button, MenuItem } from "@mui/material";
 import { userRegistrationAPICall } from '../redux/users/userActions';
-import { doCreateUserWithEmailAndPassword } from '../firebase/FirebaseFunctions';
+import { doCreateUserWithEmailAndPassword, doSignOut } from '../firebase/FirebaseFunctions';
 import { AuthContext } from '../firebase/Auth';
 import SocialSignIn from './SocialSignIn';
 import helpers from '../helpers';
@@ -37,7 +37,26 @@ const Register = ({ userData, userRegistrationAPICall }) => {
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [profileError, setProfileError] = useState(false);
   const [ageError, setAgeError] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [success, setSuccess] = useState(false);
+  let items;
+
+  useEffect(() => {
+    setSuccess(false);
+    if (userData !== undefined) {
+      if (userData?.error !== "") {
+        setServerError(true);
+        setErrorText(userData?.error);
+        doSignOut(userData?.error);
+      } else {
+        if (Object.keys(userData?.data).length !== 0) {
+          items = JSON.parse(localStorage.getItem('userData'));
+          setSuccess(true);
+        }
+      }
+    }
+  }, [userData]);
 
   const validation = async (field, valFunc) => {
     let fieldVal = await helpers.execValdnAndTrim(field);
@@ -135,6 +154,15 @@ const Register = ({ userData, userRegistrationAPICall }) => {
 
       if (uid !== "") {
         uuid = uid;
+        const data = {
+          firstName: firstName?.trim(),
+          lastName: lastName?.trim(),
+          email: email?.trim(),
+          profile: profile?.trim(),
+          age: age,
+          uuid: uuid
+        };
+        await userRegistrationAPICall(data);
       } else {
         if (code === 'auth/weak-password') {
           setPasswordError(true);
@@ -148,28 +176,16 @@ const Register = ({ userData, userRegistrationAPICall }) => {
         }
       }
 
-      try {
-        const data = {
-          firstName: firstName?.trim(),
-          lastName: lastName?.trim(),
-          email: email?.trim(),
-          profile: profile?.trim(),
-          age: age,
-          uuid: uuid
-        };
-        await userRegistrationAPICall(data);
-      } catch (error) {
-        alert(error);
-      }
 
-      return <Navigate to='/login' />;
+
+      // return <Navigate to='/login' />;
     }
   };
 
-  if (currentUser) {
-    const items = JSON.parse(localStorage.getItem('userData'));
-    return <Navigate to='/home' id={items?._id} />;
-  }
+  // if (currentUser) {
+  //   const items = JSON.parse(localStorage.getItem('userData'));
+  //   return <Navigate to='/home' id={items?._id} />;
+  // }
 
   return (
     <React.Fragment>
@@ -270,15 +286,15 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           />
           <br />
           <br />
-
           <Button variant="outlined" color="secondary" type="submit" className="center">Register</Button>
-
+          <br />
+          {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
         </form>
         <small>Already have an account? <Link to="/login">Login here</Link></small>
         <br />
         <SocialSignIn />
       </div>
-
+      {success === true && currentUser && <Navigate to='/home' id={items?._id} />}
     </React.Fragment>
   );
 };

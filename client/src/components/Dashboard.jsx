@@ -1,7 +1,7 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import '../App.css';
-import { Link, useParams,Navigate } from 'react-router-dom';
+import { Link, useParams, Navigate } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -96,7 +96,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData?.data?.mealRequirements && dashboardData?.data?.mealRequirements[0]?.meal
                     ? dashboardData?.data?.mealRequirements[0]?.meal
                     : 'No data to display'}
-                 
+
                   {"Click to view Details"}
                 </Typography>
                 <dl>
@@ -190,7 +190,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData?.data && dashboardData?.data?.appointments && dashboardData?.data?.appointments[0]
                     ? dashboardData?.data?.appointments[0]?.date + " : " + dashboardData?.data?.appointments[0]?.doctor
                     : 'No data to display'}
-        
+
                   {"Click to view details"}
                 </Typography>
                 <dl>

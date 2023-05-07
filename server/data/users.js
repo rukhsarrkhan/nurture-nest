@@ -3,7 +3,7 @@ const users = mongoCollections.users;
 const { ObjectId } = require("mongodb");
 const helper = require("../helpers");
 // Email is always inserted in lowercase.. Ensure to always check the same when comparing
-const createUser = async (firstName, lastName, email, profile, age, sex, uuid) => {
+const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     firstName = await helper.execValdnAndTrim(firstName, "FirstName");
     await helper.isNameValid(firstName, "FirstName");
     lastName = await helper.execValdnAndTrim(lastName, "LastName");
@@ -22,8 +22,8 @@ const createUser = async (firstName, lastName, email, profile, age, sex, uuid) =
         email: email.toLowerCase(),
         profile: profile,
         age: age,
-        sex: sex,
-        phone: phone,
+        sex: "",
+        phone: "",
         firebaseUuid: uuid,
         p_childIds: [],
         n_childIds: [],

@@ -1,4 +1,3 @@
-// import { v4 as uuid } from "uuid";
 import {
     USER_LOGIN_SUCCESS,
     USER_LOGIN_FALIURE,
@@ -11,7 +10,7 @@ import {
     USER_ID_STORE,
     USER_INITIATE,
 } from "./userActionTypes";
-import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../../firebase/FirebaseFunctions';
+import { doSignOut } from '../../firebase/FirebaseFunctions';
 
 const initialState = {
     userLoggedIn: false,
@@ -43,8 +42,6 @@ export const userReducer = (state = initialState, action) => {
                 userProfile: payload,
             };
         case USER_LOGIN_FALIURE:
-            console.log("payload", payload);
-            console.log("error", payload?.response?.data?.message);
             doSignOut(payload?.response?.data?.message);
 
             return {
@@ -71,7 +68,7 @@ export const userReducer = (state = initialState, action) => {
         case USER_REGISTER_FALIURE:
             return {
                 ...state,
-                error: payload?.response?.data,
+                error: payload?.response?.data?.message,
             };
         case SET_USER_PROFILE:
             return {

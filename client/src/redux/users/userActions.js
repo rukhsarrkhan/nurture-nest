@@ -100,7 +100,6 @@ export const userLoginAPICall = (uuId) => {
             socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
             dispatch(userLoginSuccess(resp?.data));
         } catch (error) {
-            console.log("error", error);
             dispatch(userLoginFailure(error));
         }
     };

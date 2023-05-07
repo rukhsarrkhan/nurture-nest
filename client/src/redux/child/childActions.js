@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS } from "./childActionTypes";
+import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS, DELETE_CHILD_SUCCESS,DELETE_CHILD_FAILURE } from "./childActionTypes";
 
 export const setChildSuccess = (userObj) => {
     return {
@@ -11,6 +11,20 @@ export const setChildSuccess = (userObj) => {
 export const setChildFailure = (error) => {
     return {
         type: ADD_CHILD_FAILURE,
+        payload: error,
+    };
+};
+
+export const deleteChildSuccess = (userObj) => {
+    return {
+        type: DELETE_CHILD_SUCCESS,
+        payload: userObj,
+    };
+};
+
+export const deleteChildFailure = (error) => {
+    return {
+        type: DELETE_CHILD_FAILURE,
         payload: error,
     };
 };
@@ -45,6 +59,17 @@ export const fetchChildrenAPICall = (userId) => {
     return async (dispatch) => {
         try {
             let { data } = await axios.get(`http://localhost:3000/users/children/${userId}`);
+            dispatch(setFetchChildSuccess(data));
+        } catch (error) {
+            dispatch(setFetchChildFailure(error));
+        }
+    };
+};
+
+export const deleteChilDAPICall = (userId,childId) => {
+    return async (dispatch) => {
+        try {
+            let { data } = await axios.get(`http://localhost:3000/users/children/${childId}/${userId}`);
             dispatch(setFetchChildSuccess(data));
         } catch (error) {
             dispatch(setFetchChildFailure(error));

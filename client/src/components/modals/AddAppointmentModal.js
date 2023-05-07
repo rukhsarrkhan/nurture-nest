@@ -162,6 +162,7 @@ const AddAppointmentModal = (props) => {
                               <TextField
                              id="inline-picker"
                                 className="appointmentField"
+                                label="Time"
                                 type='time'
                                 onChange={e => setTime(e.target.value)}
                                 required

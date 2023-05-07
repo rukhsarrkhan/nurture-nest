@@ -139,6 +139,7 @@ const AddMealModal = (props) => {
                             <TextField
                                 id="inline-picker"
                                 className="mealField"
+                                label="Time"
                                 type='time'
                                 onChange={e => setTime(e.target.value)}
                                 required

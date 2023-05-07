@@ -245,7 +245,7 @@ router
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
             postAppointment.doctor = await helper.execValdnAndTrim(postAppointment.doctor, "doctor");
-            await helper.onlyLettersNumbersAndSpaces(postAppointment.doctor, "doctor");
+            await helper.isNameValid(postAppointment.doctor, "doctor");
 
             postAppointment.hospital = await helper.execValdnAndTrim(postAppointment.hospital, "hospital");
             await helper.onlyLettersNumbersAndSpaces(postAppointment.hospital, "hospital");
@@ -366,5 +366,33 @@ router.route("/mealplan/:mealId").delete(async (req, res) => {
         return res.status(500).json({ error: e });
     }
 });
+
+router.route("/removeChild/:childId").delete(async (req, res) => {
+    const childId = req.params.childId;
+    const  parentId = req.body._id;
+
+    try {
+        await helper.execValdnAndTrim(childId, "Child Id");
+        if (!ObjectId.isValid(childId)) {
+            throw { statusCode: 400, message: "Child Id is not valid" };
+        }
+        await helper.execValdnAndTrim(parentId, "Parent Id");
+        if (!ObjectId.isValid(parentId)) {
+            throw { statusCode: 400, message: "Parent Id is not valid" };
+        }
+    } catch (e) {
+        return res.status(400).json({ error: e });
+    }
+    try {
+        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId,childId.toString())
+        const removeChildIdFrmChild = await childCollection.removeChild(childId);
+
+        return res.status(200).json(removeChildIdFrmChild);
+    } catch (e) {
+        return res.status(500).json({ error: e });
+    }
+
+});
+
 
 module.exports = router;

@@ -550,6 +550,26 @@ const getJobByChildId = async (childId) => {
   return nannyFromApplicants;
 };
 
+// const fireNanny = async (nannyId) => {
+
+//       const userCollection = await users();
+//       const jobCollection = await jobs();
+
+//       const removeNannyFromJobCollection = await jobCollection.updateOne({ nannyId: ObjectId(nannyId) }, { $set: { nannyId: null } },
+//       {
+//         projection: {
+//             childId: 1
+//         },
+//     }
+//       );
+
+
+//       if (deletedNanny.value == null) throw  { statusCode: 500, message:`Could not delete nanny with id of ${nannyId}`};
+//       deletedNanny.value._id = deletedNanny.value._id.toString();
+//       return `${deletedNanny.value.name} has been successfully deleted!`;
+//   };
+
+
 module.exports = {
   createJob,
   getJobById,

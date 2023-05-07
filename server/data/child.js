@@ -86,36 +86,29 @@ const removeChild = async (childId) => {
     let currentChild = await getChildById(childId)
 
     const deletedChild = await childCollection.findOneAndDelete({
-        _id: ObjectId(childId)}, { projection: { _id: 1 }});
+        _id: ObjectId(childId)
+    }, { projection: { _id: 1 } });
     if (deletedChild.value == null) {
         throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
     return deletedChild.value._id;
 };
 
-const removeChildFromUser = async (parentId,childId) => {
+const removeChildFromUser = async (parentId, childId) => {
     parentId = await helper.execValdnAndTrim(parentId, "Child Id");
     if (!ObjectId.isValid(parentId)) {
         throw { statusCode: 400, message: "Child Id is not valid" };
     }
-
-    // const childInDb = await getChildById(childId)
-    // if (childInDb != null)
-    // throw {
-    //   statusCode: 400,
-    //   message:
-    //     "child Cannot be deleted. Please delete the child from the child collection first to delete this job",
-    // };
     const userCollection = await users();
     // let getUser = userCollection.findOne({ _id: ObjectId(parentId) })
     const removeChildId = await userCollection.updateOne({ _id: ObjectId(parentId), p_childIds: { $elemMatch: { $eq: childId } } },
-    { $pull: { p_childIds: childId } } );
+        { $pull: { p_childIds: childId } });
     if (!removeChildId.acknowledged || removeChildId.modifiedCount == 0)
-    throw {
-      statusCode: 400,
-      message: "Couldn't update child from user collection",
-    };
-    return  removeChildId;
+        throw {
+            statusCode: 400,
+            message: "Couldn't update child from user collection",
+        };
+    return removeChildId;
 }
 
 

@@ -125,7 +125,7 @@ router
             }
             return res.json(childObj);
         } catch (e) {
-            console.log("e",e)
+            console.log("e", e)
             return res.status(e.statusCode).json({ message: e.message });
         }
     })
@@ -369,7 +369,7 @@ router.route("/mealplan/:mealId").delete(async (req, res) => {
 
 router.route("/removeChild/:childId").delete(async (req, res) => {
     const childId = req.params.childId;
-    const  parentId = req.body._id;
+    const parentId = req.body._id;
 
     try {
         await helper.execValdnAndTrim(childId, "Child Id");
@@ -384,9 +384,17 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
         return res.status(400).json({ error: e });
     }
     try {
-        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId,childId.toString())
+        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId, childId.toString())
         const removeChildIdFrmChild = await childCollection.removeChild(childId);
+        if (!removeChildFrmUserCllcn.acknowledged || removeChildFrmUserCllcn.modifiedCount == 0)
+            throw {
+                statusCode: 400,
+                message: "Couldn't update child from user collection",
+            };
 
+        if (removeChildIdFrmChild._id == null) {
+            throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
+        }
         return res.status(200).json(removeChildIdFrmChild);
     } catch (e) {
         return res.status(500).json({ error: e });

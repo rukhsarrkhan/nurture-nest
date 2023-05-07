@@ -87,47 +87,47 @@ if (loading) {
                   sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}
                 >
                   {nannyData && nannyData.firstName
-                    ? 'First Name: ' + nannyData.firstName
+                    ? 'First Name: ' + nannyData?.firstName
                     : 'First Name: No data to display'}
                   <br />
                   {nannyData && nannyData.lastName
-                    ? 'Last Name: ' + nannyData.lastName
+                    ? 'Last Name: ' + nannyData?.lastName
                     : 'Last Name: No data to display'}
                   <br />
                   {nannyData && nannyData.email
-                    ? 'Email: ' + nannyData.email
+                    ? 'Email: ' + nannyData?.email
                     : 'Email: No data to display'}
                   <br />
                   {nannyData && nannyData.age
-                    ? 'Age: ' + nannyData.age
+                    ? 'Age: ' + nannyData?.age
                     : 'Age: No data to display'}
                   <br />
                   {nannyData && nannyData.address
-                    ? 'Address: ' + nannyData.address
+                    ? 'Address: ' + nannyData?.address
                     : 'Address: No data to display'}
                   <br />
                   {nannyData && nannyData.distance
-                    ? 'Distance: ' + nannyData.distance
+                    ? 'Distance: ' + nannyData?.distance
                     : 'Distance: No data to display'}
                   <br />
                   {nannyData && nannyData.disability
-                    ? 'Disability: ' + nannyData.distance
+                    ? 'Disability: ' + nannyData?.distance
                     : 'Disability: No data to display'}
                   <br />
                   {nannyData && nannyData.experience
-                    ? 'Experience: ' + nannyData.experience
+                    ? 'Experience: ' + nannyData?.experience
                     : 'Experience: No data to display'}
                   <br />
                   {nannyData && nannyData.punctuality
-                    ? 'Punctuality: ' + nannyData.punctuality
+                    ? 'Punctuality: ' + nannyData?.punctuality
                     : 'Punctuality: No data to display'}
                   <br />
                   {nannyData && nannyData.attachment
-                    ? 'Attachments: ' + nannyData.attachment
+                    ? 'Attachments: ' + nannyData?.attachment
                     : 'Attachments: No data to display'}
                   <br />
                   {nannyData && nannyData.reasonToSelect
-                    ? 'Reason To Select: ' + nannyData.reasonToSelect
+                    ? 'Reason To Select: ' + nannyData?.reasonToSelect
                     : 'Reason To Select: No data to display'}
                 </Typography>
               </CardContent>

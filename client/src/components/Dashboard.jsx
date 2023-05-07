@@ -6,6 +6,7 @@ import { Link, useParams,Navigate, useNavigate,useLocation  } from 'react-router
 import { AuthContext } from '../firebase/Auth';
 import {
   Card,
+  CardActions,
   CardActionArea,
   CardContent,
   CardMedia,
@@ -15,6 +16,7 @@ import {
 import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
 import vaccineImage from '../img/vaccineimage.png';
+import nannyImage from '../img/nanny.png'
 import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
@@ -97,7 +99,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData?.data?.mealRequirements && dashboardData?.data?.mealRequirements[0]?.meal
                     ? dashboardData?.data?.mealRequirements[0]?.meal
                     : 'No data to display'}
-                 
+                 <br></br>
                   {"Click to view Details"}
                 </Typography>
                 <dl>
@@ -144,6 +146,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData?.data && dashboardData?.data?.vaccine && dashboardData?.data?.vaccine[0] && dashboardData?.data?.vaccine[0]?.name && dashboardData?.data?.vaccine[0]?.date
                     ? dashboardData?.data?.vaccine[0]?.name + " due on " + dashboardData?.data?.vaccine[0]?.date
                     : 'No data to display'}
+                    <br></br>
                   {"Click to view details"}
                 </Typography>
                 <dl>
@@ -191,7 +194,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   {dashboardData && dashboardData?.data && dashboardData?.data?.appointments && dashboardData?.data?.appointments[0]
                     ? dashboardData?.data?.appointments[0]?.date + " : " + dashboardData?.data?.appointments[0]?.doctor
                     : 'No data to display'}
-        
+                  <br></br>
                   {"Click to view details"}
                 </Typography>
                 <dl>
@@ -201,49 +204,48 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
           </CardActionArea>
         </Grid>
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
-              <CardActionArea>
-                <CardMedia
-                  component='img'
-                  height='200'
-                  alt=''
-                />
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant='h5'
-                    component='div'
-                    sx={{ fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }}
-                  >
-                    Nanny Details
-                  </Typography>
-                  <Typography variant='body2' color='text.secondary' sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}>
-                    {dashboardData && dashboardData.data.nannyId
-                      ? "First Name: " + dashboardData.nannyId
-                      : "First Name: " + 'No data to display'}
-                    <br />
-                    {/* {nannyData && nannyData.lastName
-                      ? "Last Name: " + nannyData.lastName
-                      : "Last Name: " + 'No data to display'}
-                    <br />
-                    {nannyData && nannyData.email
-                      ? "Email: " + nannyData.email
-                      : "Email: " + 'No data to display'}
-                    <br />
-                    {nannyData && nannyData.age
-                      ? "Age: " + nannyData.age
-                      : "Age: " + 'No data to display'}
-                    <br />
-                    {nannyData && nannyData.address
-                      ? "Address: " + nannyData.address
-                      : "Address: " + 'No data to display'} */}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-              <Button variant='contained' color='primary' onClick={() => 
-            { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, {state: { childId: dashboardData?.data?._id}})}}>
-         View Nanny Details
-        </Button>
-          </Grid>
+  <CardActionArea>
+      <CardMedia
+        sx={{
+          maxWidth: 345,
+          height: 'auto',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          borderRadius: 5,
+          boxShadow: 'none'
+        }}
+        component='img'
+        image={nannyImage}
+        title='Nanny Details'
+      />
+      <CardContent>
+        <Typography
+          sx={{
+            maxWidth: 345,
+            height: 'auto',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            borderRadius: 5,
+            border: '1px solid #080a33',
+            boxShadow: 'none'
+          }}
+          gutterBottom
+          variant='h6'
+          component='h2'
+        >
+          {"Nanny Details"}
+        </Typography>
+        <Typography variant='body2' color='textSecondary' component='p'>
+        </Typography>
+      </CardContent>
+    <CardActions>
+    </CardActions>
+    <Button variant='contained' color='primary' onClick={() => 
+        { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, {state: { childId: dashboardData?.data?._id}})}}>
+        View Nanny Details
+      </Button>
+  </CardActionArea>
+</Grid>
       </Grid>
     );
   };

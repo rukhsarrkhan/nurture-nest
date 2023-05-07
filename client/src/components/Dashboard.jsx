@@ -12,7 +12,9 @@ import {
   CardContent,
   CardMedia,
   Grid,
-  Typography
+  Typography,
+  Avatar,
+  Box
 } from '@mui/material';
 import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
 import mealPlanImage from '../img/MealPlan.jpg';
@@ -63,9 +65,28 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
     return (
       <div>
         <br />
-        <Typography variant="body1">
-         Child Name: {dashboardData?.data?.name}
-         </Typography>
+        <Typography variant="body1" sx={{ 
+  color: 'white', 
+  bgcolor: 'purple', 
+  display: 'flex', 
+  justifyContent: 'center', 
+  alignItems: 'center',
+  height: 80, 
+  fontSize: 24,
+  fontWeight: 'bold',
+  borderRadius: '0px',
+  padding: '0px 32px',
+  }}>
+    <Avatar 
+      src={dashboardData?.data?.photoUrl} 
+      sx={{ 
+        width: 64, 
+        height: 64, 
+        marginRight: 2 
+      }} 
+    />
+    {dashboardData?.data?.name}
+</Typography>
            <br />
         <Button
           variant="contained"

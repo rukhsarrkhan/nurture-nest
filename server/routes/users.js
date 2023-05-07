@@ -61,13 +61,27 @@ router.route("/signup").post(async (req, res) => {
 
 router.route("/signin/:uuId").post(async (req, res) => {
     let uuId = req.params.uuId;
+    let { email, firstName, lastName } = req.body;
     try {
         uuId = await helper.execValdnAndTrim(uuId, "Uuid");
+        if (firstName !== undefined) {
+            firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+            await helper.isNameValid(firstName, "FirstName");
+        }
+        if (lastName !== undefined) {
+            lastName = await helper.execValdnAndTrim(lastName, "LastName");
+            await helper.isNameValid(lastName, "LastName");
+        }
+        if (email !== undefined) {
+            email = await helper.execValdnAndTrim(email, "Email");
+            await helper.isEmailValid(email, "Email");
+        }
+
     } catch (e) {
         return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
     try {
-        const userFetched = await userData.getUserByFirebaseId(uuId);
+        const userFetched = await userData.getUserByFirebaseId(uuId, firstName, lastName, email);
         if (!userFetched) {
             throw { statusCode: 500, message: `Couldn't fetch user` };
         }

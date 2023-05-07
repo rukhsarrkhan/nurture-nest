@@ -4,15 +4,14 @@ const ChatFooter = ({ socket }) => {
     const [message, setMessage] = useState('');
     let items = JSON.parse(localStorage.getItem('userData'));
 
-
     const handleSendMessage = (e) => {
         e.preventDefault();
         if (message.trim() && localStorage.getItem('userName')) {
             socket.emit('message', {
                 text: message,
                 name: localStorage.getItem('userName'),
-                id: `${items?._id}${Math.random()}`,
-                socketID: items?._id,
+                id: `${socket?.id}${Math.random()}`,
+                socketID: socket?.id,
             });
         }
         setMessage('');

@@ -16,6 +16,18 @@ export const Nav = styled.nav`
   }
 `;
 
+export const NavLogo = styled(Link)`
+  color: white;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0 1rem;
+  height: 100%;
+  cursor: pointer;
+  font-size: 2rem;
+  font-weight: bold;
+`;
+
 export const NavLink = styled(Link)`
   color: #fff;
   display: flex;

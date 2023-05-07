@@ -63,7 +63,7 @@ export const getMealPlanAPICall = (childId) => {
       let resp = await axios.get(`http://localhost:3000/child/mealplan/${childId}`);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(getMealPlanSuccess(resp.data));
+      dispatch(getMealPlanSuccess(resp?.data));
     } catch (error) {
       dispatch(getMealPlanFailure(error));
     }
@@ -77,7 +77,7 @@ export const mealPlanSetAPICall = (obj,childId) => {
       let resp = await axios.post('http://localhost:3000/child/mealplan/'+childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-      dispatch(mealPlanSetSuccess(resp.data));
+      dispatch(mealPlanSetSuccess(resp?.data));
     } catch (error) {
       dispatch(mealPlanSetFailure(error));
     }
@@ -91,7 +91,7 @@ export const delMealAPICall = (mealId) => {
       let resp = await axios.delete('http://localhost:3000/child/mealplan/'+mealId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-       dispatch(mealDeleteSuccess(resp.data));
+       dispatch(mealDeleteSuccess(resp?.data));
     } catch (error) {
        dispatch(mealDeleteFailure(error));
     }

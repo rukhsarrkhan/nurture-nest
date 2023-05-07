@@ -111,7 +111,7 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
                   }}
                   gutterBottom
                   variant='h6'
-                  component='h2'
+                  component='h1'
                 >
                   {"Daily Meal Plans"}
                 </Typography>

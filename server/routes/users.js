@@ -60,8 +60,6 @@ router.route("/signup").post(async (req, res) => {
 });
 
 router.route("/signin/:uuId").post(async (req, res) => {
-    // return res.status(500).json({ title: "Error", message: "YOU ARE DUMB" });
-
     let uuId = req.params.uuId;
     try {
         uuId = await helper.execValdnAndTrim(uuId, "Uuid");

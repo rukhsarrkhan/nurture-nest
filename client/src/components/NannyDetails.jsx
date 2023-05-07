@@ -18,7 +18,6 @@ import { getNannyDetailsAPICall } from '../redux/nannyDetails/nannyDetailsAction
 import { useLocation } from 'react-router-dom';
 
 const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
-
   const location = useLocation();
   let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);

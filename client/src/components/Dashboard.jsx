@@ -61,6 +61,25 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
     );
   } else {
     return (
+      <div>
+        <br />
+        <Typography variant="body1">
+         Child Name: {dashboardData?.data?.name}
+         </Typography>
+           <br />
+        <Button
+          variant="contained"
+          onClick={() => { navigate(-1) }}
+          sx={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block'
+          }}
+        >
+          Back
+        </Button>
+        <br />
+        <br />
       <Grid container spacing={2}>
         <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?._id?.toString()}>
           <CardActionArea>
@@ -246,18 +265,8 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </Button>
           </CardActionArea>
         </Grid>
-        <Button
-          variant="contained"
-          onClick={() => { navigate(-1) }}
-          sx={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            display: 'block'
-          }}
-        >
-          Back
-        </Button>
       </Grid>
+      </div>
     );
   };
 };

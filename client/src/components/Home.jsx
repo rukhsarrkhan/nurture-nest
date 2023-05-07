@@ -219,7 +219,6 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         aria-describedby="modal-modal-description"
                     />
                 )}
-
                 {open2 && <DeleteChildModal
                     open={open2}
                     onClose={handleClose2}

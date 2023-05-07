@@ -10,10 +10,14 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     await helper.isNameValid(lastName, "LastName");
     email = await helper.execValdnAndTrim(email, "Email");
     await helper.isEmailValid(email, "Email");
-    profile = await helper.execValdnAndTrim(profile, "Profile");
-    await helper.isProfileValid(profile, "Profile");
-    age = await helper.execValdnAndTrim(age, "Age");
-    await helper.isAgeValid(parseInt(age), "Age");
+    if (profile !== "") {
+        profile = await helper.execValdnAndTrim(profile, "Profile");
+        await helper.isProfileValid(profile, "Profile");
+    }
+    if (age !== "") {
+        age = await helper.execValdnAndTrim(age, "Age");
+        await helper.isAgeValid(parseInt(age), "Age");
+    }
     uuid = await helper.execValdnAndTrim(uuid, "Uuid");
 
     let newUser = {
@@ -34,18 +38,38 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     const userMatch = await userCollection.findOne({
         email: email.toLowerCase(),
     });
-    if (userMatch !== null) throw { statusCode: 401, message: "User already exists with given username" };
+    if (userMatch !== null && profile !== "") throw { statusCode: 401, message: "User already exists with given username" };
     const insertedUser = await userCollection.insertOne(newUser);
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw { statusCode: 500, message: `Couldn't Create user` };
     const user = await getUserById(insertedUser.insertedId.toString());
     return user;
 };
 
-const getUserByFirebaseId = async (id) => {
+const getUserByFirebaseId = async (id, firstName, lastName, email) => {
     id = await helper.execValdnAndTrim(id, "Uuid");
+    if (firstName !== undefined) {
+        firstName = await helper.execValdnAndTrim(firstName, "FirstName");
+        await helper.isNameValid(firstName, "FirstName");
+    }
+    if (lastName !== undefined) {
+        lastName = await helper.execValdnAndTrim(lastName, "LastName");
+        await helper.isNameValid(lastName, "LastName");
+    }
+    if (email !== undefined) {
+        email = await helper.execValdnAndTrim(email, "Email");
+        await helper.isEmailValid(email, "Email");
+    }
     const userCollection = await users();
-    const userFound = await userCollection.findOne({ firebaseUuid: id });
-    if (userFound === null) throw { statusCode: 404, message: "No user with that id" };
+    let userFound;
+    userFound = await userCollection.findOne({ firebaseUuid: id });
+    if (userFound === null) {
+        const userCreated = await createUser(firstName, lastName, email, "", "", id);
+        if (userCreated === null || userCreated === undefined) {
+            throw { statusCode: 500, message: `Couldn't Create user` };
+        } else {
+            userFound = userCreated;
+        }
+    }
     userFound._id = userFound._id.toString();
     return userFound;
 };
@@ -80,10 +104,6 @@ const updateUser = async (userId, userObj) => {
         await helper.isNameValid(userObj.lastName, "Last Name");
         if (cur_userObj.lastName != userObj.lastName) updatedUser.lastName = userObj.lastName;
     }
-    // if (userObj.userName) {
-    //     userObj.userName = await helper.execValdnAndTrim(userObj.userName, "Username");
-    //     updatedUser.userName = userObj.userName;
-    // }
     if (userObj.age) {
         userObj.age = await helper.execValdnAndTrim(userObj.age, "Age");
         await helper.isAgeValid(userObj.age, "Age");

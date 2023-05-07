@@ -5,7 +5,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
 import { Container } from '@mui/system';
-import image from '../../img/appointmentImage.png'
+import image from '../../img/appointmentImage.png';
 
 const style = {
     position: 'absolute',
@@ -57,28 +57,28 @@ const AddAppointmentModal = (props) => {
     const [errorText, setErrorText] = useState("");
 
     const handleSubmit = async (event) => {
-        event.preventDefault()
+        event.preventDefault();
         setDoctorError(false);
         setHospitalError(false);
         setDateError(false);
-        setErrorText("")
+        setErrorText("");
 
-        let doctorCheck = await helpers.isNameValid(doctor, "Doctor")
+        let doctorCheck = await helpers.isNameValid(doctor, "Doctor");
         if (doctorCheck !== undefined) {
             setDoctorError(true);
-            setErrorText(doctorCheck.message)
-            return
+            setErrorText(doctorCheck.message);
+            return;
         }
-        let hospitalCheck = await helpers.isNameValid(hospital, "Hospital")
+        let hospitalCheck = await helpers.isNameValid(hospital, "Hospital");
         if (hospitalCheck !== undefined) {
             setHospitalError(true);
-            setErrorText(hospitalCheck.message)
-            return
+            setErrorText(hospitalCheck.message);
+            return;
         }
         if (date < today) {
             setDateError(true);
-            setErrorText('Please select a future date')
-            return
+            setErrorText('Please select a future date');
+            return;
         }
         if (doctor?.trim() && hospital?.trim() && date?.trim() && time?.trim() && errorText === "") {
             try {
@@ -88,12 +88,12 @@ const AddAppointmentModal = (props) => {
                     date: formatDate(date),
                     time: tConvert(time)
                 };
-                await props?.addAppointment(data)
+                await props?.addAppointment(data);
             } catch (error) {
-                alert(error)
+                alert(error);
             }
         }
-    }
+    };
 
     return (
         <div >
@@ -105,14 +105,14 @@ const AddAppointmentModal = (props) => {
             >
                 <Container maxWidth="sm">
                     <Box className='appointmentForm' sx={style} >
-                    <img
-                        src={image}
-                        alt="appointment description"
-                        className='vaccine-image'
-                   />
-                            <p className='P-title-home' >
-                                Add Appointment
-                            </p>
+                        <img
+                            src={image}
+                            alt="appointment description"
+                            className='vaccine-image'
+                        />
+                        <p className='P-title-home' >
+                            Add Appointment
+                        </p>
 
                         <form autoComplete="off" onSubmit={handleSubmit}>
                             <TextField
@@ -151,8 +151,8 @@ const AddAppointmentModal = (props) => {
                                 value={date}
                                 error={dateError}
                             />
-                              <TextField
-                             id="inline-picker"
+                            <TextField
+                                id="inline-picker"
                                 className="appointmentField"
                                 label="Time"
                                 type='time'
@@ -164,7 +164,7 @@ const AddAppointmentModal = (props) => {
                                 helperText={timeError && errorText}
                                 value={time}
                                 error={timeError}
-                            />  
+                            />
 
                             <Button variant="outlined" color="secondary" type="submit" >
                                 Add

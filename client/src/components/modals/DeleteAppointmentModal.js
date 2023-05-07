@@ -16,7 +16,6 @@ const style = {
 };
 
 const DeleteAppointmentModal = (props) => {
-
     return (
         <div>
             <Modal

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS,DELETE_CHILD_SUCCESS,DELETE_CHILD_FAILURE } from "./childActionTypes";
+import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILD, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS, DELETE_CHILD_SUCCESS, DELETE_CHILD_FAILURE } from "./childActionTypes";
 
 export const setChildSuccess = (userObj) => {
     return {
@@ -65,10 +65,10 @@ export const deleteChildFailure = (error) => {
     };
 };
 
-export const deleteChilDAPICall = (childId,obj) => {
+export const deleteChilDAPICall = (childId, obj) => {
     return async (dispatch) => {
         try {
-            let { data } = await axios.delete('http://localhost:3000/child/removeChild/' + childId, { data: obj } );
+            let { data } = await axios.delete('http://localhost:3000/child/removeChild/' + childId, { data: obj });
             dispatch(deleteChildSuccess(data));
         } catch (error) {
             dispatch(deleteChildFailure(error));

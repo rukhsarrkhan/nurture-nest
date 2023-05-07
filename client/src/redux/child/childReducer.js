@@ -1,4 +1,3 @@
-// import { v4 as uuid } from "uuid";
 import { ADD_CHILD, ADD_CHILD_SUCCESS, ADD_CHILD_FAILURE, FETCH_CHILDREN_FAILURE, FETCH_CHILDREN_SUCCESS, DELETE_CHILD_SUCCESS, DELETE_CHILD_FAILURE } from "./childActionTypes";
 
 const initialState = {
@@ -39,16 +38,15 @@ export const childReducer = (state = initialState, action) => {
                 error: payload.response.data,
             };
         case DELETE_CHILD_SUCCESS:
-            console.log(payload,'this is payload from delete child reducer')
             return {
                 ...state,
                 childObjs: state.childObjs.filter(child => child._id !== payload._id),
             };
-            case DELETE_CHILD_FAILURE:
-                return {
-                    ...state,
-                    error: payload.response.data,
-                };
+        case DELETE_CHILD_FAILURE:
+            return {
+                ...state,
+                error: payload.response.data,
+            };
         default:
             return state;
     }

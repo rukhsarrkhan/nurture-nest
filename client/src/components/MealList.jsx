@@ -1,13 +1,13 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import { useParams,useNavigate } from 'react-router-dom';
-import { Link, Navigate } from "react-router-dom";
+import { useParams, useNavigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 import CardHeader from '@mui/material/CardHeader';
 import CardActions from '@mui/material/CardActions';
 import { mealPlanSetAPICall } from '../redux/mealplans/mealPlanActions';
 import { delMealAPICall } from '../redux/mealplans/mealPlanActions';
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AuthContext } from '../firebase/Auth';
@@ -26,28 +26,27 @@ import Button from '@mui/material/Button';
 import AddMealModal from './modals/AddMealModal';
 import DeleteMealModal from './modals/DeleteMealModal';
 import Collapse from '@mui/material/Collapse';
-// import { useNavigate } from 'react-router-dom';
 
 const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPICall }) => {
-   let navigate = useNavigate();
+  let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   let { childId } = useParams();
-  let items = JSON.parse(localStorage.getItem("userData"))
-  let profile = items?.profile
+  let items = JSON.parse(localStorage.getItem("userData"));
+  let profile = items?.profile;
   let card = null;
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const [deleteId, setDeleteId] = useState('')
+  const [deleteId, setDeleteId] = useState('');
   const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(false);
   const [expanded, setExpanded] = useState({});
 
-  const handleOpen = () => { setOpen(true) };
+  const handleOpen = () => { setOpen(true); };
   const handleClose = () => setOpen(false);
 
   const handleOpen2 = (id) => {
-    setDeleteId(id)
-    setOpen2(true)
+    setDeleteId(id);
+    setOpen2(true);
   };
   const handleExpandClick = (mealId) => {
     setExpanded((prevExpanded) => ({
@@ -65,15 +64,15 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
 
 
   const addMeal = async (obj) => {
-    await mealPlanSetAPICall(obj, childId)
+    await mealPlanSetAPICall(obj, childId);
     handleClose();
-  }
+  };
 
   const deleteMeal = async (mealId) => {
     await delMealAPICall(mealId);
     setOpen2(false);
     await getMealPlanAPICall(childId);
-  }
+  };
 
   const buildCard = (meal) => {
     return (
@@ -99,21 +98,19 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
             image={mealPlanImage}
           />
           <CardActions disableSpacing>
-          {profile === "PARENT" ? (
-                        <IconButton onClick={() => handleOpen2(meal && meal?._id)} color='textSecondary' aria-label="Delete Vaccine">
-                            <DeleteIcon />
-                        </IconButton>
-                    ) : null}
+            {profile === "PARENT" ? (
+              <IconButton onClick={() => handleOpen2(meal && meal?._id)} color='textSecondary' aria-label="Delete Vaccine">
+                <DeleteIcon />
+              </IconButton>
+            ) : null}
             <Button variant="contained"
               color="success"
               expand={expanded}
-              // onClick={handleExpandClick}
               onClick={() => handleExpandClick(meal?._id)}
               aria-expanded={expanded[meal?._id]}
               aria-label="show more"
             >
               Directions
-
               <ExpandMoreIcon />
             </Button>
           </CardActions>
@@ -128,7 +125,7 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
           </Collapse>
         </Card>
       </Grid >
-    )
+    );
   };
 
 
@@ -144,15 +141,15 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
     });
 
 
-    if (!currentUser) {
-      return <Navigate to='/' />;
-    }
-    if (loading) {
-      return (
-          <div>
-              <Loading />
-          </div>
-      );
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
     // } else if (error) {
     //   return (<div>
     //     Error here
@@ -163,15 +160,15 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
       <div>
         <br />
         {profile === "PARENT" ? (
-                        <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
-                        Add Meal
-                    </Button>
-                    ) : null}
+          <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
+            Add Meal
+          </Button>
+        ) : null}
 
-        <Button variant="contained" onClick={() => {navigate(-1)}} sx={{ marginLeft: '10px' }}>
+        <Button variant="contained" onClick={() => { navigate(-1); }} sx={{ marginLeft: '10px' }}>
 
-                        Back
-                    </Button>
+          Back
+        </Button>
         <br />
         <br />
         <Grid
@@ -203,7 +200,7 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
       </div>
     );
   };
-}
+};
 
 const mapStateToProps = state => {
   return {

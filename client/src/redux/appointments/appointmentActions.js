@@ -45,14 +45,14 @@ export const appointmentSetFailure = (error) => {
 
 export const appointmentDeleteSuccess = (appointment) => {
   return {
-    type:  APPOINTMENT_DELETE_SUCCESS,
+    type: APPOINTMENT_DELETE_SUCCESS,
     payload: appointment,
   };
 };
 
 export const appointmentDeleteFailure = (error) => {
   return {
-    type:  APPOINTMENT_DELETE_FAILURE,
+    type: APPOINTMENT_DELETE_FAILURE,
     payload: error,
   };
 };
@@ -60,9 +60,7 @@ export const appointmentDeleteFailure = (error) => {
 export const getAppointmentAPICall = (childId) => {
   return async (dispatch) => {
     try {
-      let resp = await axios.get('http://localhost:3000/child/appointment/'+childId);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
+      let resp = await axios.get('http://localhost:3000/child/appointment/' + childId);
       dispatch(getAppointmentSuccess(resp?.data));
     } catch (error) {
       dispatch(getAppointmentFailure(error));
@@ -70,14 +68,12 @@ export const getAppointmentAPICall = (childId) => {
   };
 };
 
-export const appointmentSetAPICall = (obj,childId) => {
+export const appointmentSetAPICall = (obj, childId) => {
   return async (dispatch) => {
     try {
       dispatch(appointmentSetTrigger());
-      let resp = await axios.post('http://localhost:3000/child/appointment/'+childId, obj);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
-      dispatch( appointmentSetSuccess(resp?.data));
+      let resp = await axios.post('http://localhost:3000/child/appointment/' + childId, obj);
+      dispatch(appointmentSetSuccess(resp?.data));
     } catch (error) {
       dispatch(appointmentSetFailure(error));
     }
@@ -88,12 +84,10 @@ export const delAppointmentAPICall = (appointmentId) => {
   return async (dispatch) => {
     try {
       dispatch(appointmentSetTrigger());
-      let resp = await axios.delete('http://localhost:3000/child/appointment/'+appointmentId);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
-       dispatch(appointmentDeleteSuccess(resp?.data));
+      let resp = await axios.delete('http://localhost:3000/child/appointment/' + appointmentId);
+      dispatch(appointmentDeleteSuccess(resp?.data));
     } catch (error) {
-       dispatch(appointmentDeleteFailure(error));
+      dispatch(appointmentDeleteFailure(error));
     }
   };
 };

@@ -125,7 +125,6 @@ router
             }
             return res.json(childObj);
         } catch (e) {
-            console.log("e", e)
             return res.status(e.statusCode).json({ message: e.message });
         }
     })
@@ -384,7 +383,7 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
         return res.status(400).json({ error: e });
     }
     try {
-        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId, childId.toString())
+        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId, childId.toString());
         const removeChildIdFrmChild = await childCollection.removeChild(childId);
         if (!removeChildFrmUserCllcn.acknowledged || removeChildFrmUserCllcn.modifiedCount == 0)
             throw {

@@ -175,17 +175,8 @@ const Register = ({ userData, userRegistrationAPICall }) => {
           setErrorText(`Failed with error code: ${code}`);
         }
       }
-
-
-
-      // return <Navigate to='/login' />;
     }
   };
-
-  // if (currentUser) {
-  //   const items = JSON.parse(localStorage.getItem('userData'));
-  //   return <Navigate to='/home' id={items?._id} />;
-  // }
 
   return (
     <React.Fragment>

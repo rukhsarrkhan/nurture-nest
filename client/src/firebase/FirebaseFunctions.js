@@ -53,13 +53,24 @@ async function doSocialSignIn(provider) {
   let socialProvider = null;
   if (provider === 'google') {
     socialProvider = new firebase.auth.GoogleAuthProvider();
+    socialProvider.addScope('email');
   } else if (provider === 'facebook') {
     socialProvider = new firebase.auth.FacebookAuthProvider();
+    socialProvider.addScope('email');
   }
   try {
     const resp = await firebase.auth().signInWithPopup(socialProvider);
+    let email;
+    let firstName;
+    let lastName;
+
     if (resp?.user?.multiFactor?.user?.uid !== "") {
-      return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
+      if (resp?.additionalUserInfo?.profile?.email) {
+        email = resp?.additionalUserInfo?.profile?.email;
+        firstName = resp?.additionalUserInfo?.profile?.given_name;
+        lastName = resp?.additionalUserInfo?.profile?.family_name;
+      }
+      return { uid: resp?.user?.multiFactor?.user?.uid, code: null, error: null, email: email, firstName: firstName, lastName: lastName };
     }
   } catch (e) {
     return { uid: "", code: e?.code, error: e?.message };

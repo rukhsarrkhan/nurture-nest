@@ -285,12 +285,12 @@ router.route("/children/:userId").get(async (req, res) => {
             childrenIdArr = userObj.p_childIds;
         }
         if (childrenIdArr.length === 0) {
-            throw { statusCode: 404, message: `No children assigned to the user` };
+            return res.json([]);
         }
         const childrenObjArr = await getChildrenByIds(childrenIdArr);
-        if (childrenObjArr.length === 0) {
-            throw { statusCode: 404, message: `No children assigned to the user` };
-        }
+        // if (childrenObjArr.length === 0) {
+        //     throw { statusCode: 404, message: `No children assigned to the user` };
+        // }
         return res.json(childrenObjArr);
     } catch (e) {
         return res.status(404).json({ error: e });

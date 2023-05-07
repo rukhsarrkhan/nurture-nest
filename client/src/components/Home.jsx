@@ -14,7 +14,6 @@ import { createChildAPICall, setChildSuccess, setChildFailure, fetchChildrenAPIC
 import { setUserProfileAPICall } from "../redux/users/userActions";
 
 const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall }) => {
-    console.log(childData, " ChildData");
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,18 +44,20 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                 setErrorText(e.message ? e.message : e);
             }
         }
-        if (id !== undefined && userData.userProfile === null) {
+        if (id !== undefined && userData?.userProfile === null) {
             fetchData();
             fetchChildData();
         }
-        if (userData.userProfile) {
-            setuserObjData(userData.userProfile);
+        if (userData?.userProfile !== null && userData?.userProfile !== undefined) {
+            setuserObjData(userData?.userProfile);
             setLoading(false);
         }
+        // } else if (id !== undefined) {
+        //     return <Navigate to="/setProfile" id={id} />;
+        // }
     }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
     useEffect(() => {
-        if (childData) {
-            console.log(childData, " ChildData here");
+        if (childData && childData.length > 0) {
             setChildObjArr(childData);
         }
     }, [childData]);
@@ -109,19 +110,18 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                                         color: "#000000",
                                     }}
                                 >
+                                    <dl>
+                                        <p>
+                                            <dt className="title">Age: </dt>
+                                            {child?.age ? <dd>{child.age}</dd> : <dd>N/A</dd>}
+                                        </p>
+                                        <p>
+                                            <dt className="title">Sex: </dt>
+                                            {child?.sex ? <dd>{child.sex}</dd> : <dd>N/A</dd>}
+                                        </p>
+                                    </dl>
+
                                     {child?.age}
-                                </Typography>
-                                <br />
-                                <Typography
-                                    variant="body3"
-                                    color="textSecondary"
-                                    component="span"
-                                    sx={{
-                                        borderBottom: "1px solid #1e8678",
-                                        color: "#000000",
-                                    }}
-                                >
-                                    {child?.sex}
                                 </Typography>
                             </CardContent>
                         </Link>
@@ -173,17 +173,16 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         Add Child
                     </Button>
                 )}
-                {/* <AddChildModal open={modalOpen} onClose={handleModalClose} /> */}
-                <Grid
-                    container
-                    spacing={2}
-                    sx={{
-                        flexGrow: 1,
-                        flexDirection: "row",
-                    }}
-                >
-                    {card}
-                </Grid>
+                {childObjArr.length === 0 ? (
+                    <Typography variant="h1" component="h2">
+                        No childs found
+                    </Typography>
+                ) : (
+                    <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
+                        {card}
+                    </Grid>
+                )}
+
                 {modalOpen && (
                     <AddChildModal
                         open={modalOpen}

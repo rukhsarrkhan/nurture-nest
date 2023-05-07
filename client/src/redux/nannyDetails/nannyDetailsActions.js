@@ -37,10 +37,7 @@ export const getNannyDetailsAPICall = (nannyId, childId) => {
         disability: resp2?.data?.disability,
         attachment: resp2?.data?.attachment,
         punctuality: resp2?.data?.shiftPunctuality
-      }
-
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
+      };
       dispatch(getNannyDetailsSuccess(newObj));
     } catch (error) {
       console.log(error);

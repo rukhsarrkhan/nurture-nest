@@ -60,13 +60,11 @@ async function doSocialSignIn(provider) {
   }
   try {
     const resp = await firebase.auth().signInWithPopup(socialProvider);
-    console.log("resp---", resp);
     let email;
     let firstName;
     let lastName;
 
     if (resp?.user?.multiFactor?.user?.uid !== "") {
-      console.log("hi");
       if (resp?.additionalUserInfo?.profile?.email) {
         email = resp?.additionalUserInfo?.profile?.email;
         firstName = resp?.additionalUserInfo?.profile?.given_name;

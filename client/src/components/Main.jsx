@@ -8,11 +8,7 @@ import Landing from '../components/Landing';
 import Login from '../components/Login';
 import Register from '../components/Register';
 import Profile from '../components/Profile/Profile';
-import ChildList from '../components/ChildList';
-import AddChild from '../components/AddChild';
 import Dashboard from '../components/Dashboard';
-import JobList from '../components/JobList';
-import NannyList from '../components/NannyList';
 import MealList from '../components/MealList';
 import VaccineList from '../components/VaccineList';
 import AppointmentList from '../components/AppointmentList';
@@ -54,12 +50,8 @@ const Main = ({ userData }) => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/profile/:userId" element={<Profile />} />
-                    <Route path="/children/:id" element={<ChildList />} />
-                    <Route path="/child/:id" element={<AddChild />} />
                     <Route path="/home" element={<Home id={items?._id} />} />
                     <Route path="/dashboard/:childId" element={<Dashboard />} />
-                    <Route path="/jobs" element={<JobList />} />
-                    <Route path="/nannies" element={<NannyList />} />
                     <Route path="/nanny/:nannyId" element={<NannyDetails />} />
                     <Route path="/meal/:childId" element={<MealList />} />
                     <Route path="/vaccine/:childId" element={<VaccineList />} />

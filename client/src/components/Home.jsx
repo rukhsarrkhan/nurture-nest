@@ -2,8 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import "../App.css";
 import { connect } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
-import CardHeader from "@mui/material/CardHeader";
-import CardActions from "@mui/material/CardActions";
 import { Card, CardMedia, Grid, Button, CardActionArea, CardContent, Typography } from "@mui/material";
 import { AuthContext } from "../firebase/Auth";
 import Loading from "./Loading";
@@ -12,11 +10,11 @@ import childImage from "../img/childImage.png";
 import AddChildModal from "./modals/AddChildModal";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from "@mui/icons-material/Delete";
-import { createChildAPICall, setChildSuccess, setChildFailure, fetchChildrenAPICall,deleteChilDAPICall } from "../redux/child/childActions";
+import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
 import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
-const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall,deleteChilDAPICall }) => {
+const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -59,7 +57,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
             setLoading(false);
         }
         if (childData.length === 0) {
-            setChildObjArr(childData); 
+            setChildObjArr(childData);
         }
     }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
     useEffect(() => {
@@ -67,7 +65,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
             setChildObjArr(childData);
         }
         if (childData.length === 0) {
-            setChildObjArr(childData); 
+            setChildObjArr(childData);
         }
     }, [childData]);
 
@@ -85,11 +83,11 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
                     }}
                 >
-                  {userObjData?.profile === "PARENT" ? (
-                            <IconButton onClick={() => handleOpen2( child?._id)}color='textSecondary' aria-label="Delete Child">
-                                <DeleteIcon sx={{ position: "relative", top: 5, left: 150 }} />
-                            </IconButton>
-                        ) : null}
+                    {userObjData?.profile === "PARENT" ? (
+                        <IconButton onClick={() => handleOpen2(child?._id)} color='textSecondary' aria-label="Delete Child">
+                            <DeleteIcon sx={{ position: "relative", top: 5, left: 150 }} />
+                        </IconButton>
+                    ) : null}
                     <CardActionArea>
                         <Link to={`/dashboard/${child?._id}`}>
                             <CardMedia
@@ -171,9 +169,9 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
     const handleClose2 = () => setOpen2(false);
 
     const deleteChild = async (childId) => {
-        await deleteChilDAPICall(childId,userObjData);
+        await deleteChilDAPICall(childId, userObjData);
         setOpen2(false);
-         await fetchChildrenAPICall(id);
+        await fetchChildrenAPICall(id);
     };
 
     if (!currentUser) {
@@ -200,8 +198,8 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         Add Child
                     </Button>
                 )}
-                    <br />
-                    <br />
+                <br />
+                <br />
                 {childObjArr.length === 0 ? (
                     <Typography variant="h1" component="h2">
                         No childs found
@@ -220,16 +218,16 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     />
-                     )}
-                    
-                     {open2 && <DeleteChildModal
-                        open={open2}
-                        onClose={handleClose2}
-                        _id={deleteId}
-                        deleteChild={deleteChild}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    />}
+                )}
+
+                {open2 && <DeleteChildModal
+                    open={open2}
+                    onClose={handleClose2}
+                    _id={deleteId}
+                    deleteChild={deleteChild}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                />}
             </div>
         );
     }
@@ -247,7 +245,7 @@ const mapDispatchToProps = (dispatch) => {
         setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
         createChildAPICall: (obj) => dispatch(createChildAPICall(obj)),
         fetchChildrenAPICall: (id) => dispatch(fetchChildrenAPICall(id)),
-        deleteChilDAPICall: (childId,obj) => dispatch(deleteChilDAPICall(childId,obj))
+        deleteChilDAPICall: (childId, obj) => dispatch(deleteChilDAPICall(childId, obj))
     };
 };
 

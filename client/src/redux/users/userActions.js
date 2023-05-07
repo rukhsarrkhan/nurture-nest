@@ -1,7 +1,5 @@
 import axios from "axios";
 import socketIO from 'socket.io-client';
-// import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../../firebase/FirebaseFunctions';
-
 
 import {
     USER_LOGOUT,
@@ -141,7 +139,6 @@ export const updateProfileImageAPICall = (id, formData) => {
 export const userLogoutCall = (obj) => {
     return async (dispatch) => {
         dispatch(userLogout());
-        // remove token here
         localStorage.removeItem("userData");
         localStorage.clear();
     };

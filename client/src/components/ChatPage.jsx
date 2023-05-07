@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import ChatBody from './ChatBody';
 import ChatFooter from './ChatFooter';
 import { AuthContext } from '../firebase/Auth';
-import { Link, useParams, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 const ChatPage = ({ socket }) => {
   const { currentUser } = useContext(AuthContext);

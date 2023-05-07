@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const ChatFooter = ({ socket }) => {
     const [message, setMessage] = useState('');
-    let items = JSON.parse(localStorage.getItem('userData'));
 
     const handleSendMessage = (e) => {
         e.preventDefault();

@@ -46,8 +46,6 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
 };
 
 const getUserByFirebaseId = async (id, firstName, lastName, email) => {
-    console.log("email, firstName, lastName", email, firstName, lastName);
-
     id = await helper.execValdnAndTrim(id, "Uuid");
     if (firstName !== undefined) {
         firstName = await helper.execValdnAndTrim(firstName, "FirstName");
@@ -106,10 +104,6 @@ const updateUser = async (userId, userObj) => {
         await helper.isNameValid(userObj.lastName, "Last Name");
         if (cur_userObj.lastName != userObj.lastName) updatedUser.lastName = userObj.lastName;
     }
-    // if (userObj.userName) {
-    //     userObj.userName = await helper.execValdnAndTrim(userObj.userName, "Username");
-    //     updatedUser.userName = userObj.userName;
-    // }
     if (userObj.age) {
         userObj.age = await helper.execValdnAndTrim(userObj.age, "Age");
         await helper.isAgeValid(userObj.age, "Age");

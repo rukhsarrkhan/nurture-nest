@@ -27,8 +27,8 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     const { currentUser } = useContext(AuthContext);
     let card = null;
     let { childId } = useParams();
-    let items = JSON.parse(localStorage.getItem("userData"))
-    let profile = items?.profile
+    let items = JSON.parse(localStorage.getItem("userData"));
+    let profile = items?.profile;
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -136,7 +136,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                             Add Appointment
                         </Button>
                     ) : null}
-                    <Button variant="contained" onClick={() => { navigate(-1) }} sx={{ marginLeft: '10px' }}>
+                    <Button variant="contained" onClick={() => { navigate(-1); }} sx={{ marginLeft: '10px' }}>
                         Back
                     </Button>
                     <br />

@@ -5,16 +5,14 @@ import { userLoginAPICall } from '../redux/users/userActions';
 import { connect } from 'react-redux';
 
 
-const SocialSignIn = ({ userLoginAPICall }) => {
+const SocialSignIn = ({ userData, userLoginAPICall }) => {
   const [serverError, setServerError] = useState(false);
-
   const [errorText, setErrorText] = useState("");
 
   const socialSignOn = async (provider) => {
     const { uid, error, code, email, firstName, lastName } = await doSocialSignIn(provider);
     if (uid !== "") {
       await userLoginAPICall(uid, email, firstName, lastName);
-      // what if this fails
       return <Navigate to='/home' id={uid} />;
     } else {
       setServerError(true);
@@ -32,9 +30,7 @@ const SocialSignIn = ({ userLoginAPICall }) => {
         src='/images/btn_google_signin.png'
       />
       <br />
-
       {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
-
     </div>
   );
 };

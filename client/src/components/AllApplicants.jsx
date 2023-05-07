@@ -134,12 +134,13 @@ const AllApplicants = ({
       <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
         <Card
           sx={{
-            maxWidth: "70%",
-            maxHeight: 300,
+            maxWidth: "100%",
+            maxHeight: "100%",
             paddingRight: 0,
-            marginLeft: "15%",
-            marginRight: "15%",
+            marginLeft: "15px",
+            marginRight: "15px",
             position: "relative",
+      
           }}
         >
           <Grid container spacing={0}>
@@ -167,7 +168,7 @@ const AllApplicants = ({
                     )}`}
                   />
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", paddingLeft: "16px" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -180,7 +181,7 @@ const AllApplicants = ({
                     {show?.whySelect}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", paddingLeft: "16px" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -193,7 +194,7 @@ const AllApplicants = ({
                     {show?.distance}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", paddingLeft: "16px" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"

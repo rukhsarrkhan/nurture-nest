@@ -27,7 +27,7 @@ const MyJob = ({ job, getMyJobAPICall }) => {
   const [errorMsg, setErrorMsg] = useState(true);
   console.log(location.state, "appID heree");
   //   let application = location.state.application
-  let jobId = "6444dc31477d85ad6f7103db";
+  let jobId = "644e193264cd9d3f4c012f41";
   let pageNum = 1;
 
   useEffect(() => {
@@ -233,7 +233,7 @@ const MyJob = ({ job, getMyJobAPICall }) => {
           </CardContent>
         </Card>
         <br />
-        {!showData.nannyId && (
+        {showData.nannyId && (
           <Button
             variant="contained"
             onClick={() => {

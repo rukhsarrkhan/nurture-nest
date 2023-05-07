@@ -272,6 +272,7 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
   // Find all Applicants from Parent side
   let { jobId, pageNum } = req.params;
   try {
+    console.log("indside allApplicants route",jobId,pageNum)
     const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
     if (!allApplicants) {
       throw "Couldn't get applications";

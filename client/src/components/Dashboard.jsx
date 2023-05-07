@@ -4,7 +4,8 @@ import '../App.css';
 import { Button } from '@mui/material';
 import { Link, useParams, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
-
+import { createJobAPICall } from "../redux/jobs/jobActions";
+import CreateJobModal from "./modals/CreateJobModal";
 import {
   Card,
   CardActions,
@@ -21,12 +22,24 @@ import nannyImage from '../img/nanny.png';
 import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
-const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
+const Dashboard = ({ getDashboardAPICall,createJobAPICall, dashboardData }) => {
   let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
+  let items = JSON.parse(localStorage.getItem("userData"))
+  let profile = items?.profile
+  console.log(items,"profileee heree")
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
+
+  const [openCreateJobModal, setOpenCreateJobModal] = useState(false);
+  const handleOpenCreateJob = () => setOpenCreateJobModal(true);
+  const handleCloseCreateJob = () => setOpenCreateJobModal(false);
+
+  const createJob = async (data,parentId,childId) => {
+    createJobAPICall(data,parentId,childId);
+    handleCloseCreateJob();   
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -246,6 +259,18 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
             </Button>
           </CardActionArea>
         </Grid>
+        <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>
+        {profile === "PARENT" && openCreateJobModal ? (
+                        <CreateJobModal
+                        open={openCreateJobModal}
+                        onClose={handleCloseCreateJob}
+                        parentId={items._id}
+                        childId={childId}
+                        createJob={createJob}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+    />
+                    ) : null}
         <Button
           variant="contained"
           onClick={() => { navigate(-1) }}
@@ -264,13 +289,15 @@ const Dashboard = ({ getDashboardAPICall, dashboardData }) => {
 
 const mapStateToProps = state => {
   return {
-    dashboardData: state?.dashboard
+    dashboardData: state?.dashboard,
+    job: state?.jobs
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getDashboardAPICall: (nannyId) => dispatch(getDashboardAPICall(nannyId)),
+    createJobAPICall:(data,parentId,childId) => dispatch(createJobAPICall(data,parentId,childId))
   };
 };
 

@@ -16,7 +16,7 @@ Windows: https://imagemagick.org/script/download.php#windows
 
 Mac: https://imagemagick.org/script/download.php#macosx
 
-Lastly, make sure that you have all the latest packages of Visual Studio Code downloaded on your machine.
+Lastly, make sure that you have all the Microsoft's Visual Studio C++ reditributable latest packages downloaded on your machine.
 
 For reference, visit https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170 
 

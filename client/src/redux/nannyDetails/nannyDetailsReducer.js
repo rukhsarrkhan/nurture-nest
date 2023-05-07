@@ -26,8 +26,8 @@ import {
           ...state,
           error: payload?.response?.data,
         };
-      default:
-        return state;
+        default:
+          return state;
     }
   };
   

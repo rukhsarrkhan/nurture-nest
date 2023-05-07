@@ -74,7 +74,6 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
             .crop(200, 200) // crop the resized image to a 200x200 square
             .toBuffer(async (err, buffer) => {
                 if (err) {
-                    console.log(err);
                     return res.status(500).json({ title: "Error", message: err.message });
                 } else {
                     try {
@@ -124,8 +123,9 @@ router
             if (!childObj || childObj === null || childObj === undefined) {
                 throw { statusCode: 404, message: "No child found with that id" };
             }
-            return res.json(childFound);
+            return res.json(childObj);
         } catch (e) {
+            console.log("e",e)
             return res.status(e.statusCode).json({ message: e.message });
         }
     })
@@ -171,7 +171,6 @@ router
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
         try {
@@ -181,7 +180,6 @@ router
             }
             return res.json(vaccineFound);
         } catch (e) {
-            console.log(e);
             return res.status(404).json({ error: e });
         }
     })
@@ -200,7 +198,6 @@ router
             await helper.execValdnAndTrim(postVaccine.doses, "Doses");
             await helper.onlyNumbers(postVaccine.doses, "doses");
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
 
@@ -212,7 +209,6 @@ router
             }
             return res.json(vaccineAdded);
         } catch (e) {
-            console.log(e);
             return res.status(404).json({ error: e });
         }
     });
@@ -227,7 +223,6 @@ router
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
 
@@ -238,7 +233,6 @@ router
             }
             return res.json(appointmentFound);
         } catch (e) {
-            console.log(e);
             return res.status(404).json({ error: e });
         }
     })
@@ -259,7 +253,6 @@ router
             postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, "date");
             await helper.isDateValid(postAppointment.date, "Date");
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
 
@@ -271,7 +264,6 @@ router
             }
             return res.json(appointmentAdded);
         } catch (e) {
-            console.log(e);
             return res.status(404).json({ error: e });
         }
     });
@@ -284,7 +276,6 @@ router.route("/vaccine/:vaccineId").delete(async (req, res) => {
             throw { statusCode: 400, message: "Vaccine Id is not valid" };
         }
     } catch (e) {
-        console.log(e);
         return res.status(400).json({ error: e });
     }
 
@@ -329,7 +320,6 @@ router
             }
             return res.json(mealsFound);
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
     })
@@ -344,7 +334,6 @@ router
             postMeal.meal = await helper.execValdnAndTrim(postMeal.meal, "meal");
             await helper.onlyLettersNumbersAndSpaces(postMeal.meal, "meal");
         } catch (e) {
-            console.log(e);
             return res.status(400).json({ error: e });
         }
 
@@ -356,7 +345,6 @@ router
             }
             return res.json(mealAdded);
         } catch (e) {
-            console.log(e);
             return res.status(404).json({ error: e });
         }
     });

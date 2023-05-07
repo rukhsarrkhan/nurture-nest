@@ -38,6 +38,13 @@ mongodb+srv://swarajsingpatil:Password%401@cluster0.68unpvh.mongodb.net/test
 ### IMPORTANT INFORMATION
 
 Both Server and Client side require .env file which the team 'Status 418' must have provided seperately. If you face issues accessing the same, please contact the team!
+
+You would also have to install ImageMagick on your machine to make things work as it is one of our independent technologies that we have used in our project. 
+Below are the links to download the same:
+
+Windows: https://imagemagick.org/script/download.php#windows
+
+Mac: https://imagemagick.org/script/download.php#macosx
  
 ## NOTE
 

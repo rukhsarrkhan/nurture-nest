@@ -5,9 +5,6 @@ const nannyData = data.nanny;
 const childData = data.child;
 const helperFunction = require("../helpers");
 const { ObjectId } = require("mongodb");
-const multer = require('multer')
-const upload = multer({dest: 'uploads/'})
-const { uploadFile } = require('../s3')
 
 router
     .route("/dashboard/:nannyId")

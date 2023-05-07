@@ -194,11 +194,14 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
         };
         return (
             <div>
+                <br />
                 {userObjData?.profile === "PARENT" && (
                     <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddChildClick}>
                         Add Child
                     </Button>
                 )}
+                    <br />
+                    <br />
                 {childObjArr.length === 0 ? (
                     <Typography variant="h1" component="h2">
                         No childs found

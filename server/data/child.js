@@ -299,13 +299,14 @@ const getChildrenByIds = async (arrIds) => {
     const objectIdArr = arrIds.map((id) => new ObjectId(id));
     const childCollection = await childs();
     let childObjArr = await childCollection.find({ _id: { $in: objectIdArr } }).toArray();
-    if (childObjArr.length === 0) throw { statusCode: 404, message: "No children found" };
-    childObjArr = childObjArr.map((childObj) => {
-        return {
-            ...childObj,
-            _id: childObj._id.toString(),
-        };
-    });
+    if (childObjArr.length > 0) {
+        childObjArr = childObjArr.map((childObj) => {
+            return {
+                ...childObj,
+                _id: childObj._id.toString(),
+            };
+        });
+    }
     return childObjArr;
 };
 

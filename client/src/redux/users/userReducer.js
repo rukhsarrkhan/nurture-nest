@@ -10,7 +10,7 @@ import {
     USER_ID_STORE,
     USER_INITIATE,
 } from "./userActionTypes";
-import { doSignOut } from "../../firebase/FirebaseFunctions";
+import { doSignOut } from '../../firebase/FirebaseFunctions';
 
 const initialState = {
     userLoggedIn: false,
@@ -19,17 +19,18 @@ const initialState = {
     error: "",
     status: "",
     userProfile: null,
-    userId: "",
+    userId: ""
 };
 
 export const userReducer = (state = initialState, action) => {
+
     const { type, payload } = action;
     switch (type) {
         case USER_INITIATE:
             return {
                 ...state,
                 data: {},
-                error: "",
+                error: ""
             };
         case USER_LOGIN_SUCCESS:
             return {
@@ -55,7 +56,7 @@ export const userReducer = (state = initialState, action) => {
         case USER_ID_STORE:
             return {
                 ...state,
-                userId: payload,
+                userId: payload
             };
         case USER_REGISTER_SUCCESS:
             return {
@@ -77,7 +78,7 @@ export const userReducer = (state = initialState, action) => {
         case SET_PROFILE_SUCCESS:
             return {
                 ...state,
-                userProfile: { ...payload },
+                userProfile: payload,
             };
         case SET_PROFILE_FAILURE:
             return {

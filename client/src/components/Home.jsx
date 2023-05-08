@@ -8,56 +8,67 @@ import Loading from "./Loading";
 import AddIcon from "@mui/icons-material/Add";
 import childImage from "../img/childImage.png";
 import AddChildModal from "./modals/AddChildModal";
-import IconButton from "@mui/material/IconButton";
+import IconButton from '@mui/material/IconButton';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
 import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
-const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
-    const [userObjData, setuserObjData] = useState(userData?.userProfile);
+const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
+    const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState("");
-    const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false); // new state to control modal visibility
     const [open2, setOpen2] = useState(false);
-    const [deleteId, setDeleteId] = useState("");
-    const [redirectProfile, setRedirectProfile] = useState(false);
+    const [deleteId, setDeleteId] = useState('');
 
     let card = null;
     const { currentUser } = useContext(AuthContext);
 
-    const id = userData?.userProfile?._id;
 
     useEffect(() => {
-        if (userData?.userProfile) {
-            setuserObjData(userData?.userProfile);
-            fetchChildrenAPICall(userData.userProfile._id);
-        }
-    }, [userData, fetchChildrenAPICall]);
-    useEffect(() => {
-        setChildObjArr(childData);
-        setLoading(false);
-    }, [childData]);
-
-    useEffect(() => {
-        if (userObjData) {
-            if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
-                setRedirectProfile(true);
-            } else {
-                setRedirectProfile(false);
+        async function fetchData() {
+            try {
+                await setUserProfileAPICall(id);
+            } catch (e) {
+                setuserObjData(undefined);
+                setLoading(false);
+                setError(true);
+                setErrorText(e.message ? e.message : e);
             }
         }
-    }, [userObjData]);
-
-    if (!currentUser) {
-        return <Navigate to="/" />;
-    }
-
-    if (redirectProfile) {
-        return <Navigate to="/setProfile" />;
-    }
+        async function fetchChildData() {
+            try {
+                await fetchChildrenAPICall(id);
+            } catch (e) {
+                setChildObjArr([]);
+                setLoading(false);
+                setError(true);
+                setErrorText(e.message ? e.message : e);
+            }
+        }
+        if (id !== undefined && userData?.userProfile === null) {
+            fetchData();
+            fetchChildData();
+        }
+        if (userData?.userProfile !== null && userData?.userProfile !== undefined) {
+            setuserObjData(userData?.userProfile);
+            setLoading(false);
+        }
+        if (childData.length === 0) {
+            setChildObjArr(childData);
+        }
+    }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
+    useEffect(() => {
+        if (childData && childData.length > 0) {
+            setChildObjArr(childData);
+        }
+        if (childData.length === 0) {
+            setChildObjArr(childData);
+        }
+    }, [childData]);
 
     const buildCard = (child) => {
         return (
@@ -74,7 +85,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                     }}
                 >
                     {userObjData?.profile === "PARENT" ? (
-                        <IconButton onClick={() => handleOpen2(child?._id)} color="textSecondary" aria-label="Delete Child">
+                        <IconButton onClick={() => handleOpen2(child?._id)} color='textSecondary' aria-label="Delete Child">
                             <DeleteIcon sx={{ position: "relative", top: 5, left: 150 }} />
                         </IconButton>
                     ) : null}
@@ -138,6 +149,10 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
             return buildCard(child);
         });
 
+    const handleModalOpen = () => {
+        setModalOpen(true);
+    };
+
     const handleModalClose = () => {
         setModalOpen(false);
     };
@@ -146,6 +161,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
         await createChildAPICall(obj);
         handleModalClose();
     };
+
 
     const handleOpen2 = (id) => {
         setDeleteId(id);
@@ -187,7 +203,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                 <br />
                 {childObjArr.length === 0 ? (
                     <Typography variant="h1" component="h2">
-                        No children found
+                        No childs found
                     </Typography>
                 ) : (
                     <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
@@ -204,24 +220,20 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                         aria-describedby="modal-modal-description"
                     />
                 )}
-
-                {open2 && (
-                    <DeleteChildModal
-                        open={open2}
-                        onClose={handleClose2}
-                        _id={deleteId}
-                        deleteChild={deleteChild}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    />
-                )}
+                {open2 && <DeleteChildModal
+                    open={open2}
+                    onClose={handleClose2}
+                    _id={deleteId}
+                    deleteChild={deleteChild}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                />}
             </div>
         );
     }
 };
 
 const mapStateToProps = (state) => {
-    console.log(state, " State here");
     return {
         userData: state.users,
         childData: state.child.childObjs,
@@ -233,7 +245,7 @@ const mapDispatchToProps = (dispatch) => {
         setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
         createChildAPICall: (obj) => dispatch(createChildAPICall(obj)),
         fetchChildrenAPICall: (id) => dispatch(fetchChildrenAPICall(id)),
-        deleteChilDAPICall: (childId, obj) => dispatch(deleteChilDAPICall(childId, obj)),
+        deleteChilDAPICall: (childId, obj) => dispatch(deleteChilDAPICall(childId, obj))
     };
 };
 

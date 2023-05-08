@@ -7,10 +7,9 @@ import {
   CardMedia,
   Typography,
   CardHeader,
-  Divider,
-  IconButton
+  Divider
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import Avatar from "@mui/material/Avatar";
 import { purple } from "@mui/material/colors";
 import SelectNanny from "./modals/SelectNanny";
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
@@ -18,38 +17,26 @@ import { connect } from "react-redux";
 import "../App.css";
 import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
-import AddIcon from '@mui/icons-material/Add';
-import { getMyJobAPICall, fireNannyAPICall } from "../redux/jobs/jobActions";
+import { getMyJobAPICall } from "../redux/jobs/jobActions";
 import { deleteJobAPICall } from "../redux/jobs/jobActions";
 import DeleteJobModal from "./modals/DeleteJobModal";
-import FireNannyModal from "./modals/FireNannyModal";
 
-const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => {
+const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState(true);
-  const [open2, setOpen2] = useState(false);
-  const [deleteId, setDeleteId] = useState('');
-
 
   const [openDeleteJobModal, setOpenDeleteJobModal] = useState(false);
   const handleOpenDeleteJob = () => setOpenDeleteJobModal(true);
   const handleCloseDeleteJob = () => setOpenDeleteJobModal(false);
 
-  const handleOpen2 = (id) => {
-    setDeleteId(id);
-    setOpen2(true);
-  };
-  
-  const handleClose2 = () => setOpen2(false);
-  
+
+  console.log(location.state, "appID heree");
   //   let application = location.state.application
-  
   let jobId = location.state.jobId
-  let childId = location.state.childId
   let pageNum = 1;
 
   const deleteJob = async (jobId) => {
@@ -57,12 +44,6 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
     setOpenDeleteJobModal(false);
     navigate(-1)
   }
-
-  const fireNanny = async (childId) => {
-    await fireNannyAPICall(childId, job?.data?.nannyId);
-    setOpen2(false);
-    await getMyJobAPICall(jobId);
-  };
 
   useEffect(() => {
     try {
@@ -143,9 +124,6 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
           >
             Delete Job
           </Button>
-          {/* <IconButton onClick={() => handleOpen2(childId)} color='textSecondary' aria-label="Fire Nanny" sx={{ marginBottom: "1rem" }}>
-          <DeleteIcon /> Fire Nanny
-          </IconButton> */}
         </div>
         {openDeleteJobModal && (
           <DeleteJobModal
@@ -157,14 +135,6 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
             aria-describedby="modal-modal-description"
           />
         )}
-        {open2 && <FireNannyModal
-          open={open2}
-          onClose={handleClose2}
-          _id={deleteId}
-          fireNanny={fireNanny}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        />}
         <Card sx={{ maxWidth: "80%", margin: "0 auto" }}>
           <CardContent>
             <Typography variant="h4" component="h1" color="text.primary" gutterBottom
@@ -217,19 +187,9 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
               });
             }}
             color="primary"
-            sx={{ marginTop: "2rem", marginRight: "0.5rem" }}
+            sx={{ marginTop: "2rem", marginRight: "1rem" }}
           >
             View Nanny Applications
-          </Button>
-        )}
-        {showData.nannyId && (
-        <Button
-          onClick={() => handleOpen2(childId)}
-            variant="contained"
-            color="error"
-            sx={{  marginTop: "2rem",marginRight: "auto", marginLeft: '0.5rem' }}
-          >
-            Fire Nanny
           </Button>
         )}
       </Container>
@@ -246,8 +206,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
-    deleteJobAPICall: (jobId) => dispatch(deleteJobAPICall(jobId)),
-    fireNannyAPICall: (childId, obj) => dispatch(fireNannyAPICall(childId, obj))
+    deleteJobAPICall: (jobId) => dispatch(deleteJobAPICall(jobId))
   };
 };
 

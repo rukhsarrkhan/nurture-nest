@@ -73,6 +73,11 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                         boxShadow: "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
                     }}
                 >
+                    {userObjData?.profile === "PARENT" ? (
+                        <IconButton onClick={() => handleOpen2(child?._id)} color="textSecondary" aria-label="Delete Child">
+                            <DeleteIcon sx={{ position: "relative", top: 5, left: 150 }} />
+                        </IconButton>
+                    ) : null}
                     <CardActionArea>
                         <Link to={`/dashboard/${child?._id}`}>
                             <CardMedia
@@ -121,11 +126,6 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                             </CardContent>
                         </Link>
                     </CardActionArea>
-                        {userObjData?.profile === "PARENT" ? (
-                            <IconButton onClick={() => handleOpen2(child?._id)} color='textSecondary' aria-label="Delete Child" >
-                                <DeleteIcon sx={{ position: "absolute", bottom: 0, right: 150 }} />
-                            </IconButton>
-                        ) : null}
                 </Card>
             </Grid>
         );

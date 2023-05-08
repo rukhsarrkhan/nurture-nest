@@ -42,7 +42,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
     await createJobAPICall(data, parentId, childId);
     handleCloseCreateJob();
     navigate("/myJob", {
-      state: { jobId: dashboardData?.data?.jobId, childId: dashboardData?.data?._id },
+      state: { jobId: dashboardData?.data?.jobId },
     });
   };
 
@@ -145,7 +145,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
       color='primary'
       onClick={() => {
         navigate("/myJob", {
-          state: { jobId: dashboardData?.data?.jobId,childId: dashboardData?.data?._id },
+          state: { jobId: dashboardData?.data?.jobId },
         });
       }}
       sx={{

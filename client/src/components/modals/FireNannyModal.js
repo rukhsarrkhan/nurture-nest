@@ -20,19 +20,19 @@ const FireNannyModal = (props) => {
     return (
         <div>
             <Modal
-                open={props?.open}
-                onClose={props?.handleClose2}
+                open={props.open}
+                onClose={props.handleClose2}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
                     <p >
-                        Are you sure you want to fire this nanny ?
+                        Are you sure you want to ?
                     </p>
-                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props.fireNanny(props?._id)}>
+                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props.deleteNanny(props._id)}>
                         Yes
                     </Button>
-                    <Button onClick={() => props?.handleClose2}>
+                    <Button onClick={() => props.handleClose2}>
                         No
                     </Button>
                 </Box>

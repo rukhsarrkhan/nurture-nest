@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import Loading from './Loading';
-import AddIcon from '@mui/icons-material/Add';
-import IconButton from '@mui/material/IconButton';
 import {
   Card,
   CardMedia,
@@ -26,8 +24,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
   const [error, setError] = useState(false);
   let { nannyId } = useParams();
   let childData = location.state.childId;
-console.log(childData,'this is childdata from nanny details')
-console.log(nannyData,'this is nanny data from nanny detailsssss')
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -75,11 +72,6 @@ console.log(nannyData,'this is nanny data from nanny detailsssss')
         >
           Back
         </Button>
-
-        <IconButton  color='textSecondary' aria-label="Fire Nanny" startIcon={<AddIcon />}>
-        Fire Nanny
-        </IconButton>
-
         <br></br>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={7} md={5} lg={4} xl={6} key={nannyData?.firstName?.toString()}>

@@ -392,7 +392,7 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
                 message: "Couldn't update child from user collection",
             };
 
-        if (removeChildIdFrmChild._id === null) {
+        if (removeChildIdFrmChild._id == null) {
             throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
         }
         return res.status(200).json(removeChildIdFrmChild);

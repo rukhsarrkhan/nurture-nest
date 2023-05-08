@@ -74,11 +74,11 @@ const AddModal = (props) => {
     const vaccineDate = new Date(date);
 
     const minDate = new Date();
-    minDate.setFullYear(minDate.getFullYear() - 13);
+    minDate.setFullYear(minDate.getFullYear() - 12);
 
     if (vaccineDate < minDate) {
         setDateError(true);
-        setErrorText("Date cannot be older than 13 years from current date");
+        setErrorText("Date cannot be older than 12 years from current date");
         return;
     }
 

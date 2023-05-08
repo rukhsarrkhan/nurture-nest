@@ -92,7 +92,7 @@ const AddChildModal = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        setdisableBtn(true);
         setNameError(false);
         setAgeError(false);
         setSexError(false);
@@ -102,6 +102,7 @@ const AddChildModal = (props) => {
         if (nameCheck !== "") {
             setNameError(true);
             setErrorText(nameCheck);
+            setdisableBtn(false);
             return;
         }
 
@@ -109,21 +110,23 @@ const AddChildModal = (props) => {
         if (ageCheck !== "") {
             setAgeError(true);
             setErrorText(ageCheck);
+            setdisableBtn(false);
             return;
         }
         if (!validSexArr.includes(sex)) {
             setSexError(true);
             setErrorText("Invalid sex provided");
+            setdisableBtn(false);
             return;
         }
         if (!imageFile) {
             setImageError("No image available");
             setImagePreview(null);
+            setdisableBtn(false);
             return;
         }
 
         if (name.trim() && age.trim() && sex.trim() && imageFile && errorText === "") {
-            setdisableBtn(true);
             const formData = new FormData();
             formData.append("image", imageFile);
             formData.append("name", name);
@@ -134,7 +137,9 @@ const AddChildModal = (props) => {
                 await props.addChild(formData);
             } catch (error) {
                 console.log(error);
+                setdisableBtn(false);
             }
+            setdisableBtn(false);
         }
     };
 

@@ -17,6 +17,8 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     if (age !== "") {
         age = await helper.execValdnAndTrim(age, "Age");
         await helper.isAgeValid(parseInt(age), "Age");
+    } else {
+        age = "25";
     }
     uuid = await helper.execValdnAndTrim(uuid, "Uuid");
 

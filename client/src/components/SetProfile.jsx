@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../firebase/Auth";
 import "../App.css";
 import { connect } from "react-redux";
-import { redirect, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { TextField, Button, MenuItem, Typography } from "@mui/material";
-import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../redux/users/userActions";
+import { updateUserAPICall } from "../redux/users/userActions";
 import Loading from "./Loading";
 import helpers from "../helpers";
 // import ErrorPage from "../components/ErrorPage";
@@ -23,6 +23,7 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
     const [profileSelected, setProileSelected] = useState(false);
     const [userObjData, setuserObjData] = useState(undefined);
     const [loading, setLoading] = useState(true);
+    const [disableBtn, setdisableBtn] = useState(false);
     const { currentUser } = useContext(AuthContext);
     console.log(userData, " Current UserData");
 
@@ -64,6 +65,7 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setdisableBtn(true);
         setProfileError(false);
         setErrorText("");
 
@@ -71,6 +73,7 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
         if (profileCheck !== "" && profile !== "PARENT" && profile !== "NANNY") {
             setProfileError(true);
             setErrorText("Profile is invalid");
+            setdisableBtn(false);
             return;
         }
         if (profile?.trim() && errorText === "") {
@@ -78,11 +81,13 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
             newObj.profile = profile;
             try {
                 await updateUserAPICall(userObjData._id, newObj);
+                setdisableBtn(false);
                 setProileSelected(true);
             } catch (e) {
                 setErrorText(e.message);
                 setError(true);
                 setErrorCode(e.statusCode);
+                setdisableBtn(false);
             }
         }
     };
@@ -133,7 +138,7 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
                     ))}
                 </TextField>
                 <div style={{ display: "flex", justifyContent: "center" }}>
-                    <Button variant="contained" sx={{ mt: 2 }} type="submit">
+                    <Button variant="contained" sx={{ mt: 2 }} type="submit" disabled={disableBtn}>
                         Submit
                     </Button>
                 </div>
@@ -143,7 +148,6 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
 };
 
 const mapStateToProps = (state) => {
-    console.log(state, " Current state");
     return {
         userData: state.users,
     };

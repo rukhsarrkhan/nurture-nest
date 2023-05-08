@@ -2,19 +2,12 @@ import React, { useContext } from "react";
 import { connect } from "react-redux";
 import { AuthContext } from "../firebase/Auth";
 import { doSignOut } from "../firebase/FirebaseFunctions";
-import {
-    Nav,
-    NavLink,
-    Bars,
-    NavMenu,
-    NavBtn,
-    ProfileBtn,
-} from "./NavbarElements";
+import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from "./NavbarElements";
 
 const Navbar = () => {
     const { currentUser } = useContext(AuthContext);
     let items = JSON.parse(localStorage.getItem("userData"));
-    const profileLink = `/profile/${items?._id}`;
+    const profileLink = `/profile`;
 
     return (
         <>
@@ -31,7 +24,8 @@ const Navbar = () => {
                         <NavLink to="/job/viewAllJobs/1" id={items?._id}>
                             Careers
                         </NavLink>
-                    )}                </NavMenu>
+                    )}{" "}
+                </NavMenu>
                 <NavBtn>
                     {!currentUser && (
                         <ProfileBtn>

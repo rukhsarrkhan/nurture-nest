@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "../App.css";
 import { connect } from "react-redux";
-import { Link, Navigate, redirect } from "react-router-dom";
-import CardHeader from "@mui/material/CardHeader";
-import CardActions from "@mui/material/CardActions";
+import { Link, Navigate } from "react-router-dom";
 import { Card, CardMedia, Grid, Button, CardActionArea, CardContent, Typography } from "@mui/material";
 import { AuthContext } from "../firebase/Auth";
 import Loading from "./Loading";
@@ -22,7 +20,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [errorText, setErrorText] = useState("");
-    const [modalOpen, setModalOpen] = useState(false); // new state to control modal visibility
+    const [modalOpen, setModalOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [deleteId, setDeleteId] = useState("");
     const [redirectProfile, setRedirectProfile] = useState(false);
@@ -51,7 +49,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
                 setErrorText(e.message ? e.message : e);
             }
         }
-        if (id !== undefined && userData?.userProfile === null) {
+        if (id !== undefined && (userData?.userProfile === null || userData?.userProfile === undefined)) {
             fetchData();
             fetchChildData();
         }
@@ -61,11 +59,11 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
         }
     }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
     useEffect(() => {
+        console.log("child Data ", childData);
         if (childData && childData.length > 0) {
             setChildObjArr(childData);
         }
         if (childData.length === 0) {
-            setChildObjArr(childData);
             setChildObjArr(childData);
         }
     }, [childData]);

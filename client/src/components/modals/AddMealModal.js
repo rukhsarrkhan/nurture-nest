@@ -5,7 +5,7 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
 import { Container } from '@mui/system';
-import image from '../../img/MealPlan.jpg'
+import image from '../../img/MealPlan.jpg';
 
 const style = {
     position: 'absolute',
@@ -21,10 +21,7 @@ const style = {
 };
 
 const AddMealModal = (props) => {
-
-  
     const today = new Date().toISOString().slice(0, 16);
-
 
     const tConvert = (time) => {
         // Check correct time format and split into components
@@ -49,29 +46,16 @@ const AddMealModal = (props) => {
     const [errorText, setErrorText] = useState("");
 
     const handleSubmit = async (event) => {
-        event.preventDefault()
+        event.preventDefault();
         setMealError(false);
-        setErrorText("")
+        setErrorText("");
 
-        let MealCheck = await helpers.onlyLettersNumbersAndSpaces(meal, "Meal")
+        let MealCheck = await helpers.onlyLettersNumbersAndSpaces(meal, "Meal");
         if (MealCheck !== undefined) {
             setMealError(true);
-            setErrorText(MealCheck.message)
-            return
+            setErrorText(MealCheck.message);
+            return;
         }
-        if (time < today) {
-            setTimeError(true)
-            setErrorText("Please select a future time")
-            return
-        } else {
-            setTimeError(false)
-        }
-        // let dateCheck = await helpers.isDateValid(date, "date")
-        // if (dateCheck !== undefined) {
-        //     setDateError(true);
-        //     setErrorText(dateCheck.message)
-        //     return
-        // }
 
         if (time === '') {
             setTimeError(true);
@@ -83,12 +67,12 @@ const AddMealModal = (props) => {
                     time: tConvert(time),
                     directions: directions
                 };
-                await props?.addMeal(data)
+                await props?.addMeal(data);
             } catch (error) {
-                alert(error)
+                alert(error);
             }
         }
-    }
+    };
 
     return (
         <div >
@@ -140,6 +124,7 @@ const AddMealModal = (props) => {
                                 id="inline-picker"
                                 className="mealField"
                                 type='time'
+                                label="Time"
                                 onChange={e => setTime(e.target.value)}
                                 required
                                 variant="filled"
@@ -148,7 +133,6 @@ const AddMealModal = (props) => {
                                 helperText={timeError && errorText}
                                 value={time}
                                 error={timeError}
-                                inputProps={{ min: today }}
                             />
 
                             <Button variant="outlined" color="secondary" type="submit" >
@@ -167,5 +151,3 @@ const AddMealModal = (props) => {
 
 
 export default AddMealModal;
-
-

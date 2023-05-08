@@ -1,7 +1,5 @@
 import axios from "axios";
 import socketIO from 'socket.io-client';
-// import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../../firebase/FirebaseFunctions';
-
 
 import {
     USER_LOGOUT,
@@ -90,14 +88,15 @@ export const userRegistrationAPICall = (obj) => {
     };
 };
 
-export const userLoginAPICall = (uuId) => {
+export const userLoginAPICall = (uuId, email, firstName, lastName) => {
     return async (dispatch) => {
         try {
             dispatch(userInitiate());
-            let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`);
+            let obj = {
+                email: email, firstName: firstName, lastName: lastName
+            };
+            let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`, obj);
             localStorage.setItem("userData", JSON.stringify(resp?.data));
-            localStorage.setItem('userName', resp?.data?.firstName);
-            socket.emit('newUser', { userName: resp?.data?.firstName, socketID: resp?.data?._id });
             dispatch(userLoginSuccess(resp?.data));
         } catch (error) {
             dispatch(userLoginFailure(error));
@@ -140,7 +139,7 @@ export const updateProfileImageAPICall = (id, formData) => {
 export const userLogoutCall = (obj) => {
     return async (dispatch) => {
         dispatch(userLogout());
-        // remove token here
         localStorage.removeItem("userData");
+        localStorage.clear();
     };
 };

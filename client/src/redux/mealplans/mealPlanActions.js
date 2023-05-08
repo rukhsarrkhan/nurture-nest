@@ -45,14 +45,14 @@ export const mealPlanSetFailure = (error) => {
 
 export const mealDeleteSuccess = (meal) => {
   return {
-    type:  MEAL_DELETE_SUCCESS,
+    type: MEAL_DELETE_SUCCESS,
     payload: meal,
   };
 };
 
 export const mealDeleteFailure = (error) => {
   return {
-    type:  MEAL_DELETE_FAILURE,
+    type: MEAL_DELETE_FAILURE,
     payload: error,
   };
 };
@@ -70,11 +70,11 @@ export const getMealPlanAPICall = (childId) => {
   };
 };
 
-export const mealPlanSetAPICall = (obj,childId) => {
+export const mealPlanSetAPICall = (obj, childId) => {
   return async (dispatch) => {
     try {
       dispatch(mealSetTrigger());
-      let resp = await axios.post('http://localhost:3000/child/mealplan/'+childId, obj);
+      let resp = await axios.post('http://localhost:3000/child/mealplan/' + childId, obj);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
       dispatch(mealPlanSetSuccess(resp?.data));
@@ -88,12 +88,12 @@ export const delMealAPICall = (mealId) => {
   return async (dispatch) => {
     try {
       dispatch(mealSetTrigger());
-      let resp = await axios.delete('http://localhost:3000/child/mealplan/'+mealId);
+      let resp = await axios.delete('http://localhost:3000/child/mealplan/' + mealId);
       // set token here
       // sessionStorage.setItem("token", resp.data.token);
-       dispatch(mealDeleteSuccess(resp?.data));
+      dispatch(mealDeleteSuccess(resp?.data));
     } catch (error) {
-       dispatch(mealDeleteFailure(error));
+      dispatch(mealDeleteFailure(error));
     }
   };
 };

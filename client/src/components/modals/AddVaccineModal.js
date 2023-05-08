@@ -4,8 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import helpers from '../../helpers';
-import image from '../../img/vaccineimage.png'
-
+import image from '../../img/vaccineimage.png';
 
 const style = {
     position: 'absolute',
@@ -20,7 +19,6 @@ const style = {
     borderRadius: '50px'
 };
 
-
 const AddModal = (props) => {
 
     const formatDate = (showdate) => {
@@ -29,7 +27,7 @@ const AddModal = (props) => {
         var day = showdate.substring(8, 10);
         return month + '/' + day + '/' + year;
     };
-    const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
+    // const today = new Date().toISOString().split('T')[0]; // get today's date in YYYY-MM-DD format
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
@@ -46,26 +44,19 @@ const AddModal = (props) => {
         setnameError(false);
         setDateError(false);
         setDosesError(false);
-        setErrorText("")
+        setErrorText("");
 
-        let nameCheck = await helpers.onlyLettersNumbersAndSpaces(name, "name")
+        let nameCheck = await helpers.onlyLettersNumbersAndSpaces(name, "name");
         if (nameCheck !== undefined) {
             setnameError(true);
-            setErrorText(nameCheck.message)
+            setErrorText(nameCheck.message);
             return;
         }
-        if(date < today) {
-            setDateError(true)
-            setErrorText('Please select a future date')
-            return
-        } else {
-            setDateError(false)
-        }
-        let dosesCheck = await helpers.onlyNumbers(doses, "doses")
+        let dosesCheck = await helpers.onlyNumbers(doses, "doses");
         if (dosesCheck !== undefined) {
             setDosesError(true);
-            setErrorText(dosesCheck.message)
-            return
+            setErrorText(dosesCheck.message);
+            return;
         }
 
         if (name?.trim() && date?.trim() && doses?.trim() && errorText === "") {
@@ -75,12 +66,12 @@ const AddModal = (props) => {
                     date: formatDate(date),
                     doses: doses
                 };
-                await props?.addVaccine(data)
+                await props?.addVaccine(data);
             } catch (error) {
-                alert(error)
+                alert(error);
             }
         }
-    }
+    };
 
 
     return (
@@ -96,12 +87,12 @@ const AddModal = (props) => {
                         src={image}
                         alt="vaccine description"
                         className='vaccine-image'
-                   />
+                    />
 
                     <p className='P-title-home' >
                         Add Vaccine
                     </p>
-                    <form autoComplete="off"  onSubmit={handleSubmit}>
+                    <form autoComplete="off" onSubmit={handleSubmit}>
                         <TextField
                             className="vacField"
                             label="Name"

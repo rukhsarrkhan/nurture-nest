@@ -29,7 +29,7 @@ const SelectNanny = (props) => {
                     <p className='P-title-home'>
                         Are you sure you want to select Nanny:{props.nannyName} & Id:{props.nannyId} for your child?
                     </p>
-                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props.selectNanny(props.jobId,props.nannyId)}>
+                    <Button variant="outlined" color="secondary" type="submit" onClick={() => props.selectNanny(props.jobId, props.nannyId)}>
                         Yes
                     </Button>
                     <Button onClick={props.onClose}>

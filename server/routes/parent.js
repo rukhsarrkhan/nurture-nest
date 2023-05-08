@@ -23,7 +23,7 @@ router
             return res.status(error.statusCode).json({ message: error.message });
         }
     })
-    .put(async (req, res) => {})
-    .delete(async (req, res) => {});
+    .put(async (req, res) => { })
+    .delete(async (req, res) => { });
 
 module.exports = router;

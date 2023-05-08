@@ -37,8 +37,11 @@ const Dashboard = ({ getDashboardAPICall,createJobAPICall, dashboardData }) => {
   const handleCloseCreateJob = () => setOpenCreateJobModal(false);
 
   const createJob = async (data,parentId,childId) => {
-    createJobAPICall(data,parentId,childId);
-    handleCloseCreateJob();   
+    await createJobAPICall(data,parentId,childId);
+    handleCloseCreateJob();
+    navigate("/myJob", {
+      state: { jobId: dashboardData?.data?.jobId },
+    });
   };
 
   useEffect(() => {
@@ -259,8 +262,8 @@ const Dashboard = ({ getDashboardAPICall,createJobAPICall, dashboardData }) => {
             </Button>
           </CardActionArea>
         </Grid>
-        <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>
-        {profile === "PARENT" && openCreateJobModal ? (
+       {profile === "PARENT" && !dashboardData?.data?.jobId && <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>}
+        {profile === "PARENT" && !dashboardData?.data?.jobId && openCreateJobModal ? (
                         <CreateJobModal
                         open={openCreateJobModal}
                         onClose={handleCloseCreateJob}
@@ -271,6 +274,11 @@ const Dashboard = ({ getDashboardAPICall,createJobAPICall, dashboardData }) => {
                         aria-describedby="modal-modal-description"
     />
                     ) : null}
+        {profile === "PARENT" && dashboardData?.data?.jobId && <Button variant='contained' color='primary' onClick={() => {
+                    navigate("/myJob", {
+                      state: { jobId: dashboardData?.data?.jobId },
+                    });
+                  }} >View My Job</Button>}
         <Button
           variant="contained"
           onClick={() => { navigate(-1) }}

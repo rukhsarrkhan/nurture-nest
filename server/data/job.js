@@ -321,11 +321,8 @@ const addApplication = async (
   await helpers.isNameValid(nannyName, "Nanny Name");
   contact = await helpers.execValdnAndTrim(contact, "Phone Number");
   await helpers.validatePhoneNumber(contact, "Phone Number");
-  nannyAddress = await helpers.isAddressParentValid(
-    nannyAddress,
-    "Nanny Address"
-  );
-  await helpers.isNameValid(nannyAddress, "Nanny Address");
+  nannyAddress = await helpers.execValdnAndTrim(nannyAddress,"Nanny Address");
+  await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
   city = await helpers.execValdnAndTrim(city, "City");
   await helpers.isCityParentValid(city, "City");
   state = await helpers.execValdnAndTrim(state, "State");
@@ -337,8 +334,8 @@ const addApplication = async (
   if (shiftPuntuality) {
     shiftPuntuality = shiftPuntuality.trim();
   }
-  if (description) {
-    description = description.trim();
+  if (whySelect) {
+    whySelect = whySelect.trim();
   }
   if (disability) {
     disability = disability.trim();
@@ -346,7 +343,7 @@ const addApplication = async (
   if (experience) {
     experience = experience.trim();
   }
-  if (coverLetter) {
+  if (attachment) {
     attachment = attachment.trim();
   }
   ///////////////
@@ -474,7 +471,7 @@ const setNannytoJob = async (jobId, nannyId) => {
     console.log("Inside getAllJobs dataFunction", pageNum);
     const jobCollection = await jobs();
     let nanniesFound = await jobCollection
-      .find({}, { projection: { applications: 0 } })
+      .find({nannyId:null}, { projection: { applications: 0 } })
       .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
       .limit(5)
       .toArray();

@@ -30,6 +30,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
 
   console.log(location.state, "appID heree");
   let jobData = location.state.job;
+  let nanny = location.state.nanny;
   // let jobId = location.state.jobId
 
   const [openApplyToJobModal, setOpenApplyToJobModal] = React.useState(false);
@@ -189,7 +190,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
               <ApplyToJobModal
                 open={openApplyToJobModal}
                 onClose={handleCloseApplyToJob}
-                nannyId={"644c52061284f55284689dea"}
+                nannyId={nanny._id}
                 jobId={showData._id}
                 applyToJob={applyToJob}
                 aria-labelledby="modal-modal-title"

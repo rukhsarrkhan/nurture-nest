@@ -423,6 +423,8 @@ const CreateJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
+                multiline
+                rows={10}
                 sx={{ mb: 3 }}
                 fullWidth
                 helperText={descriptionError && errorText}
@@ -477,7 +479,7 @@ const CreateJobModal = (props) => {
               />
               <TextField
                 className="formField"
-                label="Salary in USD per week"
+                label="Salary in USD per hour"
                 onChange={(e) => setSalary(e.target.value)}
                 required
                 variant="filled"

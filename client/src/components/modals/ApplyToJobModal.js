@@ -184,7 +184,6 @@ const ApplyToJobModal = (props) => {
         experience: experience,
         attachment: coverLetter,
       };
-
       props.applyToJob(data, props.nannyId, props.jobId);
     }
   };

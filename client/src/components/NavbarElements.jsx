@@ -116,7 +116,7 @@ export const DropdownMenu = styled.div`
 export const DropdownItem = styled.div`
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 16px;  
   color: #fff;
   cursor: pointer;
   transition: all 0.2s ease-in-out;

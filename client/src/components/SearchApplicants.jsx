@@ -18,7 +18,7 @@ const SearchApplicants = (props) => {
 
   return (
     <form method='POST ' onSubmit={handleSearch} name='formName' >
-      <label><br />
+      <label>
         <TextField
           className="formField"
           label="Search Nannies"

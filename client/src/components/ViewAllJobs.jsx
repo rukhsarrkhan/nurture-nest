@@ -10,11 +10,8 @@ import {
   Typography,
   getAlertTitleUtilityClass,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { connect } from "react-redux";
-import CardHeader from "@mui/material/CardHeader";
 import CardActions from "@mui/material/CardActions";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
@@ -23,11 +20,9 @@ import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
 
 let noImage = "noImage";
 
-const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall }) => {
+const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
   let { pageNum } = useParams();
   const navigate = useNavigate();
-  // const job = useSelector((state) => state.jobs);
-  // const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
@@ -38,6 +33,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall }) => {
   let card = null;
   let pagenum = pageNum;
 
+  let items = JSON.parse(localStorage.getItem("userData"));
   //View Applicants useEffect for apiCall
   useEffect(() => {
     try {
@@ -220,7 +216,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall }) => {
                 <Button
                   variant="contained"
                   onClick={() => {
-                    navigate("/job/viewJobDetails", { state: { job: show } });
+                    navigate("/job/viewJobDetails", { state: { job: show,nanny:items } });
                   }}
                   sx={{ bgcolor: purple[700] }}
                 >
@@ -310,8 +306,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getallJobsAPICall: (pageNum) => dispatch(getallJobsAPICall(pageNum)),
-    searchJobsAPICall: (searchTerm, pageNum) =>
-      dispatch(searchJobsAPICall(searchTerm, pageNum)),
+    searchJobsAPICall: (searchTerm, pageNum) => dispatch(searchJobsAPICall(searchTerm, pageNum)),
   };
 };
 

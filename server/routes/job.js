@@ -191,11 +191,8 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     await helpers.isNameValid(nannyName, "Nanny Name");
     contact = await helpers.execValdnAndTrim(contact, "Phone Number");
     await helpers.validatePhoneNumber(contact, "Phone Number");
-    nannyAddress = await helpers.isAddressParentValid(
-      nannyAddress,
-      "Nanny Address"
-    );
-    await helpers.isNameValid(nannyAddress, "Nanny Address");
+    nannyAddress = await helpers.execValdnAndTrim(nannyAddress,"Nanny Address");
+    await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
     city = await helpers.execValdnAndTrim(city, "City");
     await helpers.isCityParentValid(city, "City");
     state = await helpers.execValdnAndTrim(state, "State");
@@ -207,8 +204,8 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     if (shiftPuntuality) {
       shiftPuntuality = shiftPuntuality.trim();
     }
-    if (description) {
-      description = description.trim();
+    if (whySelect) {
+      whySelect = whySelect.trim();
     }
     if (disability) {
       disability = disability.trim();
@@ -216,7 +213,7 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     if (experience) {
       experience = experience.trim();
     }
-    if (coverLetter) {
+    if (attachment) {
       attachment = attachment.trim();
     }
     ///////////////

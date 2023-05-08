@@ -40,6 +40,7 @@ const Application = ({ job, selectNannyAPICall }) => {
     console.log("something is hapenning", jobId, nannyId);
     selectNannyAPICall(jobId, nannyId);
     setSelectNannyModal(false);
+    navigate(-2)
   };
 
   useEffect(() => {

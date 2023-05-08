@@ -38,8 +38,48 @@ export const getDashboardAPICall = (childId) => {
   return async (dispatch) => {
     try {
       let resp = await axios.get(`http://localhost:3000/child/${childId}`);
-      dispatch(getDashboardSuccess(resp?.data));
+
+      let newObj = {
+        _id: resp?.data?._id,
+        name: resp?.data?.name,
+        age: resp?.data?.age,
+        sex: resp?.data?.sex,
+        jobId: null,
+        mealRequirements: resp?.data?.mealRequirements,
+        vaccine: resp?.data?.vaccine,
+        nannyId: null,
+        appointments: resp?.data?.appointments,
+        photoUrl: resp?.data?.photoUrl,
+        nannyPhotoUrl: null
+      }
+
+      console.log(newObj, "swarak")
+
+      let resp2 = null;
+      let nannyId = null;
+      let resp3 = null;
+
+      if (resp.data.jobId) {
+        resp2 = await axios.get(`http://localhost:3000/job/findjob/${childId}`);
+        nannyId = resp2?.data?.nannyId;
+        resp3 = await axios.get(`http://localhost:3000/users/` + nannyId)
+      }
+
+      if (resp?.data?.jobId) {
+        newObj.jobId = resp.data.jobId
+      }
+
+      if (resp2?.data?.nannyId) {
+        newObj.nannyId = resp2.data.nannyId
+      }
+
+      if (resp2?.data?.nannyId && resp3?.data?.photoUrl) {
+        newObj.nannyPhotoUrl = resp3.data.photoUrl
+      }
+
+      dispatch(getDashboardSuccess(newObj));
     } catch (error) {
+      console.log(error)
       dispatch(getDashboardFailure(error));
     }
   };

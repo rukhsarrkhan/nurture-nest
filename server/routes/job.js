@@ -77,7 +77,7 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
     const jobCreated = await jobCollection.createJob(
       xss(parentId),
       xss(childId),
-      xss(shifts),
+      (shifts),
       xss(description),
       xss(address),
       xss(specialCare),

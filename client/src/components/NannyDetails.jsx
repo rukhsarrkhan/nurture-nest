@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import '../App.css';
 import { connect } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import Loading from './Loading';
 import {
@@ -11,12 +10,14 @@ import {
   Grid,
   CardActionArea,
   CardContent,
-  Typography
+  Typography,
+  Button,
 } from '@mui/material';
 import { getNannyDetailsAPICall } from '../redux/nannyDetails/nannyDetailsActions';
 import { useLocation } from 'react-router-dom';
 
-const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
+const NannyDetails = ({ getNannyDetailsAPICall, nannyData }) => {
+  let navigate = useNavigate();
   const location = useLocation();
   const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
   useEffect(() => {
     async function fetchData() {
       try {
-        getNannyDetailsAPICall(nannyId, childData);
+        getNannyDetailsAPICall(childData);
         setLoading(false);
         setError(false);
       } catch (e) {
@@ -35,8 +36,8 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
         setError(true);
       }
     }
-    if (nannyId !== undefined) { fetchData(); }
-  }, [nannyId]);
+    if (childData !== undefined) { fetchData(); }
+  }, [childData]);
 
 
   if (!currentUser) {
@@ -59,6 +60,19 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
     return (
       <div>
         <br></br>
+        <br></br>
+        <Button
+          variant="contained"
+          onClick={() => { navigate(-1); }}
+          sx={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            display: 'block'
+          }}
+        >
+          Back
+        </Button>
+        <br></br>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={7} md={5} lg={4} xl={6} key={nannyData?.firstName?.toString()}>
             <Card sx={{ maxWidth: 600, borderRadius: 16 }}>
@@ -67,7 +81,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
                   component='img'
                   height='200'
                   alt=''
-                  image={nannyData?.image}
+                  image={nannyData?.photoUrl}
                 />
                 <CardContent>
                   <Typography
@@ -83,22 +97,21 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
                     color='text.secondary'
                     sx={{ fontFamily: 'Roboto, sans-serif', fontWeight: 'bold' }}
                   >
-                    {nannyData && nannyData.firstName
-                      ? 'First Name: ' + nannyData?.firstName
-                      : 'First Name: No data to display'}
+                    {nannyData && nannyData.name
+                      ? 'Name: ' + nannyData?.name
+                      : 'Name: No data to display'}
                     <br />
-                    {nannyData && nannyData.lastName
-                      ? 'Last Name: ' + nannyData?.lastName
-                      : 'Last Name: No data to display'}
+                    {nannyData && nannyData.contact
+                      ? 'Contact: ' + nannyData?.contact
+                      : 'Contact: No data to display'}
                     <br />
-                    {nannyData && nannyData.email
-                      ? 'Email: ' + nannyData?.email
-                      : 'Email: No data to display'}
+                    {nannyData && nannyData.city
+                      ? 'City: ' + nannyData?.city
+                      : 'City: No data to display'}
                     <br />
-                    {nannyData && nannyData.age
-                      ? 'Age: ' + nannyData?.age
-                      : 'Age: No data to display'}
-                    <br />
+                    {nannyData && nannyData.city
+                      ? 'State: ' + nannyData?.state
+                      : 'State: No data to display'}
                     {nannyData && nannyData.address
                       ? 'Address: ' + nannyData?.address
                       : 'Address: No data to display'}

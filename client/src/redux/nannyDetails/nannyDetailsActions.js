@@ -18,18 +18,20 @@ export const getNannyDetailsFailure = (error) => {
   };
 };
 
-export const getNannyDetailsAPICall = (nannyId, childId) => {
+export const getNannyDetailsAPICall = (childId) => {
   return async (dispatch) => {
     try {
-      let resp = await axios.get(`http://localhost:3000/nanny/${nannyId}`);
-      let resp2 = await axios.get(`http://localhost:3000/job/findjob/${childId}`);
 
+      let resp2 = await axios.get(`http://localhost:3000/job/findjob/${childId}`);
+      let nannyId = resp2?.data?.nannyId;
+      let nannyInfoFromUserCollection = await axios.get(`http://localhost:3000/nanny/` + nannyId);
       let newObj = {
-        firstName: resp?.data?.firstName,
-        lastName: resp?.data?.LastName,
-        image: resp?.data?.photoUrl,
-        email: resp?.data?.email,
-        age: resp?.data?.age,
+        name: resp2?.data?.nannyName,
+        contact: resp2?.data?.contact,
+        city: resp2?.data?.city,
+        state: resp2?.data?.state,
+        zipCode: resp2?.data?.zipCode,
+        photoUrl: nannyInfoFromUserCollection?.data?.photoUrl,
         distance: resp2?.data?.distance,
         address: resp2?.data?.nannyAddress,
         reasonToSelect: resp2?.data?.whySelect,

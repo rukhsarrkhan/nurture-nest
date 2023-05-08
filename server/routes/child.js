@@ -223,7 +223,7 @@ router
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
         } catch (e) {
-            return res.status(400).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
 
         try {
@@ -233,7 +233,7 @@ router
             }
             return res.json(appointmentFound);
         } catch (e) {
-            return res.status(404).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     })
     .post(async (req, res) => {
@@ -253,7 +253,7 @@ router
             postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, "date");
             await helper.isDateValid(postAppointment.date, "Date");
         } catch (e) {
-            return res.status(400).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
 
         try {
@@ -302,7 +302,7 @@ router.route("/appointment/:appointmentId").delete(async (req, res) => {
         const removedAppointment = await childCollection.removeAppointment(appointmentId);
         return res.status(200).json(removedAppointment);
     } catch (e) {
-        return res.status(500).json({ error: e });
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
 });
 

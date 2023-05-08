@@ -21,19 +21,22 @@ import AddAppointmentModal from './modals/AddAppointmentModal';
 import { delAppointmentAPICall } from '../redux/appointments/appointmentActions';
 import Loading from './Loading';
 import { AuthContext } from '../firebase/Auth';
+import ErrorPage from '../components/ErrorPage';
 
 const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall }) => {
     let navigate = useNavigate();
     const { currentUser } = useContext(AuthContext);
     let card = null;
     let { childId } = useParams();
-    let items = JSON.parse(localStorage.getItem("userData"));
+    let items = JSON.parse(localStorage.getItem('userData'));
     let profile = items?.profile;
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errorPage, setErrorPage] = useState(false);
     const [deleteId, setDeleteId] = useState('');
+    const [errorText, setErrorText] = useState("");
+    const [errorCode, setErrorCode] = useState("");
 
     const handleOpen = () => { setOpen(true); };
     const handleClose = () => setOpen(false);
@@ -43,6 +46,16 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
         setOpen2(true);
     };
     const handleClose2 = () => setOpen2(false);
+
+    useEffect(() => {
+        if (appointmentData !== undefined) {
+            if (appointmentData?.error !== "") {
+                setErrorPage(true);
+                setErrorText(appointmentData?.error);
+                setErrorCode(appointmentData?.code);
+            }
+        }
+    }, [appointmentData]);
 
     useEffect(() => {
         getAppointmentAPICall(childId);
@@ -122,10 +135,9 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     } else if (errorPage) {
         return (
             <div>
-                <h2>Error 404: No data for this page</h2>
+                <ErrorPage error={errorText} code={errorCode} />
             </div>
         );
-
     } else {
         return (
             <div>
@@ -171,7 +183,6 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                 </div>
                 <br />
                 <br />
-
             </div>
 
         );

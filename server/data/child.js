@@ -90,13 +90,13 @@ const removeChild = async (childId) => {
     if (deletedChild.value == null) {
         throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
-    return deletedChild.value._id;
+    return deletedChild.value._id.toString();
 };
 
 const removeChildFromUser = async (parentId, childId) => {
-    parentId = await helper.execValdnAndTrim(parentId, "Child Id");
+    parentId = await helper.execValdnAndTrim(parentId, "Parent Id");
     if (!ObjectId.isValid(parentId)) {
-        throw { statusCode: 400, message: "Child Id is not valid" };
+        throw { statusCode: 400, message: "Parent Id is not valid" };
     }
     const userCollection = await users();
     // let getUser = userCollection.findOne({ _id: ObjectId(parentId) })

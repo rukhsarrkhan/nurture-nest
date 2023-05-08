@@ -422,4 +422,41 @@ router
         }
     });
 
+    router.route('/fireNanny/:childId').delete(async (req, res) => {
+      const childId = req.params.childId;
+      const nannyId = req.body._id;
+  
+      try {
+          await helpers.execValdnAndTrim(childId, "Child Id");
+          if (!ObjectId.isValid(childId)) {
+              throw { statusCode: 400, message: "Child Id is not valid" };
+          }
+          await helpers.execValdnAndTrim(nannyId, "Nanny Id");
+          if (!ObjectId.isValid(nannyId)) {
+              throw { statusCode: 400, message: "Nanny Id is not valid" };
+          }
+      } catch (e) {
+          return res.status(400).json({ error: e });
+      }
+      try {
+          const removeNannyFrmUser = await jobCollection.removeNannyFromUser(nannyId, childId.toString())
+          const removeNannyFrmJob = await jobCollection.removeNannyFromJob(nannyId);
+          if (!removeNannyFrmJob.acknowledged || removeNannyFrmJob.modifiedCount == 0)
+              throw {
+                  statusCode: 400,
+                  message: "Couldn't update child from user collection",
+              };
+  
+          // if (removeChildIdFrmChild._id === null) {
+          //     throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
+          // }
+          return res.status(200).json(removeNannyFrmJob);
+      } catch (e) {
+        console.log(e,'e')
+          return res.status(500).json({ error: e });
+      }
+  
+  });
+
+
 module.exports = router;

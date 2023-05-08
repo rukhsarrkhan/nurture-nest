@@ -190,7 +190,7 @@ const ApplyToJobModal = (props) => {
 
   return (
     <React.Fragment>
-      <div className="container">
+      <div className="container"  sx={{ display: 'flex', flexWrap: 'wrap' }}>
         <Modal
           sx={{ overflow: "scroll" }}
           open={props.open}
@@ -204,11 +204,12 @@ const ApplyToJobModal = (props) => {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 600,
+              width: 670,
               bgcolor: "background.paper",
               border: "2px solid #000",
               boxShadow: 24,
               p: 4,
+              borderRadius: '100px',
             }}
           >
             <form
@@ -221,7 +222,7 @@ const ApplyToJobModal = (props) => {
               </Typography>
 
               {/* {checkboxErrorText && <Typography variant="subtitle1">Select atleast 1 day for shifts</Typography>} */}
-              <br />
+            
               <TextField
                 className="formField"
                 label="Nanny Name"
@@ -229,8 +230,8 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                sx={{ mb: 3, mr: 2 }}
+                // fullWidth
                 helperText={nannyNameError && errorText}
                 value={nannyName}
                 error={nannyNameError}
@@ -242,8 +243,8 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                sx={{ mb: 3, mr: 2 }}
+                // fullWidth
                 helperText={contactError && errorText}
                 value={contact}
                 error={contactError}
@@ -255,8 +256,8 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                sx={{ mb: 3, mr: 2 }}
+                // fullWidth
                 helperText={addressError && errorText}
                 value={address}
                 error={addressError}
@@ -268,8 +269,8 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                sx={{ mb: 3, mr: 2 }}
+                // fullWidth
                 helperText={cityError && errorText}
                 value={city}
                 error={cityError}
@@ -285,8 +286,8 @@ const ApplyToJobModal = (props) => {
                 helperText={stateError ? errorText : "Please select State"}
                 value={state}
                 error={stateError}
-                fullWidth
-                sx={{ mb: 3 }}
+                // fullWidth
+                sx={{ mb: 1 }}
               >
                 {allStates.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -301,7 +302,7 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={zipCodeError && errorText}
                 value={zipCode}
@@ -314,7 +315,7 @@ const ApplyToJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={distanceError && errorText}
                 value={distance}
@@ -326,7 +327,7 @@ const ApplyToJobModal = (props) => {
                 onChange={(e) => setShift(e.target.value)}
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={shiftError && errorText}
                 value={shift}
@@ -338,7 +339,7 @@ const ApplyToJobModal = (props) => {
                 onChange={(e) => setDescription(e.target.value)}
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={descriptionError && errorText}
                 value={description}
@@ -350,7 +351,7 @@ const ApplyToJobModal = (props) => {
                 onChange={(e) => setDisability(e.target.value)}
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={disabilityError && errorText}
                 value={disability}
@@ -361,10 +362,10 @@ const ApplyToJobModal = (props) => {
                 label="Previous Experience"
                 onChange={(e) => setExperience(e.target.value)}
                 multiline
-                rows={10}
+                rows={1}
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={experienceError && errorText}
                 value={experience}
@@ -375,10 +376,10 @@ const ApplyToJobModal = (props) => {
                 label="Paste your Cover letter here"
                 onChange={(e) => setCoverLetter(e.target.value)}
                 multiline
-                rows={10}
+                rows={1}
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={coverLetterError && errorText}
                 value={coverLetter}

@@ -29,7 +29,6 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
   const { currentUser } = useContext(AuthContext);
   let items = JSON.parse(localStorage.getItem("userData"));
   let profile = items?.profile;
-  console.log(dashboardData.data, "ksdjhkszhdks")
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
@@ -301,7 +300,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
               </Link>
             </CardActionArea>
           </Grid>
-        {profile === "PARENT" ? (
+        {profile === "PARENT" && dashboardData?.data?.nannyId? (
            <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
            <CardActionArea>
              <CardMedia

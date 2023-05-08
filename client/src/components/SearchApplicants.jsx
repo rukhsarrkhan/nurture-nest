@@ -1,7 +1,6 @@
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from "@mui/material/Button";
-import { Typography } from '@mui/material';
 import { purple } from "@mui/material/colors";
 
 const SearchApplicants = (props) => {
@@ -9,28 +8,28 @@ const SearchApplicants = (props) => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log(searchInput,"will search for this")
+    console.log(searchInput, "will search for this");
     props.searchValue(searchInput);
-  }
+  };
 
   const handleChange = (e) => {
-    setSearchInput(e.target.value)
+    setSearchInput(e.target.value);
   };
+
   return (
     <form method='POST ' onSubmit={handleSearch} name='formName' >
-      <label><br />
+      <label>
         <TextField
-                className="formField"
-                label="Search Nannies"
-                onChange={handleChange}
-                variant="filled"
-                color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
-                value={searchInput}
-              />
+          className="formField"
+          label="Search Nannies"
+          onChange={handleChange}
+          variant="filled"
+          color="secondary"
+          sx={{ mb: 3 }}
+          fullWidth
+          value={searchInput}
+        />
         <Button variant="contained" sx={{ bgcolor: purple[700] }} type="submit">Search</Button>
-        {/* <input autoComplete='off' type='text' name='searchTerm' onChange={handleChange} /> */}
       </label>
     </form>
   );

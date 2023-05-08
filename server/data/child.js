@@ -83,7 +83,6 @@ const removeChild = async (childId) => {
     if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID" };
     const childCollection = await childs();
     let currentChild = await getChildById(childId);
-
     const deletedChild = await childCollection.findOneAndDelete(
         {
             _id: ObjectId(childId),

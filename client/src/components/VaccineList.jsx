@@ -24,8 +24,8 @@ import { Navigate } from "react-router-dom";
 
 const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall }) => {
     let navigate = useNavigate();
-    let items = JSON.parse(localStorage.getItem("userData"))
-    let profile = items?.profile
+    let items = JSON.parse(localStorage.getItem("userData"));
+    let profile = items?.profile;
     const { currentUser } = useContext(AuthContext);
     let card = null;
     let { childId } = useParams();
@@ -137,7 +137,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                             Add Vaccine
                         </Button>
                     ) : null}
-                    <Button variant="contained" onClick={() => { navigate(-1) }} sx={{ marginLeft: '10px' }}>
+                    <Button variant="contained" onClick={() => { navigate(-1); }} sx={{ marginLeft: '10px' }}>
                         Back
                     </Button>
                     <br />

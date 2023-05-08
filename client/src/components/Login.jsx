@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { TextField, Button, MenuItem } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import { doSignInWithEmailAndPassword, doPasswordReset, doSignOut } from '../firebase/FirebaseFunctions';

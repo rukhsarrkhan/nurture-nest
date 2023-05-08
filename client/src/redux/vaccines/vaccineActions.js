@@ -45,14 +45,14 @@ export const vaccinesSetFailure = (error) => {
 
 export const vaccineDeleteSuccess = (vaccine) => {
   return {
-    type:  VACCINE_DELETE_SUCCESS,
+    type: VACCINE_DELETE_SUCCESS,
     payload: vaccine,
   };
 };
 
 export const vaccinesDeleteFailure = (error) => {
   return {
-    type:  VACCINE_DELETE_FAILURE,
+    type: VACCINE_DELETE_FAILURE,
     payload: error,
   };
 };
@@ -60,9 +60,7 @@ export const vaccinesDeleteFailure = (error) => {
 export const getVaccineAPICall = (childId) => {
   return async (dispatch) => {
     try {
-      let resp = await axios.get('http://localhost:3000/child/vaccine/'+childId);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
+      let resp = await axios.get('http://localhost:3000/child/vaccine/' + childId);
       dispatch(getVaccinesSuccess(resp?.data));
     } catch (error) {
       dispatch(getVaccinesFailure(error));
@@ -70,13 +68,11 @@ export const getVaccineAPICall = (childId) => {
   };
 };
 
-export const vaccineSetAPICall = (obj,childId) => {
+export const vaccineSetAPICall = (obj, childId) => {
   return async (dispatch) => {
     try {
       dispatch(vaccinesSetTrigger());
-      let resp = await axios.post('http://localhost:3000/child/vaccine/'+childId, obj);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
+      let resp = await axios.post('http://localhost:3000/child/vaccine/' + childId, obj);
       dispatch(vaccinesSetSuccess(resp?.data));
     } catch (error) {
       dispatch(vaccinesSetFailure(error));
@@ -88,9 +84,7 @@ export const delVaccineAPICall = (vaccineId) => {
   return async (dispatch) => {
     try {
       dispatch(vaccinesSetTrigger());
-      let resp = await axios.delete('http://localhost:3000/child/vaccine/'+vaccineId);
-      // set token here
-      // sessionStorage.setItem("token", resp.data.token);
+      let resp = await axios.delete('http://localhost:3000/child/vaccine/' + vaccineId);
       dispatch(vaccineDeleteSuccess(resp?.data));
     } catch (error) {
       dispatch(vaccinesDeleteFailure(error));

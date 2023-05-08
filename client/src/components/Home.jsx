@@ -12,10 +12,11 @@ import childImage from "../img/childImage.png";
 import AddChildModal from "./modals/AddChildModal";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { createChildAPICall, setChildSuccess, setChildFailure, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
+import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
 import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
+const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
 const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
@@ -29,6 +30,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
 
     let card = null;
     const { currentUser } = useContext(AuthContext);
+
 
     useEffect(() => {
         async function fetchData() {
@@ -65,6 +67,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
             setChildObjArr(childData);
         }
         if (childData.length === 0) {
+            setChildObjArr(childData);
             setChildObjArr(childData);
         }
     }, [childData]);

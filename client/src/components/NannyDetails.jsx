@@ -3,7 +3,6 @@ import '../App.css';
 import { connect } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Navigate } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../firebase/Auth';
 import Loading from './Loading';
 import {
@@ -19,14 +18,12 @@ import { useLocation } from 'react-router-dom';
 
 const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
   const location = useLocation();
-  let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [activeChild, setActiveChild] = useState("");
   let { nannyId } = useParams();
-  let card = null;
   let childData = location.state.childId;
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -45,6 +42,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
   if (!currentUser) {
     return <Navigate to='/' />;
   }
+
   if (loading) {
     return (
       <div>
@@ -133,7 +131,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, id }) => {
               </CardActionArea>
             </Card>
           </Grid>
-          </Grid> 
+        </Grid>
       </div>
     );
   };

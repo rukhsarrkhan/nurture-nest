@@ -10,6 +10,7 @@ const multerS3 = require("multer-s3");
 const gm = require("gm").subClass({ imageMagick: true });
 const mime = require("mime");
 const { getChildrenByIds } = require("../data/child");
+const xss = require("xss");
 
 aws.config.update({
     secretAccessKey: process.env.ACCESS_SECRET,
@@ -49,7 +50,7 @@ router.route("/signup").post(async (req, res) => {
         return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
     try {
-        const userCreated = await userData.createUser(firstName, lastName, email, profile, age, uuid);
+        const userCreated = await userData.createUser(xss(firstName), xss(lastName), xss(email), xss(profile), xss(age), xss(uuid));
         if (!userCreated) {
             throw { statusCode: 500, message: `Couldn't Create user` };
         }

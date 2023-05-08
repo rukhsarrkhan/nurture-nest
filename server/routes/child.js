@@ -11,6 +11,7 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const gm = require("gm").subClass({ imageMagick: true });
 const mime = require("mime");
+const xss = require("xss");
 aws.config.update({
     secretAccessKey: process.env.ACCESS_SECRET,
     accessKeyId: process.env.ACCESS_KEY,
@@ -87,19 +88,19 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
                         const data = await s3.upload(params).promise();
                         photoUrl = data.Location;
                         const childCreated = await childCollection.createChild(
-                            photoUrl,
-                            name,
-                            age,
-                            sex,
-                            mealRequirementsArr,
-                            vaccineArr,
-                            appointmentsArr
+                            xss(photoUrl),
+                            xss(name),
+                            xss(age),
+                            xss(sex),
+                            xss(mealRequirementsArr),
+                            xss(vaccineArr),
+                            xss(appointmentsArr)
                         );
                         if (!childCreated) {
                             throw { statusCode: 500, message: "Internal Server error" };
                         }
                         childCreated._id = childCreated._id.toString();
-                        let userUpdated = await userData.addChildToUser(parentId, childCreated._id.toString());
+                        let userUpdated = await userData.addChildToUser(xss(parentId), xss(childCreated._id.toString()));
                         if (userUpdated) {
                             // parentObj = await userData.getUserById(parentId);
                         }
@@ -202,7 +203,7 @@ router
 
         try {
             const { name, date, doses } = postVaccine;
-            const vaccineAdded = await childCollection.addVaccine(name, date, doses, childId);
+            const vaccineAdded = await childCollection.addVaccine(xss(name), xss(date), xss(doses), xss(childId));
             if (!vaccineAdded) {
                 throw "Couldn't creatva";
             }
@@ -257,7 +258,7 @@ router
 
         try {
             const { doctor, hospital, date, time } = postAppointment;
-            const appointmentAdded = await childCollection.addAppointment(doctor, hospital, date, time, childId);
+            const appointmentAdded = await childCollection.addAppointment(xss(doctor), xss(hospital), xss(date), xss(time), xss(childId));
             if (!appointmentAdded) {
                 throw "Couldn't create";
             }
@@ -338,7 +339,7 @@ router
 
         try {
             const { meal, time, directions } = postMeal;
-            const mealAdded = await childCollection.addAMealPlan(meal, time, directions, childId);
+            const mealAdded = await childCollection.addAMealPlan(xss(meal), xss(time), xss(directions), xss(childId));
             if (!mealAdded) {
                 throw "Couldn't create";
             }

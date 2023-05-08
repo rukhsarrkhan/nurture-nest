@@ -63,6 +63,7 @@ export const userReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                userProfile: payload,
             };
         case USER_REGISTER_FALIURE:
             return {

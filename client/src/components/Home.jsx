@@ -27,6 +27,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
 
     let card = null;
     const { currentUser } = useContext(AuthContext);
+    console.log(currentUser, " Current user in home");
 
     const id = userData?.userProfile?._id;
 

@@ -78,6 +78,7 @@ const isAgeValid = async (age, fieldName) => {
         throw { statusCode: 400, message: `${fieldName} should be a number` };
     } else {
         if (age < 14) throw { statusCode: 400, message: `User must be 14 or older` };
+        if (age > 90) throw { statusCode: 400, message: `User must be 90 or younger`}
     }
 };
 

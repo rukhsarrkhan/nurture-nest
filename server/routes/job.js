@@ -7,6 +7,7 @@ const helpers = require("../helpers");
 const jobCollection = data.job;
 const childCollection = data.child;
 const userCollection = data.users;
+const xss = require("xss");
 
 router.route("/createJob/:parentId/:childId").post(async (req, res) => {
   //Create Job from Parent side
@@ -74,15 +75,15 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
   }
   try {
     const jobCreated = await jobCollection.createJob(
-      parentId,
-      childId,
-      shifts,
-      description,
-      address,
-      specialCare,
-      state,
-      zipCode,
-      salary
+      xss(parentId),
+      xss(childId),
+      xss(shifts),
+      xss(description),
+      xss(address),
+      xss(specialCare),
+      xss(state),
+      xss(zipCode),
+      xss(salary)
     );
     if (!jobCreated) {
       throw { statusCode: 500, message: `Couldn't Create Job` };
@@ -217,20 +218,20 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     }
     ///////////////
     const applicationCreated = await jobCollection.addApplication(
-      jobId,
-      nannyId,
-      nannyName,
-      contact,
-      city,
-      state,
-      zipCode,
-      distance,
-      nannyAddress,
-      whySelect,
-      disability,
-      shiftPuntuality,
-      experience,
-      attachment
+      xss(jobId),
+      xss(nannyId),
+      xss(nannyName),
+      xss(contact),
+      xss(city),
+      xss(state),
+      xss(zipCode),
+      xss(distance),
+      xss(nannyAddress),
+      xss(whySelect),
+      xss(disability),
+      xss(shiftPuntuality),
+      xss(experience),
+      xss(attachment)
     );
     if (!applicationCreated) {
       throw "Couldn't Create Application";
@@ -320,9 +321,9 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
       nannyJobSet.childId.toString()
     );
     const setChildToNanny = await userCollection.addChildToUser(
-      nannyId,
-      nannyJobSet.childId.toString(),
-      child.name
+      xss(nannyId),
+      xss(nannyJobSet.childId.toString()),
+      xss(child.name)
     );
     return res.json(nannyJobSet);
   } catch (e) {

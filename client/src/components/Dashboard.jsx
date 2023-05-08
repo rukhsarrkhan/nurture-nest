@@ -25,7 +25,6 @@ import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
 const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => {
-  console.log(dashboardData.data, "dekhle data")
   let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   let items = JSON.parse(localStorage.getItem("userData"));
@@ -316,8 +315,11 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
                }}
                component='img'
                height='200'
-               alt=''
-               image={dashboardData?.data?.photoUrl}
+               alt='' 
+               image={dashboardData && dashboardData.data && dashboardData.data.nannyPhotoUrl
+               ? dashboardData.data.nannyPhotoUrl
+               : nannyImage
+              }
                title='Nanny Details'
              />
              <CardContent>

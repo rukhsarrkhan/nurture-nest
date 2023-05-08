@@ -29,6 +29,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
   const { currentUser } = useContext(AuthContext);
   let items = JSON.parse(localStorage.getItem("userData"));
   let profile = items?.profile;
+  console.log(dashboardData.data, "ksdjhkszhdks")
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
@@ -103,18 +104,59 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
     {dashboardData?.data?.name}
 </Typography>
            <br />
-        <Button
-          variant="contained"
-          onClick={() => { navigate(-1); }}
-          sx={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            display: 'block'
-          }}
-        >
-          Back
-        </Button>
-        <br />
+           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <Button
+    variant="contained"
+    onClick={() => { navigate(-1); }}
+    sx={{
+      marginRight: '10px',
+      padding: '10px 20px'
+    }}
+  >
+    Back
+  </Button>
+  {profile === "PARENT" && !dashboardData?.data?.jobId && (
+    <Button
+      variant='contained'
+      color='primary'
+      onClick={handleOpenCreateJob}
+      sx={{
+        marginLeft: '10px',
+        padding: '10px 20px'
+      }}
+    >
+      Create Job
+    </Button>
+  )}
+  {profile === "PARENT" && !dashboardData?.data?.jobId && openCreateJobModal ? (
+    <CreateJobModal
+      open={openCreateJobModal}
+      onClose={handleCloseCreateJob}
+      parentId={items?._id}
+      childId={childId}
+      createJob={createJob}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    />
+  ) : null}
+  {profile === "PARENT" && dashboardData?.data?.jobId && (
+    <Button
+      variant='contained'
+      color='primary'
+      onClick={() => {
+        navigate("/myJob", {
+          state: { jobId: dashboardData?.data?.jobId },
+        });
+      }}
+      sx={{
+        marginLeft: '10px',
+        padding: '10px 20px'
+      }}
+    >
+      View My Job
+    </Button>
+  )}
+</Box>
         <br />
         <Grid container spacing={2}>
           <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?._id?.toString()}>
@@ -296,29 +338,12 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
               </CardContent>
               <CardActions>
               </CardActions>
-              <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?.nannyId?.toString()}`, { state: { childId: dashboardData?.data?._id } }); }}>
+              <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?._id?.toString()}`, { state: { childId: dashboardData?.data?._id } }); }}>
                 View Nanny Details
               </Button>
             </CardActionArea>
           </Grid>
         </Grid>
-        {profile === "PARENT" && !dashboardData?.data?.jobId && <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>}
-        {profile === "PARENT" && !dashboardData?.data?.jobId && openCreateJobModal ? (
-          <CreateJobModal
-            open={openCreateJobModal}
-            onClose={handleCloseCreateJob}
-            parentId={items?._id}
-            childId={childId}
-            createJob={createJob}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          />
-        ) : null}
-        {profile === "PARENT" && dashboardData?.data?.jobId && <Button variant='contained' color='primary' onClick={() => {
-          navigate("/myJob", {
-            state: { jobId: dashboardData?.data?.jobId },
-          });
-        }} >View My Job</Button>}
       </div>
     );
   };

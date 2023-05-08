@@ -7,6 +7,7 @@ import {
   CardMedia,
   Typography,
   CardHeader,
+  Divider
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { purple } from "@mui/material/colors";
@@ -20,7 +21,7 @@ import { getMyJobAPICall } from "../redux/jobs/jobActions";
 import { deleteJobAPICall } from "../redux/jobs/jobActions";
 import DeleteJobModal from "./modals/DeleteJobModal";
 
-const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
+const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
@@ -32,17 +33,17 @@ const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   const handleOpenDeleteJob = () => setOpenDeleteJobModal(true);
   const handleCloseDeleteJob = () => setOpenDeleteJobModal(false);
 
-  
+
   console.log(location.state, "appID heree");
   //   let application = location.state.application
   let jobId = location.state.jobId
   let pageNum = 1;
 
-const deleteJob = async (jobId) => {
+  const deleteJob = async (jobId) => {
     deleteJobAPICall(jobId);
     setOpenDeleteJobModal(false);
     navigate(-1)
-}
+  }
 
   useEffect(() => {
     try {
@@ -102,150 +103,81 @@ const deleteJob = async (jobId) => {
 
     return (
       <Container sx={{ justifyContent: "center" }}>
-        <Button
-          onClick={() => {
-            navigate(-1);
-          }}
-          variant="filled"
-          sx={{ bgcolor: purple[700] }}
-        >
-          Back
-        </Button>
         <br />
-        <br />
-        <Card sx={{ maxWidth: "70%", marginLeft: "15%" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Button
+            onClick={() => {
+              navigate(-1);
+            }}
+            variant="contained"
+            color="primary"
+            sx={{ marginBottom: "2rem", marginLeft: 'auto' }}
+          >
+            Back
+          </Button>
+
+          <Button
+            onClick={handleOpenDeleteJob}
+            variant="contained"
+            color="error"
+            sx={{ marginBottom: "2rem", marginRight: "auto", marginLeft: '0.5rem' }}
+          >
+            Delete Job
+          </Button>
+        </div>
+        {openDeleteJobModal && (
+          <DeleteJobModal
+            open={openDeleteJobModal}
+            onClose={handleCloseDeleteJob}
+            jobId={jobId}
+            deleteJob={deleteJob}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          />
+        )}
+        <Card sx={{ maxWidth: "80%", margin: "0 auto" }}>
           <CardContent>
-            <Typography variant="h3" component="h1" color="text.primary">
-              My Job
+            <Typography variant="h4" component="h1" color="text.primary" gutterBottom
+              sx={{ fontWeight: "bold", fontFamily: "Arial, sans-serif" }}>
+              My Listed Job
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Description:
+            </Typography>
+            <Typography variant="body1" color="text.primary" sx={{ marginBottom: "1rem" }}>
+              {showData?.description}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Address:
+            </Typography>
+            <Typography variant="body1" color="text.primary" sx={{ marginBottom: "1rem" }}>
+              {showData?.address}, {showData?.city}, {showData?.state} {showData?.zipCode}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Special Care:
+            </Typography>
+            <Typography variant="body1" color="text.primary" sx={{ marginBottom: "1rem" }}>
+              {showData?.specialCare}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Shift:
+            </Typography>
+            <Typography variant="body1" color="text.primary" sx={{ marginBottom: "1rem" }}>
+              {shiftDays} from {getEDTTimeFromISOString(showData?.shifts?.timeFrom)} to {getEDTTimeFromISOString(showData?.shifts?.timeTo)}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Salary:
+            </Typography>
+            <Typography variant="body1" color="text.primary" sx={{ marginBottom: "1rem" }}>
+              {showData?.salary} USD per hour
             </Typography>
           </CardContent>
-          <CardContent>
-            <div style={{ display: "flex" }}>
-              <Typography paragraph color="text.primary">
-                Description:
-              </Typography>
-              <Typography
-                paragraph
-                color="text.secondary"
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.description}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Address:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.address}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                City:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.city}
-              </Typography>
-
-              <Typography
-                color="text.primary"
-                paragraph
-                sx={{ paddingLeft: "15px" }}
-              >
-                State:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.state}
-              </Typography>
-
-              <Typography
-                color="text.primary"
-                paragraph
-                sx={{ paddingLeft: "15px" }}
-              >
-                ZipCode:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.zipCode}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Special Care:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.specialCare}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift Time From:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {getEDTTimeFromISOString(showData?.shifts?.timeFrom)}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift Time To:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {getEDTTimeFromISOString(showData?.shifts?.timeTo)}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift days:
-              </Typography>
-
-              <Typography color="text.secondary" paragraph>
-                {shiftDays}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Salary:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.salary + " USD per hour"}
-              </Typography>
-            </div>
-          </CardContent>
         </Card>
-        <br />
         {!showData.nannyId && (
           <Button
             variant="contained"
@@ -254,22 +186,12 @@ const deleteJob = async (jobId) => {
                 state: { jobId: showData._id },
               });
             }}
-            sx={{ bgcolor: purple[700] }}
+            color="primary"
+            sx={{ marginTop: "2rem", marginRight: "1rem" }}
           >
             View Nanny Applications
           </Button>
         )}
-        <br />
-        <Button onClick={handleOpenDeleteJob} variant="filled" sx={{bgcolor:purple[700]}}>Delete Job</Button>
-        {openDeleteJobModal && <DeleteJobModal
-                        open={openDeleteJobModal}
-                        onClose={handleCloseDeleteJob}
-                        jobId={jobId}
-                        deleteJob={deleteJob}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    />}
-        <br />
       </Container>
     );
   }
@@ -284,7 +206,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
-    deleteJobAPICall:(jobId) => dispatch(deleteJobAPICall(jobId))
+    deleteJobAPICall: (jobId) => dispatch(deleteJobAPICall(jobId))
   };
 };
 

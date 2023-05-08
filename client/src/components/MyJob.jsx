@@ -43,14 +43,14 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
     setDeleteId(id);
     setOpen2(true);
   };
+  
   const handleClose2 = () => setOpen2(false);
-
-
+  
   //   let application = location.state.application
+  
   let jobId = location.state.jobId
   let childId = location.state.childId
   let pageNum = 1;
-
 
   const deleteJob = async (jobId) => {
     deleteJobAPICall(jobId);
@@ -63,7 +63,6 @@ const MyJob = ({ job, getMyJobAPICall, deleteJobAPICall, fireNannyAPICall }) => 
     setOpen2(false);
     await getMyJobAPICall(jobId);
   };
-
 
   useEffect(() => {
     try {

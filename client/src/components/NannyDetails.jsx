@@ -75,9 +75,11 @@ console.log(nannyData,'this is nanny data from nanny detailsssss')
         >
           Back
         </Button>
+
         <IconButton  color='textSecondary' aria-label="Fire Nanny" startIcon={<AddIcon />}>
         Fire Nanny
         </IconButton>
+
         <br></br>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={7} md={5} lg={4} xl={6} key={nannyData?.firstName?.toString()}>

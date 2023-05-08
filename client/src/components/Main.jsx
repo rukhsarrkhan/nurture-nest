@@ -50,7 +50,7 @@ const Main = ({ userData }) => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/home" element={<Home id={items?._id} />} />
+                    <Route path="/home" element={<Home />} />
                     <Route path="/dashboard/:childId" element={<Dashboard />} />
                     <Route path="/nanny/:nannyId" element={<NannyDetails />} />
                     <Route path="/meal/:childId" element={<MealList />} />

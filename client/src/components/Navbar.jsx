@@ -14,11 +14,7 @@ const Navbar = () => {
             <Nav>
                 <Bars />
                 <NavMenu>
-                    {currentUser && (
-                        <NavLink to="/home" id={items?._id}>
-                            Home
-                        </NavLink>
-                    )}
+                    {currentUser && <NavLink to="/home">Home</NavLink>}
                     {currentUser && <NavLink to="/chat">Inbox</NavLink>}
                     {currentUser && items?.profile === "NANNY" && (
                         <NavLink to="/job/viewAllJobs/1" id={items?._id}>

@@ -14,7 +14,7 @@ import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "..
 import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
-const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
+const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -27,6 +27,8 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
 
     let card = null;
     const { currentUser } = useContext(AuthContext);
+
+    const id = userData?.userProfile?._id;
 
     useEffect(() => {
         async function fetchData() {
@@ -77,6 +79,10 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
             }
         }
     }, [userObjData]);
+
+    if (!currentUser) {
+        return <Navigate to="/" />;
+    }
 
     if (redirectProfile) {
         return <Navigate to="/setProfile" />;
@@ -244,6 +250,7 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
 };
 
 const mapStateToProps = (state) => {
+    console.log(state, " State here");
     return {
         userData: state.users,
         childData: state.child.childObjs,

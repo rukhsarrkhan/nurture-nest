@@ -15,7 +15,7 @@ import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
 const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
-    const [userObjData, setuserObjData] = useState(undefined);
+    const [userObjData, setuserObjData] = useState(userData?.userProfile);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -31,43 +31,14 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
     const id = userData?.userProfile?._id;
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                await setUserProfileAPICall(id);
-            } catch (e) {
-                setuserObjData(undefined);
-                setLoading(false);
-                setError(true);
-                setErrorText(e.message ? e.message : e);
-            }
-        }
-        async function fetchChildData() {
-            try {
-                await fetchChildrenAPICall(id);
-            } catch (e) {
-                setChildObjArr([]);
-                setLoading(false);
-                setError(true);
-                setErrorText(e.message ? e.message : e);
-            }
-        }
-        if (id !== undefined && (userData?.userProfile === null || userData?.userProfile === undefined)) {
-            fetchData();
-            fetchChildData();
-        }
-        if (userData?.userProfile !== null && userData?.userProfile !== undefined) {
+        if (userData?.userProfile) {
             setuserObjData(userData?.userProfile);
-            setLoading(false);
+            fetchChildrenAPICall(userData.userProfile._id);
         }
-    }, [id, setUserProfileAPICall, userData, fetchChildrenAPICall]);
+    }, [userData, fetchChildrenAPICall]);
     useEffect(() => {
-        console.log("child Data ", childData);
-        if (childData && childData.length > 0) {
-            setChildObjArr(childData);
-        }
-        if (childData.length === 0) {
-            setChildObjArr(childData);
-        }
+        setChildObjArr(childData);
+        setLoading(false);
     }, [childData]);
 
     useEffect(() => {
@@ -216,7 +187,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                 <br />
                 {childObjArr.length === 0 ? (
                     <Typography variant="h1" component="h2">
-                        No childs found
+                        No children found
                     </Typography>
                 ) : (
                     <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>

@@ -38,7 +38,7 @@ const createUser = async (firstName, lastName, email, profile, age, uuid) => {
     const userMatch = await userCollection.findOne({
         email: email.toLowerCase(),
     });
-    if (userMatch !== null && profile !== "") throw { statusCode: 401, message: "User already exists with given username" };
+    if (userMatch !== null && profile !== "") throw { statusCode: 400, message: "User already exists with given username" };
     const insertedUser = await userCollection.insertOne(newUser);
     if (!insertedUser.acknowledged || !insertedUser.insertedId) throw { statusCode: 500, message: `Couldn't Create user` };
     const user = await getUserById(insertedUser.insertedId.toString());
@@ -76,7 +76,7 @@ const getUserByFirebaseId = async (id, firstName, lastName, email) => {
 
 const getUserById = async (id) => {
     id = await helper.execValdnAndTrim(id, "UserId");
-    if (!ObjectId.isValid(id)) throw { statusCode: 401, message: "Invalid object ID" };
+    if (!ObjectId.isValid(id)) throw { statusCode: 400, message: "Invalid object ID" };
     const userCollection = await users();
     const userFound = await userCollection.findOne({ _id: ObjectId(id) });
     if (userFound === null) throw { statusCode: 404, message: "No user with that id" };
@@ -86,10 +86,10 @@ const getUserById = async (id) => {
 
 const updateUser = async (userId, userObj) => {
     userId = await helper.execValdnAndTrim(userId, "User Id");
-    if (!ObjectId.isValid(userId)) throw { statusCode: 401, message: "Invalid object ID" };
+    if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "Invalid object ID" };
     const userCollection = await users();
     if (!userObj || typeof userObj !== "object" || Object.keys(userObj).length == 0) {
-        throw { statusCode: 401, message: "No Fields provided for update" };
+        throw { statusCode: 400, message: "No Fields provided for update" };
     }
     let cur_userObj = await getUserById(userId);
 
@@ -156,7 +156,7 @@ const updateUser = async (userId, userObj) => {
         userObj.n_skills = await helper.execValdnAndTrim(userObj.n_skills, "Years Of Experience");
         if (cur_userObj.n_skills != userObj.n_skills) updatedUser.n_skills = userObj.n_skills;
     }
-    if (Object.keys(updatedUser).length == 0) throw { statusCode: 401, message: "No fields were changed" };
+    if (Object.keys(updatedUser).length == 0) throw { statusCode: 400, message: "No fields were changed" };
     const updateResult = await userCollection.updateOne({ _id: ObjectId(userId) }, { $set: userObj });
     if (!updateResult.acknowledged || updateResult.modifiedCount == 0) throw { statusCode: 500, message: "Couldn't update user" };
     cur_userObj = await getUserById(userId);
@@ -164,11 +164,11 @@ const updateUser = async (userId, userObj) => {
 };
 
 const removeUser = async (userId) => {
-    if (typeof userId == "undefined") throw { statusCode: 401, message: "userId must be provided" };
-    if (typeof userId !== "string") throw { statusCode: 401, message: "userId must be a string" };
-    if (userId.trim().length === 0) throw { statusCode: 401, message: "userId must be a string" };
+    if (typeof userId == "undefined") throw { statusCode: 400, message: "userId must be provided" };
+    if (typeof userId !== "string") throw { statusCode: 400, message: "userId must be a string" };
+    if (userId.trim().length === 0) throw { statusCode: 400, message: "userId must be a string" };
     userId = userId.trim();
-    if (!ObjectId.isValid(userId)) throw { statusCode: 401, message: "invalid object ID" };
+    if (!ObjectId.isValid(userId)) throw { statusCode: 400, message: "invalid object ID" };
     const userCollection = await users();
     const deletedUser = await userCollection.findOneAndDelete({
         _id: ObjectId(userId),

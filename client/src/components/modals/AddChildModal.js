@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Avatar, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box, Modal } from "@mui/material";
+import { Typography, Avatar, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box, Modal, MenuItem } from "@mui/material";
 import helpers from "../../helpers";
 import { Container } from "@mui/system";
 const style = {
@@ -14,6 +14,29 @@ const style = {
     p: 4,
     borderRadius: "50px",
 };
+
+const sexes = [
+    {
+        value: "Male",
+        label: "Male",
+    },
+    {
+        value: "Female",
+        label: "Female",
+    },
+    {
+        value: "Non-Binary",
+        label: "Non-Binary",
+    },
+    {
+        value: "Transgender",
+        label: "Transgender",
+    },
+    {
+        value: "Other",
+        label: "Other",
+    },
+];
 
 const AddChildModal = (props) => {
     const [name, setName] = useState("");
@@ -88,7 +111,7 @@ const AddChildModal = (props) => {
             setErrorText(ageCheck);
             return;
         }
-        if (!validSexArr.includes(sex.toLowerCase())) {
+        if (!validSexArr.includes(sex)) {
             setSexError(true);
             setErrorText("Invalid sex provided");
             return;
@@ -133,11 +156,6 @@ const AddChildModal = (props) => {
 
                                 <input type="file" onChange={handleImageChange} accept="image/*" required />
                                 {imageError && <Typography color="error">{imageError}</Typography>}
-                                {/* {imagePreview && (
-                                <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit}>
-                                    Save Image
-                                </Button>
-                            )} */}
                             </Box>
                             <TextField
                                 className="appointmentField"
@@ -163,33 +181,26 @@ const AddChildModal = (props) => {
                                 value={age}
                                 error={ageError}
                             />
-                            <FormLabel component="legend">Sex</FormLabel>
-                            <RadioGroup aria-label="sex" name="sex" value={sex} onChange={(e) => setSex(e.target.value)}>
-                                {validSexArr.map((sexOption) => (
-                                    <FormControlLabel
-                                        key={sexOption}
-                                        value={sexOption}
-                                        control={
-                                            <Radio
-                                                color="secondary"
-                                                sx={{
-                                                    "&.Mui-checked": {
-                                                        color: "black",
-                                                    },
-                                                }}
-                                            />
-                                        }
-                                        label={sexOption}
-                                        sx={{
-                                            "& .MuiFormControlLabel-label": {
-                                                color: "black",
-                                            },
-                                        }}
-                                        helpertext={sexError && errorText}
-                                        error={sexError}
-                                    />
+                            <TextField
+                                label="Sex"
+                                defaultValue="Male"
+                                select
+                                onChange={(e) => setSex(e.target.value)}
+                                variant="filled"
+                                color="secondary"
+                                helperText={sexError ? errorText : "Please select your sex"}
+                                value={sex}
+                                error={sexError}
+                                sx={{ textAlign: "left" }}
+                                fullWidth
+                            >
+                                {sexes.map((option) => (
+                                    <MenuItem key={option?.value} value={option?.value}>
+                                        {option?.label}
+                                    </MenuItem>
                                 ))}
-                            </RadioGroup>
+                            </TextField>
+
                             <Button variant="outlined" color="secondary" type="submit" disabled={disableBtn}>
                                 Add
                             </Button>

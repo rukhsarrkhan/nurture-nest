@@ -17,7 +17,6 @@ import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
 const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
-const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,7 +29,6 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
 
     let card = null;
     const { currentUser } = useContext(AuthContext);
-
 
     useEffect(() => {
         async function fetchData() {
@@ -73,15 +71,17 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
     }, [childData]);
 
     useEffect(() => {
-        if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "undefined") {
-            setRedirectProfile(true);
-        } else {
-            setRedirectProfile(false);
+        if (userObjData) {
+            if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
+                setRedirectProfile(true);
+            } else {
+                setRedirectProfile(false);
+            }
         }
     }, [userObjData]);
 
     if (redirectProfile) {
-        redirect("/setProfile");
+        return <Navigate to="/setProfile" />;
     }
 
     const buildCard = (child) => {

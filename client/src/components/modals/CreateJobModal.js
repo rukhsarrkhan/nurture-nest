@@ -17,6 +17,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { pink } from "@mui/material/colors";
 import helpers from "../../helpers";
 import allStates from "../../allStates";
+import { Container } from '@mui/system';
 
 const CreateJobModal = (props) => {
   const [errorText, setErrorText] = useState("");
@@ -225,7 +226,7 @@ const CreateJobModal = (props) => {
   };
 
   return (
-    <React.Fragment>
+    // <React.Fragment>
       <div className="container">
         <Modal
           sx={{ overflow: "scroll" }}
@@ -234,17 +235,20 @@ const CreateJobModal = (props) => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
+          <Container maxWidth="sm">
           <Box
             sx={{
               position: "absolute",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 600,
+              width: 670,
               bgcolor: "background.paper",
               border: "2px solid #000",
               boxShadow: 24,
               p: 4,
+              borderRadius: '100px',
+              // marginTop: "-10px"
             }}
           >
             <form
@@ -269,7 +273,6 @@ const CreateJobModal = (props) => {
                     color="secondary"
                     label="Shift Timing"
                     value={shift}
-                    sx={{ mb: 3 }}
                     fullWidth
                     onChange={(newValue) => setShift(newValue)}
                     helperText={shiftError && errorText}
@@ -288,13 +291,12 @@ const CreateJobModal = (props) => {
                 error={daysError}
                 helperText={daysError && errorText}
                 component="fieldset"
-                sx={{ m: 3 }}
                 variant="standard"
               >
                 <FormLabel component="legend" color="secondary">
                   Pick Shift Days
                 </FormLabel>
-                <FormGroup>
+                <FormGroup  sx={{ display: 'flex', flexDirection: 'row' }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -410,7 +412,7 @@ const CreateJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={specialCareError && errorText}
                 value={specialCare}
@@ -424,8 +426,8 @@ const CreateJobModal = (props) => {
                 variant="filled"
                 color="secondary"
                 multiline
-                rows={10}
-                sx={{ mb: 3 }}
+                rows={1}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={descriptionError && errorText}
                 value={description}
@@ -438,8 +440,8 @@ const CreateJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                sx={{ mb: 3, mr: 2 }}
+                // fullWidth
                 helperText={addressError && errorText}
                 value={address}
                 error={addressError}
@@ -455,8 +457,8 @@ const CreateJobModal = (props) => {
                 helperText={stateError ? errorText : "Please select State"}
                 value={state}
                 error={stateError}
-                fullWidth
-                sx={{ mb: 3 }}
+                // fullWidth
+                sx={{ mb: 3, mr: 2 }}
               >
                 {allStates.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
@@ -471,8 +473,8 @@ const CreateJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
-                fullWidth
+                //sx={{ mb: 1}}
+                // fullWidth
                 helperText={zipCodeError && errorText}
                 value={zipCode}
                 error={zipCodeError}
@@ -484,7 +486,7 @@ const CreateJobModal = (props) => {
                 required
                 variant="filled"
                 color="secondary"
-                sx={{ mb: 3 }}
+                sx={{ mb: 1 }}
                 fullWidth
                 helperText={salaryError && errorText}
                 value={salary}
@@ -495,9 +497,10 @@ const CreateJobModal = (props) => {
               </Button>
             </form>
           </Box>
+          </Container>
         </Modal>
       </div>
-    </React.Fragment>
+    // </React.Fragment>
   );
 };
 

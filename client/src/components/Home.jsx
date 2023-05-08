@@ -27,7 +27,6 @@ const Home = ({ userData, childData, id, createChildAPICall, setUserProfileAPICa
     let card = null;
     const { currentUser } = useContext(AuthContext);
 
-    console.log("id",id)
 
     useEffect(() => {
         async function fetchData() {

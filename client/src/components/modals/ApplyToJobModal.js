@@ -57,7 +57,6 @@ const ApplyToJobModal = (props) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("inside submit")
 
     setErrorText("");
     setnannyNameError(false);
@@ -185,7 +184,6 @@ const ApplyToJobModal = (props) => {
         experience: experience,
         attachment: coverLetter,
       };
-      console.log(props.nannyId,props.jobId,"submitting now")
       props.applyToJob(data, props.nannyId, props.jobId);
     }
   };

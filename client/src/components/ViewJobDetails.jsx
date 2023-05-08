@@ -190,8 +190,8 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
               <ApplyToJobModal
                 open={openApplyToJobModal}
                 onClose={handleCloseApplyToJob}
-                nannyId={nanny._id}
-                jobId={showData._id}
+                nannyId={nanny?._id}
+                jobId={showData?._id}
                 applyToJob={applyToJob}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"

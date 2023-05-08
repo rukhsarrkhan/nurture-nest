@@ -27,7 +27,6 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
   const { currentUser } = useContext(AuthContext);
   let items = JSON.parse(localStorage.getItem("userData"));
   let profile = items?.profile;
-  console.log(items, "profileee heree");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   let { childId } = useParams();
@@ -287,7 +286,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
           <CreateJobModal
             open={openCreateJobModal}
             onClose={handleCloseCreateJob}
-            parentId={items._id}
+            parentId={items?._id}
             childId={childId}
             createJob={createJob}
             aria-labelledby="modal-modal-title"

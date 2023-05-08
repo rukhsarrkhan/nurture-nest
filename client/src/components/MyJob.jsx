@@ -36,7 +36,6 @@ const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   console.log(location.state, "appID heree");
   //   let application = location.state.application
   let jobId = location.state.jobId
-  console.log(jobId,"idhatr aaayaaa");
   let pageNum = 1;
 
 const deleteJob = async (jobId) => {

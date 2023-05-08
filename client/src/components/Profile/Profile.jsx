@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 import "../../App.css";
 import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
@@ -40,7 +40,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [age, setAge] = useState("");
     const [sex, setSex] = useState("");
     const [address, setAddress] = useState("");
-    const [dob, setDOB] = useState("");
     const [phone, setPhone] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
     const [image, setImage] = useState(null);
@@ -52,28 +51,24 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [lastNameError, setLastNameError] = useState(false);
     const [ageError, setAgeError] = useState(false);
     const [addressError, setAddressError] = useState(false);
-    const [dobError, setDOBError] = useState(false);
     const [phoneError, setPhoneError] = useState(false);
     const [sexError, setSexError] = useState(false);
     const [errorText, setErrorText] = useState("");
     const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
     let userId = userData?.userProfile?._id;
-    const formatDate = (showdate) => {
-        if (showdate) {
-            var year = showdate.substring(0, 4);
-            var month = showdate.substring(5, 7);
-            var day = showdate.substring(8, 10);
-            return month + "/" + day + "/" + year;
-        }
-    };
 
     const handleImageChange = (event) => {
-        const file = event.target.files[0];
+        const file = event?.target?.files[0];
+        const acceptedImageTypes = ["image/gif", "image/jpeg", "image/png"];
         if (file) {
-            if (file.size > 1000000) {
-                setImageError("File size should not exceed 1 MB.");
+            if (file.size > 10000000) {
+                setImageError("File size should not exceed 10 MB.");
                 setImagePreview(null);
+            } else if (!acceptedImageTypes.includes(file.type)) {
+                setImageError("Only image files are allowed.");
+                setImagePreview(null);
+                return;
             } else {
                 setImagePreview(URL.createObjectURL(file));
                 setImageFile(file);
@@ -122,22 +117,28 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         }
     };
 
-    useEffect(() => {
-        async function fetchData() {
+    const setUserProfileAPICallMemo = useMemo(() => {
+        return () => {
             try {
-                await setUserProfileAPICall(userId);
+                setUserProfileAPICall(userId);
             } catch (error) {
                 setuserObjData(undefined);
                 setLoading(false);
                 setErrorText(error.message ? error.message : error);
             }
-        }
-        if (userId && userId !== undefined && userData.userProfile === null) fetchData();
-        if (userData.userProfile) {
-            setuserObjData(userData.userProfile);
+        };
+    }, [userId, setUserProfileAPICall]);
+
+    useEffect(() => {
+        setUserProfileAPICallMemo();
+    }, [setUserProfileAPICallMemo]);
+
+    useEffect(() => {
+        if (userData?.userProfile) {
+            setuserObjData(userData?.userProfile);
             setLoading(false);
         }
-    }, [userId, userData, setUserProfileAPICall]);
+    }, [userData]);
 
     const setVariablesFromUserObj = useCallback((value) => {
         if (value) {
@@ -152,9 +153,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             }
             if (value?.address !== undefined && value?.address !== "" && value?.address !== null) {
                 setAddress(value.address);
-            }
-            if (value?.DOB !== undefined && value?.DOB !== "" && value?.DOB !== null) {
-                setDOB(formatDate(value.DOB));
             }
             if (value?.phone !== undefined && value?.phone !== "" && value?.phone !== null) {
                 setPhone(value.phone);
@@ -192,7 +190,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             setLastNameError(false);
             setAgeError(false);
             setAddressError(false);
-            setDOBError(false);
             setPhoneError(false);
             setSexError(false);
             setErrorText("");
@@ -241,15 +238,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 }
             }
 
-            if (dob) {
-                let dobCheck = await validation(dob);
-                if (dobCheck !== "") {
-                    setDOBError(true);
-                    setErrorText(dobCheck);
-                    setDisableSave(false);
-                    return;
-                }
-            }
             if (sex) {
                 if (!validSexArr.includes(sex)) {
                     setSexError(true);
@@ -266,7 +254,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     if (userObjData.lastName !== lastName) newObj.lastName = lastName;
                     if (userObjData.age !== age) newObj.age = age;
                     if (userObjData.address !== address) newObj.address = address;
-                    if (userObjData.DOB !== dob) newObj.DOB = dob;
+
                     if (userObjData.phone !== phone) newObj.phone = phone;
                     if (userObjData.sex !== sex) newObj.sex = sex;
 
@@ -395,23 +383,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     helperText={addressError && errorText}
                     error={addressError}
                 />
-
-                <TextField
-                    label="Date of Birth"
-                    onChange={(e) => setDOB(e.target.value)}
-                    variant="filled"
-                    color="secondary"
-                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
-                    sx={{ mb: 3 }}
-                    fullWidth
-                    aria-readonly={!editMode}
-                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
-                    value={dob}
-                    helperText={dobError && errorText}
-                    error={dobError}
-                />
-
                 <TextField
                     label="Phone Number"
                     onChange={(e) => setPhone(e.target.value)}

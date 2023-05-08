@@ -1,13 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import "../../App.css";
-import { useParams } from "react-router-dom";
-import { Typography, Avatar, Grid, Paper, Button, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Box, Alert } from "@mui/material";
+import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
 import helpers from "../../helpers";
 import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
 // import axios from "axios";
+
+const sexes = [
+    {
+        value: "Male",
+        label: "Male",
+    },
+    {
+        value: "Female",
+        label: "Female",
+    },
+    {
+        value: "Non-Binary",
+        label: "Non-Binary",
+    },
+    {
+        value: "Transgender",
+        label: "Transgender",
+    },
+    {
+        value: "Other",
+        label: "Other",
+    },
+];
 
 const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updateProfileImageAPICall }) => {
     const [userObjData, setuserObjData] = useState(undefined);
@@ -22,6 +44,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [phone, setPhone] = useState("");
     const [imagePreview, setImagePreview] = useState(null);
     const [image, setImage] = useState(null);
+    const [disableSave, setDisableSave] = useState(false);
     const [imageFile, setImageFile] = useState(null);
     const [imageError, setImageError] = useState(null);
 
@@ -33,9 +56,9 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [phoneError, setPhoneError] = useState(false);
     const [sexError, setSexError] = useState(false);
     const [errorText, setErrorText] = useState("");
-    const validSexArr = ["male", "female", "non-binary", "transgender", "other"];
+    const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
-    let { userId } = useParams();
+    let userId = userData?.userProfile?._id;
     const formatDate = (showdate) => {
         if (showdate) {
             var year = showdate.substring(0, 4);
@@ -65,6 +88,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
     const handleImageSubmit = async () => {
         try {
+            setDisableSave(true);
             if (!imageFile) {
                 setImageError("No image available");
                 setImagePreview(null);
@@ -75,13 +99,11 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
             await updateProfileImageAPICall(userId, formData);
             // const response = await axios.put("http://localhost:3000/users/image", formData);
+            setDisableSave(false);
         } catch (error) {
             console.error(error);
+            setDisableSave(false);
         }
-    };
-
-    const handleSexChange = (event) => {
-        setSex(event.target.value);
     };
 
     const validation = async (field, valFunc) => {
@@ -117,22 +139,54 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         }
     }, [userId, userData, setUserProfileAPICall]);
 
-    useEffect(() => {
-        if (userObjData) {
-            setFirstName(userObjData.firstName);
-            setLastName(userObjData.lastName);
-            setAge(userObjData.age);
-            setAddress(userObjData.address);
-            setDOB(formatDate(userObjData.DOB));
-            setPhone(userObjData.phone);
-            setSex(userObjData.sex);
-            setImage(userObjData.photoUrl);
-            setImagePreview(null);
+    const setVariablesFromUserObj = useCallback((value) => {
+        if (value) {
+            if (value?.firstName !== undefined && value?.firstName !== "" && value?.firstName !== null) {
+                setFirstName(value.firstName);
+            }
+            if (value?.lastName !== undefined && value?.lastName !== "" && value?.lastName !== null) {
+                setLastName(value.lastName);
+            }
+            if (value?.age !== undefined && value?.age !== "" && value?.age !== null) {
+                setAge(value.age);
+            }
+            if (value?.address !== undefined && value?.address !== "" && value?.address !== null) {
+                setAddress(value.address);
+            }
+            if (value?.DOB !== undefined && value?.DOB !== "" && value?.DOB !== null) {
+                setDOB(formatDate(value.DOB));
+            }
+            if (value?.phone !== undefined && value?.phone !== "" && value?.phone !== null) {
+                setPhone(value.phone);
+            }
+            if (value?.sex !== undefined && value?.sex !== "" && value?.sex !== null) {
+                setSex(value.sex);
+            }
+            if (value?.photoUrl !== undefined && value?.photoUrl !== "" && value?.photoUrl !== null) {
+                setImage(value.photoUrl);
+                setImagePreview(null);
+            }
         }
-    }, [userObjData]);
+    }, []);
+
+    useEffect(() => {
+        setVariablesFromUserObj(userObjData);
+    }, [userObjData, setVariablesFromUserObj]);
+
+    const handleEdit = (event) => {
+        event.preventDefault();
+        setEditMode(true);
+    };
+
+    const handleCancel = (event) => {
+        event.preventDefault();
+        setEditMode(false);
+        setVariablesFromUserObj(userObjData);
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setDisableSave(true);
         if (editMode) {
             setFirstNameError(false);
             setLastNameError(false);
@@ -147,6 +201,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             if (firstNameCheck !== "") {
                 setFirstNameError(true);
                 setErrorText(firstNameCheck);
+                setDisableSave(false);
                 return;
             }
 
@@ -154,6 +209,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             if (lastNameCheck !== "") {
                 setLastNameError(true);
                 setErrorText(lastNameCheck);
+                setDisableSave(false);
                 return;
             }
 
@@ -161,6 +217,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             if (ageCheck !== "") {
                 setAgeError(true);
                 setErrorText(ageCheck);
+                setDisableSave(false);
                 return;
             }
 
@@ -169,6 +226,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 if (addressCheck !== "") {
                     setAddressError(true);
                     setErrorText(addressCheck);
+                    setDisableSave(false);
                     return;
                 }
             }
@@ -178,6 +236,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 if (phoneCheck !== "") {
                     setPhoneError(true);
                     setErrorText(phoneCheck);
+                    setDisableSave(false);
                     return;
                 }
             }
@@ -187,13 +246,15 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 if (dobCheck !== "") {
                     setDOBError(true);
                     setErrorText(dobCheck);
+                    setDisableSave(false);
                     return;
                 }
             }
             if (sex) {
-                if (!validSexArr.includes(sex.toLowerCase())) {
+                if (!validSexArr.includes(sex)) {
                     setSexError(true);
                     setErrorText("Invalid sex provided");
+                    setDisableSave(false);
                     return;
                 }
             }
@@ -211,11 +272,14 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
                     if (Object.keys(newObj).length > 0) {
                         await updateUserAPICall(userId, newObj);
+                        setDisableSave(false);
                     } else {
                         alert("No fields were changed to save");
+                        setDisableSave(false);
                     }
                 } catch (error) {
                     alert(error);
+                    setDisableSave(false);
                 }
             }
         }
@@ -228,8 +292,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 <Loading />
             </div>
         );
-    } else if (errorText !== "") {
-        return <Alert severity="error">errorText</Alert>;
     } else {
         const commonFields = (
             <div className="container">
@@ -245,7 +307,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: editMode ? "auto" : "none" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={firstName}
-                    helpertext={firstNameError && errorText}
+                    helperText={firstNameError && errorText}
                     required
                     error={firstNameError}
                 />
@@ -261,7 +323,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={lastName}
-                    helpertext={lastNameError && errorText}
+                    helperText={lastNameError && errorText}
                     required
                     error={lastNameError}
                 />
@@ -293,38 +355,30 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={age}
-                    helpertext={ageError && errorText}
+                    helperText={ageError && errorText}
                     required
                     error={ageError}
                 />
-                <FormLabel component="legend">Sex</FormLabel>
-                <RadioGroup aria-label="sex" name="sex" value={sex} onChange={handleSexChange} disabled={!editMode}>
-                    {validSexArr.map((sexOption) => (
-                        <FormControlLabel
-                            key={sexOption}
-                            value={sexOption}
-                            control={
-                                <Radio
-                                    color="secondary"
-                                    sx={{
-                                        "&.Mui-checked": {
-                                            color: "black",
-                                        },
-                                    }}
-                                />
-                            }
-                            label={sexOption}
-                            sx={{
-                                "& .MuiFormControlLabel-label": {
-                                    color: "black",
-                                },
-                            }}
-                            disabled={!editMode}
-                            helpertext={sexError && errorText}
-                            error={sexError}
-                        />
+                <TextField
+                    label="Sex"
+                    defaultValue={sex}
+                    select
+                    onChange={(e) => setSex(e.target.value)}
+                    variant="filled"
+                    color="secondary"
+                    helperText={sexError ? errorText : "Please select your profile"}
+                    value={sex}
+                    error={sexError}
+                    aria-readonly={!editMode}
+                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    fullWidth
+                >
+                    {sexes.map((option) => (
+                        <MenuItem key={option?.value} value={option?.value}>
+                            {option?.label}
+                        </MenuItem>
                     ))}
-                </RadioGroup>
+                </TextField>
 
                 <TextField
                     label="Address"
@@ -338,7 +392,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={address}
-                    helpertext={addressError && errorText}
+                    helperText={addressError && errorText}
                     error={addressError}
                 />
 
@@ -354,7 +408,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={dob}
-                    helpertext={dobError && errorText}
+                    helperText={dobError && errorText}
                     error={dobError}
                 />
 
@@ -370,7 +424,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={phone}
-                    helpertext={phoneError && errorText}
+                    helperText={phoneError && errorText}
                     error={phoneError}
                 />
             </div>
@@ -393,7 +447,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                         </Button>
                         {imageError && <Typography color="error">{imageError}</Typography>}
                         {imagePreview && (
-                            <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit}>
+                            <Button variant="contained" sx={{ mt: 1 }} onClick={handleImageSubmit} disabled={disableSave}>
                                 Save Image
                             </Button>
                         )}
@@ -412,9 +466,20 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                                 {commonFields}
 
                                 <div style={{ display: "flex", justifyContent: "center" }}>
-                                    <Button variant="contained" sx={{ mt: 2 }} type="submit">
-                                        {editMode ? "Save" : "Edit"}
-                                    </Button>
+                                    {editMode ? (
+                                        <>
+                                            <Button variant="contained" sx={{ mt: 2, mr: 1 }} type="submit" disabled={disableSave}>
+                                                Save
+                                            </Button>
+                                            <Button variant="contained" sx={{ mt: 2 }} onClick={handleCancel}>
+                                                Cancel
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Button variant="contained" sx={{ mt: 2 }} onClick={handleEdit}>
+                                            Edit
+                                        </Button>
+                                    )}
                                 </div>
                             </form>
                         </Paper>

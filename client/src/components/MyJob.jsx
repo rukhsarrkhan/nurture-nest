@@ -17,18 +17,32 @@ import "../App.css";
 import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
 import { getMyJobAPICall } from "../redux/jobs/jobActions";
+import { deleteJobAPICall } from "../redux/jobs/jobActions";
+import DeleteJobModal from "./modals/DeleteJobModal";
 
-const MyJob = ({ job, getMyJobAPICall }) => {
+const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState(true);
+
+  const [openDeleteJobModal, setOpenDeleteJobModal] = useState(false);
+  const handleOpenDeleteJob = () => setOpenDeleteJobModal(true);
+  const handleCloseDeleteJob = () => setOpenDeleteJobModal(false);
+
+  
   console.log(location.state, "appID heree");
   //   let application = location.state.application
-  let jobId = "6444dc31477d85ad6f7103db";
+  let jobId = location.state.jobId
   let pageNum = 1;
+
+const deleteJob = async (jobId) => {
+    deleteJobAPICall(jobId);
+    setOpenDeleteJobModal(false);
+    navigate(-1)
+}
 
   useEffect(() => {
     try {
@@ -70,7 +84,6 @@ const MyJob = ({ job, getMyJobAPICall }) => {
       </div>
     );
   } else {
-    console.log(showData, "=====================");
     let shiftDays = "";
     let daysArr = showData?.shifts?.days;
     for (let i in daysArr) {
@@ -227,7 +240,7 @@ const MyJob = ({ job, getMyJobAPICall }) => {
                 paragraph
                 sx={{ paddingLeft: "7px" }}
               >
-                {showData?.salary + " USD per week"}
+                {showData?.salary + " USD per hour"}
               </Typography>
             </div>
           </CardContent>
@@ -247,6 +260,15 @@ const MyJob = ({ job, getMyJobAPICall }) => {
           </Button>
         )}
         <br />
+        <Button onClick={handleOpenDeleteJob} variant="filled" sx={{bgcolor:purple[700]}}>Delete Job</Button>
+        {openDeleteJobModal && <DeleteJobModal
+                        open={openDeleteJobModal}
+                        onClose={handleCloseDeleteJob}
+                        jobId={jobId}
+                        deleteJob={deleteJob}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    />}
         <br />
       </Container>
     );
@@ -262,6 +284,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
+    deleteJobAPICall:(jobId) => dispatch(deleteJobAPICall(jobId))
   };
 };
 

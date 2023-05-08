@@ -28,9 +28,10 @@ const Navbar = () => {
                     )}
                     {currentUser && <NavLink to="/chat">Inbox</NavLink>}
                     {currentUser && items?.profile === "NANNY" && (
-                        <NavLink to="/jobs">Careers</NavLink>
-                    )}
-                </NavMenu>
+                        <NavLink to="/job/viewAllJobs/1" id={items?._id}>
+                            Careers
+                        </NavLink>
+                    )}                </NavMenu>
                 <NavBtn>
                     {!currentUser && (
                         <ProfileBtn>

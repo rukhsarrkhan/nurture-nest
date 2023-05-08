@@ -25,6 +25,7 @@ import appointmentImage from '../img/appointmentImage.png';
 import Loading from './Loading';
 
 const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => {
+  console.log(dashboardData.data, "dekhle data")
   let navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   let items = JSON.parse(localStorage.getItem("userData"));
@@ -301,48 +302,52 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData }) => 
               </Link>
             </CardActionArea>
           </Grid>
-          <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
-            <CardActionArea>
-              <CardMedia
-                sx={{
-                  maxWidth: 345,
-                  height: 'auto',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  borderRadius: 5,
-                  boxShadow: 'none'
-                }}
-                component='img'
-                image={nannyImage}
-                title='Nanny Details'
-              />
-              <CardContent>
-                <Typography
-                  sx={{
-                    maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    borderRadius: 5,
-                    border: '1px solid #080a33',
-                    boxShadow: 'none'
-                  }}
-                  gutterBottom
-                  variant='h6'
-                  component='h1'
-                >
-                  {"Nanny Details"}
-                </Typography>
-                <Typography variant='body2' color='textSecondary' component='p'>
-                </Typography>
-              </CardContent>
-              <CardActions>
-              </CardActions>
-              <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?._id?.toString()}`, { state: { childId: dashboardData?.data?._id } }); }}>
-                View Nanny Details
-              </Button>
-            </CardActionArea>
-          </Grid>
+        {profile === "PARENT" ? (
+           <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={dashboardData?.data?.nannyId?.toString()}>
+           <CardActionArea>
+             <CardMedia
+               sx={{
+                 maxWidth: 345,
+                 height: 'auto',
+                 marginLeft: 'auto',
+                 marginRight: 'auto',
+                 borderRadius: 5,
+                 boxShadow: 'none'
+               }}
+               component='img'
+               height='200'
+               alt=''
+               image={dashboardData?.data?.photoUrl}
+               title='Nanny Details'
+             />
+             <CardContent>
+               <Typography
+                 sx={{
+                   maxWidth: 345,
+                   height: 'auto',
+                   marginLeft: 'auto',
+                   marginRight: 'auto',
+                   borderRadius: 5,
+                   border: '1px solid #080a33',
+                   boxShadow: 'none'
+                 }}
+                 gutterBottom
+                 variant='h6'
+                 component='h1'
+               >
+                 {"Nanny Details"}
+               </Typography>
+               <Typography variant='body2' color='textSecondary' component='p'>
+               </Typography>
+             </CardContent>
+             <CardActions>
+             </CardActions>
+             <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${dashboardData?.data?._id?.toString()}`, { state: { childId: dashboardData?.data?._id } }); }}>
+               View Nanny Details
+             </Button>
+           </CardActionArea>
+         </Grid>
+        ): null}
         </Grid>
       </div>
     );

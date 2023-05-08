@@ -143,7 +143,7 @@ const createJob = async (
     };
   }
   const child = await childData.getChildById(childId);
-  console.log(child);
+  // console.log(child);
   if (child.jobId) {
     throw {
       statusCode: 400,
@@ -194,7 +194,7 @@ const getMyJob = async (jobId) => {
   );
   if (myJob === null) throw { statusCode: 400, message: "No Job with that id" };
   myJob._id = myJob._id.toString();
-  console.log(myJob);
+  // console.log(myJob);
   return myJob;
 };
 
@@ -211,7 +211,7 @@ const getJobById = async (jobId) => {
   jobId = jobId.trim();
   if (!ObjectId.isValid(jobId)) throw "invalid object ID";
   const jobCollection = await jobs();
-  console.log("holaa inside", jobId);
+  // console.log("holaa inside", jobId);
   const jobFound = await jobCollection.findOne({ _id: ObjectId(jobId) });
   if (jobFound === null) throw "No job with that id";
   jobFound._id = jobFound._id.toString();
@@ -221,7 +221,6 @@ const getJobById = async (jobId) => {
 const updateJob = async () => { };
 
 const removeJob = async (jobId) => {
-  console.log("inside data");
   if (typeof jobId == "undefined")
     throw { statusCode: 400, message: "jobId parameter not provided" };
   if (typeof jobId !== "string")
@@ -235,9 +234,8 @@ const removeJob = async (jobId) => {
   if (!ObjectId.isValid(jobId))
     throw { statusCode: 400, message: "invalid object ID" };
   // Should I keep this validation that I've done below
-  console.log("hgfdn");
   const jobInDB = await getJobById(jobId);
-  console.log("idharrr", jobInDB);
+  // console.log("idharrr", jobInDB);
   if (jobInDB.nannyId != null)
     throw {
       statusCode: 400,
@@ -256,7 +254,7 @@ const removeJob = async (jobId) => {
 };
 
 const getAllApplicants = async (jobId, pageNum) => {
-  console.log(jobId, pageNum, "inside data see");
+  // console.log(jobId, pageNum, "inside data see");
   if (typeof jobId == "undefined")
     throw { statusCode: 400, message: "jobId parameter not provided" };
   if (typeof jobId !== "string")
@@ -270,7 +268,6 @@ const getAllApplicants = async (jobId, pageNum) => {
   if (!ObjectId.isValid(jobId))
     throw { statusCode: 400, message: "invalid object ID" };
   const jobCollection = await jobs();
-  console.log("hereeee before query");
   let allApplications = await jobCollection
     .aggregate([
       { $match: { _id: ObjectId(jobId) } },
@@ -278,14 +275,14 @@ const getAllApplicants = async (jobId, pageNum) => {
       { $group: { _id: null, applications: { $push: "$applications" } } },
     ])
     .toArray();
-  console.log(allApplications, "this was for all applications");
+  // console.log(allApplications, "this was for all applications");
   console.log("-----------------------");
-  if (allApplications === null)
+  if (allApplications === null || allApplications.length === 0)
     throw { statusCode: 400, message: "No applications till now" };
   allApplications = allApplications[0]["applications"];
-  console.log(allApplications, "--------------------");
+  // console.log(allApplications, "--------------------");
   for (let i in allApplications) {
-    console.log(allApplications[i]);
+    // console.log(allApplications[i]);
     allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
   }
   return allApplications;
@@ -307,7 +304,6 @@ const addApplication = async (
   experience,
   attachment
 ) => {
-  console.log("idhaaarr");
   ////////////Params validation
   jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
   if (!ObjectId.isValid(jobId))
@@ -364,7 +360,6 @@ const addApplication = async (
     attachment: attachment,
     applyDate: new Date(),
   };
-  console.log("idhaaarr");
   const jobCollection = await jobs();
   const applicationCreated = await jobCollection.updateOne(
     { _id: ObjectId(jobId) },
@@ -382,7 +377,6 @@ const addApplication = async (
 };
 
 const searchApplications = async (jobId, searchTerm, pageNum) => {
-  console.log("Inside search dataFunction");
   if (typeof jobId == "undefined")
     throw { statusCode: 400, message: "jobId parameter not provided" };
   if (typeof jobId !== "string")
@@ -443,7 +437,6 @@ const setNannytoJob = async (jobId, nannyId) => {
       throw { statusCode: 400, message: "invalid object ID for Nanny" };
     //Validations Done
     const jobCollection = await jobs();
-    console.log(jobId, nannyId, "before mongo query");
     let jobUpdated = await jobCollection.updateOne(
       { _id: ObjectId(jobId) },
       { $set: { nannyId: ObjectId(nannyId) } }
@@ -453,7 +446,6 @@ const setNannytoJob = async (jobId, nannyId) => {
         statusCode: 500,
         message: `Could not update and set nanny to Job with jobId of ${jobId} and nannyId of ${nannyId}`,
       };
-    console.log("This was jobUpdated _id:", jobUpdated.upsertedId);
     const job = await getJobById(jobId);
     job["_id"] = job["_id"].toString();
     return job;
@@ -468,21 +460,18 @@ const setNannytoJob = async (jobId, nannyId) => {
     } else {
       pageNum = 1;
     }
-    console.log("Inside getAllJobs dataFunction", pageNum);
     const jobCollection = await jobs();
     let nanniesFound = await jobCollection
       .find({nannyId:null}, { projection: { applications: 0 } })
       .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
       .limit(5)
       .toArray();
-    console.log("This was found for getAllJobs: ", nanniesFound);
     if (nanniesFound === null)
       throw { statusCode: 500, message: "No applications with that search term" };
     return nanniesFound;
   };
   
   const searchJobsBasedOnCity = async (searchTerm, pageNum) => {
-    console.log("Inside search Job dataFunction");
     if (pageNum) {
       if (isNaN(pageNum)) {
         throw { statusCode: 400, message: "Invalid page number argument" };
@@ -509,7 +498,6 @@ const setNannytoJob = async (jobId, nannyId) => {
   };
 
 const findMyAppliedJobs = async (nannyId) => {
-  console.log("Inside myAppliedJobs dataFunction", nannyId);
   const jobCollection = await jobs();
   // let nanniesFound = await jobCollection.find(
   //   { state: {$regex:searchTerm,$options:'i'} },
@@ -521,7 +509,6 @@ const findMyAppliedJobs = async (nannyId) => {
       { $match: { "applications.nannyId": ObjectId(nannyId) } },
     ])
     .toArray();
-  console.log("This was queried for myJobApplications: ", nanniesFound);
   if (nanniesFound === null)
     throw { statusCode: 500, message: "No applications with that search term" };
   // nanniesFound = nanniesFound[0].applications
@@ -579,7 +566,7 @@ const removeNannyFromUser = async (nannyId, childId) => {
   if (!removeChildId.acknowledged || removeChildId.modifiedCount == 0)
     throw {
       statusCode: 400,
-      message: "Couldn't update child from user collection",
+      message: "Couldn't pull child id from user collection",
     };
   return removeChildId;
 };

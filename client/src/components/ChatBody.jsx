@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 const ChatBody = ({ messages }) => {
     localStorage.setItem("messages", JSON.stringify(messages));
-    let items = JSON.parse(localStorage.getItem('messages'));
 
     return (
         <>

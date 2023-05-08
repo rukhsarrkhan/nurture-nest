@@ -186,33 +186,25 @@ export const applyToJobFailure = (error) => {
 };
 
 export const createJobAPICall = (obj, parentId, childId) => {
-  console.log("obj in API call", obj, parentId, childId);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.post(
         `http://localhost:3000/job/createJob/${parentId}/${childId}`,
         obj
       );
-      console.log("resp", resp);
       dispatch(createJobSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(createJobFailure(error));
     }
   };
 };
 
 export const deleteJobAPICall = (jobId) => {
-  console.log("obj in API call", jobId);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.delete(`http://localhost:3000/job/${jobId}`);
-      console.log("resp", resp);
       dispatch(deleteJobSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(deleteJobFailure(error));
     }
   };
@@ -221,14 +213,11 @@ export const deleteJobAPICall = (jobId) => {
 export const showAllApplicantsAPICall = (jobId, pageNum) => {
   return async (dispatch) => {
     try {
-      console.log(jobId, pageNum, "hallooo here in showAllApplicants");
       let resp = await axios.get(
         `http://localhost:3000/job/allApplicants/${jobId}/${pageNum}`
       );
-      console.log("axios call got:", resp);
       dispatch(showAllApplicantsSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(showAllApplicantsFailure(error));
     }
   };
@@ -238,14 +227,11 @@ export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
   return async (dispatch) => {
     try {
       dispatch(searchInitiate());
-      console.log(jobId, searchTerm, pageNum, "hallooo here");
       let resp = await axios.get(
         `http://localhost:3000/job/searchApplicants/${jobId}/${searchTerm}/${pageNum}`
       );
-      console.log("axios call got:", resp);
       dispatch(searchApplicantsSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(searchApplicantsFailure(error));
     }
   };
@@ -254,111 +240,84 @@ export const searchApplicantsAPICall = (jobId, searchTerm, pageNum) => {
 export const selectNannyAPICall = (jobId, nannyId) => {
   return async (dispatch) => {
     try {
-      console.log("jobId:", jobId, "nannyId:", nannyId, "hallooo here");
       let resp = await axios.post(
         `http://localhost:3000/job/setNanny/${jobId}/${nannyId}`
       );
-      console.log("axios call got:", resp);
       dispatch(selectNannySuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(selectNannyFailure(error));
     }
   };
 };
 
 export const getMyJobAPICall = (jobId) => {
-  console.log("In API call getMyJob with jobId:", jobId);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.get(`http://localhost:3000/job/${jobId}`);
-      console.log("resp", resp);
       dispatch(getMyJobSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(getMyJobFailure(error));
     }
   };
 };
 
 export const getallJobsAPICall = (pageNum) => {
-  console.log("In API call getAllJobs", pageNum);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.get(
         `http://localhost:3000/job/getJobs/AllJobs/${pageNum}`
       );
-      console.log("resp", resp);
       dispatch(getAllJobsSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(getAllJobsFailure(error));
     }
   };
 };
 
 export const searchJobsAPICall = (searchTerm, pageNum) => {
-  console.log("In API call getAllJobs", searchTerm, pageNum);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.get(
         `http://localhost:3000/job/searchJobs/${searchTerm}/${pageNum}`
       );
-      console.log("resp", resp);
       dispatch(searchJobsSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(searchJobsFailure(error));
     }
   };
 };
 
 export const applyToJobAPICall = (obj, nannyId, jobId) => {
-  console.log("obj in API call", obj, nannyId, jobId);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.put(
         `http://localhost:3000/job/apply/${jobId}/${nannyId}`,
         obj
       );
-      console.log("resp", resp);
       dispatch(applyToJobSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(applyToJobFailure(error));
     }
   };
 };
 
 export const getAllMyAppliedJobsAPICall = () => {
-  console.log("In API call getAllMyAppliedJobsAPICall");
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.get(`http://localhost:3000/job/`);
-      console.log("resp", resp);
       dispatch(viewAllMyAppliedJobsSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(viewAllMyAppliedJobsFailure(error));
     }
   };
 };
 
 export const exitJobAPICall = (jobId) => {
-  console.log("obj in API call", jobId);
   return async (dispatch) => {
     try {
-      console.log("now");
       let resp = await axios.delete(`http://localhost:3000/job/`);
-      console.log("resp", resp);
       dispatch(deleteJobSuccess(resp.data));
     } catch (error) {
-      console.log("error", error);
       dispatch(deleteJobFailure(error));
     }
   };

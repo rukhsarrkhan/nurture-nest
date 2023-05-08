@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { doSocialSignIn } from '../firebase/FirebaseFunctions';
+import { doSocialSignIn, doSignOut } from '../firebase/FirebaseFunctions';
 import { Navigate } from "react-router-dom";
 import { userLoginAPICall } from '../redux/users/userActions';
 import { connect } from 'react-redux';
 
 
-const SocialSignIn = ({ userLoginAPICall }) => {
+const SocialSignIn = ({ userData, userLoginAPICall }) => {
   const [serverError, setServerError] = useState(false);
-
   const [errorText, setErrorText] = useState("");
 
   const socialSignOn = async (provider) => {
-    const { uid, error, code } = await doSocialSignIn(provider);
+    const { uid, error, code, email, firstName, lastName } = await doSocialSignIn(provider);
     if (uid !== "") {
-      await userLoginAPICall(uid);
-      // what if this fails
+      await userLoginAPICall(uid, email, firstName, lastName);
       return <Navigate to='/home' id={uid} />;
     } else {
       setServerError(true);
       setErrorText(`Internal Server Error. Please Retry.`);
+      doSignOut();
     }
   };
   return (
@@ -31,9 +30,7 @@ const SocialSignIn = ({ userLoginAPICall }) => {
         src='/images/btn_google_signin.png'
       />
       <br />
-
       {serverError && errorText && < p id="error-message" className="errorText" >{errorText}</p>}
-
     </div>
   );
 };
@@ -46,7 +43,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    userLoginAPICall: (obj) => dispatch(userLoginAPICall(obj))
+    userLoginAPICall: (obj, email, firstName, lastName) => dispatch(userLoginAPICall(obj, email, firstName, lastName))
   };
 };
 

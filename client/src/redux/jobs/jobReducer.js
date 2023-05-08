@@ -1,4 +1,3 @@
-import { v4 as uuid } from "uuid";
 import {
   CREATE_JOB_SUCCESS,
   CREATE_JOB_FALIURE,
@@ -47,7 +46,6 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case CREATE_JOB_FALIURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
@@ -59,13 +57,11 @@ export const jobReducer = (state = initialState, action) => {
         status: payload,
       };
     case DELETE_JOB_FALIURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case SHOW_ALL_APPLICANTS_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         applicantsData: payload,
@@ -73,13 +69,11 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case SHOW_ALL_APPLICANTS_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case SEARCH_APPLICANTS_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         applicantsData: payload,
@@ -87,13 +81,11 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case SEARCH_APPLICANTS_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case SELECT_NANNY_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         data: payload,
@@ -101,13 +93,11 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case SELECT_NANNY_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case GET_MY_JOB_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         data: payload,
@@ -115,13 +105,11 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case GET_MY_JOB_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case GET_ALL_JOBS_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         jobsData: payload,
@@ -129,13 +117,11 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case GET_ALL_JOBS_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
       };
     case SEARCH_JOBS_SUCCESS:
-      console.log("payload", payload);
       return {
         ...state,
         jobsData: payload,
@@ -143,7 +129,6 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case SEARCH_JOBS_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
@@ -156,7 +141,6 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case APPLY_TO_JOB_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
@@ -175,7 +159,6 @@ export const jobReducer = (state = initialState, action) => {
         status: "OK",
       };
     case VIEW_ALL_MY_APPLIED_JOBS_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,
@@ -187,7 +170,6 @@ export const jobReducer = (state = initialState, action) => {
         status: payload,
       };
     case EXIT_JOB_FAILURE:
-      console.log(payload);
       return {
         ...state,
         error: payload.response.data,

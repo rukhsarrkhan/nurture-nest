@@ -83,8 +83,7 @@ const removeChild = async (childId) => {
     childId = childId.trim();
     if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID" };
     const childCollection = await childs();
-    let currentChild = await getChildById(childId)
-
+    let currentChild = await getChildById(childId);
     const deletedChild = await childCollection.findOneAndDelete({
         _id: ObjectId(childId)
     }, { projection: { _id: 1 } });
@@ -109,8 +108,7 @@ const removeChildFromUser = async (parentId, childId) => {
             message: "Couldn't update child from user collection",
         };
     return removeChildId;
-}
-
+};
 
 const addVaccine = async (name, date, doses, childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");

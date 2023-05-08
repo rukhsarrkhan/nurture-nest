@@ -52,12 +52,36 @@ const AddModal = (props) => {
             setErrorText(nameCheck.message);
             return;
         }
+
+        if (/^\d+$/.test(name)) {
+            setnameError(true);
+            setErrorText("Name cannot contain only numbers");
+            return;
+        }
         let dosesCheck = await helpers.onlyNumbers(doses, "doses");
         if (dosesCheck !== undefined) {
             setDosesError(true);
             setErrorText(dosesCheck.message);
             return;
         }
+        if(doses > 6 ) {
+            setDosesError(true);
+            setErrorText("Doses cannot be more than 6 for a single vaccine at a time according to World Health Organization");
+            return;
+        }
+
+    const currentDate = new Date();
+    const vaccineDate = new Date(date);
+
+    const minDate = new Date();
+    minDate.setFullYear(minDate.getFullYear() - 13);
+
+    if (vaccineDate < minDate) {
+        setDateError(true);
+        setErrorText("Date cannot be older than 13 years from current date");
+        return;
+    }
+
 
         if (name?.trim() && date?.trim() && doses?.trim() && errorText === "") {
             try {

@@ -5,7 +5,11 @@ const ErrorPage = ({ error, code }) => {
     return (
         <div>
             <br />
-            <p className='errorText'>Error {code}: {error}. Please refresh.</p>
+            {error !== "" && code !== "" ? (
+                <p className='errorText'>Error {code}: {error}. Please refresh.</p>
+
+            ) : (<p className='errorText'>Some Error occured. Please refresh.</p>)
+            }
         </div>
     );
 };

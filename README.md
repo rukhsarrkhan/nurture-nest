@@ -49,7 +49,11 @@ Both the parent side and nanny side would have a chat functionality to chat with
 ### Database - Mongo SRV URL
 
 mongodb+srv://swarajsingpatil:Password%401@cluster0.68unpvh.mongodb.net/test
- 
+
+### Important Information
+
+Forget password functionality doesn't work on microsoft(outlook) accounts. Kindly use GMAIL accounts to use/test that functionality.
+
 ## NOTE
 
 Nanny can only see child details when the child is assigned to her ie. only if she is hired for the job posted by a parent

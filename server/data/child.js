@@ -90,7 +90,7 @@ const removeChild = async (childId) => {
         { projection: { _id: 1 } }
     );
     if (deletedChild.value == null) {
-        throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
+        throw { statusCode: 500, message: `Could not delete child with id of ${childId}` };
     }
     return deletedChild.value._id;
 };
@@ -147,7 +147,7 @@ const addVaccine = async (name, date, doses, childId) => {
 const getVaccines = async (childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");
     if (!ObjectId.isValid(childId)) {
-        throw { statusCode: 401, message: "Child Id is not valid" };
+        throw { statusCode: 400, message: "Child Id is not valid" };
     }
     const childCollection = await childs();
     const childFound = await childCollection.findOne({ _id: ObjectId(childId) });

@@ -261,11 +261,11 @@ export const getMyJobAPICall = (jobId) => {
   };
 };
 
-export const getallJobsAPICall = (pageNum) => {
+export const getallJobsAPICall = (nannyId,pageNum) => {
   return async (dispatch) => {
     try {
       let resp = await axios.get(
-        `http://localhost:3000/job/getJobs/AllJobs/${pageNum}`
+        `http://localhost:3000/job/getJobs/AllJobs/${nannyId}/${pageNum}`
       );
       dispatch(getAllJobsSuccess(resp.data));
     } catch (error) {
@@ -274,11 +274,11 @@ export const getallJobsAPICall = (pageNum) => {
   };
 };
 
-export const searchJobsAPICall = (searchTerm, pageNum) => {
+export const searchJobsAPICall = (nannyId,searchTerm, pageNum) => {
   return async (dispatch) => {
     try {
       let resp = await axios.get(
-        `http://localhost:3000/job/searchJobs/${searchTerm}/${pageNum}`
+        `http://localhost:3000/job/searchJobs/${nannyId}/${searchTerm}/${pageNum}`
       );
       dispatch(searchJobsSuccess(resp.data));
     } catch (error) {

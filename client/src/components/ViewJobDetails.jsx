@@ -178,13 +178,25 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
                 {showData?.salary + " USD per week"}
               </Typography>
             </div>
-            <Button
-              onClick={handleOpenApplyToJob}
-              variant="filled"
-              sx={{ bgcolor: "purple[700]", textcolor: "white" }}
-            >
-              Apply
-            </Button>
+            {showData.applied ? (
+              <Button
+                onClick={handleOpenApplyToJob}
+                variant="filled"
+                sx={{ bgcolor: "purple[700]", textcolor: "white" }}
+                disabled={showData.applied}
+              >
+                Applied
+              </Button>
+            ) : (
+              <Button
+                onClick={handleOpenApplyToJob}
+                variant="filled"
+                sx={{ bgcolor: "purple[700]", textcolor: "white" }}
+                disabled={showData.applied}
+              >
+                Apply
+              </Button>
+            )}
 
             {openApplyToJobModal && (
               <ApplyToJobModal

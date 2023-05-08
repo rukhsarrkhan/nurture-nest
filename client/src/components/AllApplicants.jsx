@@ -20,7 +20,7 @@ import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import Loading from "./Loading";
-import Container from "@mui/material/Container";
+import ErrorPage from '../components/ErrorPage';
 import "../App.css";
 
 const AllApplicants = ({
@@ -39,67 +39,48 @@ const AllApplicants = ({
   const [showsData, setShowsData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [nextButton, setLastButton] = useState(true);
+  const [errorCode, setErrorCode] = useState("");
   let card = null;
   let pagenum = pageNum;
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
-    try {
-      if (pageNum && jobId) {
+      if (pageNum) {
         setLoading(true);
         showAllApplicantsAPICall(jobId, pageNum);
       }
-    } catch (e) {
-      setError(true);
-      setLoading(false);
-    }
-  }, [pageNum, jobId]);
+  }, [pageNum]);
 
   useEffect(() => {
-    if (searchTerm) {
-      try {
+    if (job !== undefined) {
+      if (job?.error !== "") {
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }
+      if (searchTerm) {
         setSearchData(job?.applicantsData);
-        console.log(searchData);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
     } else {
-      try {
         setSearchData(job?.applicantsData);
         setShowsData(job?.applicantsData);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
-    }
-  }, [job]);
+  }
+  }
+}, [job]);
 
-  //Search Applicants useEffect for apiCall
   useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log("search use effect fired", jobId, pageNum);
-        if (pageNum) {
-          searchApplicantsAPICall(jobId, searchTerm, pageNum);
-        }
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-        console.log(e);
-      }
-    }
-    if (searchTerm) {
-      fetchData();
-    }
-  }, [searchTerm]);
+    if (job !== undefined) {
+    if (job?.error !== "") {
+      setError(true);
+      setErrorMsg(job?.error);
+      setErrorCode(job?.code);
+      setLoading(false)
+  }else if (searchTerm) {searchApplicantsAPICall(jobId, searchTerm, pageNum)}
+  }}, [searchTerm]);
 
   const searchValue = async (value) => {
     setSearchTerm(value);
@@ -259,9 +240,7 @@ const AllApplicants = ({
     );
   } else if (error) {
     return (
-      <div>
-        <h2>{errorMsg}</h2>
-      </div>
+      <ErrorPage error={errorMsg} code={errorCode} />
     );
   } else {
     return (
@@ -272,10 +251,10 @@ const AllApplicants = ({
           {card}
         </Grid>
 
-        {pagenum > 1 && (
+        {pageNum > 1 && (
           <Link
             className="showlink"
-            to={`/job/${jobId}/allApplicants/${pagenum - 1}`}
+            to={`/job/allApplicants/${parseInt(pagenum) - 1}`}
           >
             Previous
           </Link>
@@ -283,11 +262,23 @@ const AllApplicants = ({
         {nextButton && (
           <Link
             className="showlink"
-            to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}
+            // to={`/job/allApplicantions/${parseInt(pageNum)+1}`}
+          component="button"
+          onClick={() => {
+            pageNum=parseInt(pageNum)+1
+            console.log(pageNum)
+            navigate(`/job/allApplicantions/${pageNum}`, {
+              state: { jobId: jobId },
+            });
+          }}
           >
             Next
           </Link>
+          
         )}
+        <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
+            Next2
+          </Link>
       </div>
     );
   }

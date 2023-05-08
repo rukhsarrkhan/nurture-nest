@@ -96,12 +96,12 @@ const CreateJobModal = (props) => {
       setErrorText(shiftToChec);
       return;
     }
-    let shiftTimingsCheck = await helpers.isTime1BeforeTime2(timeFrom, timeTo);
-    if (shiftTimingsCheck !== "") {
-      setShiftError(true);
-      setErrorText(shiftTimingsCheck.message);
-      return;
-    }
+    // let shiftTimingsCheck = await helpers.isTime1BeforeTime2(timeFrom, timeTo);
+    // if (shiftTimingsCheck !== "") {
+    //   setShiftError(true);
+    //   setErrorText(shiftTimingsCheck.message);
+    //   return;
+    // }
 
     let days = [];
     if (monday) days.push("Monday");

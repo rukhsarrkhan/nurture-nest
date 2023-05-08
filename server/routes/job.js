@@ -30,7 +30,7 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
       shifts.timeTo.toLocaleString(),
       "Shift Timing to"
     );
-    await helpers.isTime1BeforeTime2(shifts.timeFrom, shifts.timeTo);
+    // await helpers.isTime1BeforeTime2(shifts.timeFrom, shifts.timeTo);
     shifts.days = await helpers.execValdnForArr(shifts.days, "Shift-Days");
     shifts.days.map((day) => {
       if (
@@ -44,10 +44,7 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
           "Sunday",
         ].includes(day)
       ) {
-        throw {
-          statusCode: 400,
-          message: `Shift-Days field contains a invalid day value selected`,
-        };
+        throw {statusCode: 400,message: `Shift-Days field contains a invalid day value selected`};
       }
     });
     await helpers.isShiftLimitValid(
@@ -77,7 +74,7 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
     const jobCreated = await jobCollection.createJob(
       xss(parentId),
       xss(childId),
-      xss(shifts),
+      shifts,
       xss(description),
       xss(address),
       xss(specialCare),
@@ -131,29 +128,20 @@ router
       if (typeof jobId !== "string")
         throw { statusCode: 400, message: "jobId must be a string" };
       if (jobId.trim().length === 0)
-        throw {
-          statusCode: 400,
-          message: "jobIdd cannot be an empty string or just spaces",
-        };
+        throw {statusCode: 400,message: "jobIdd cannot be an empty string or just spaces"};
       if (!ObjectId.isValid(jobId))
         throw { statusCode: 400, message: "invalid object ID for Job" };
       jobId = jobId.trim();
       const deletedJob = await jobCollection.removeJob(jobId);
       if (!deletedJob) {
-        throw {
-          statusCode: 500,
-          message: `Could not delete Job with id of ${id}`,
-        };
+        throw {statusCode: 500,message: `Could not delete Job with id of ${id}`};
       }
-      const updateChild = await jobCollection.removeJobFromChild(
-        deletedJob.childId.toString()
-      );
+      const updateChild = await jobCollection.removeJobFromChild(deletedJob.childId.toString());
       return res.json(deletedJob);
     } catch (e) {
+      console.log(e)
       // throw e.message;
-      return res
-        .status(e.statusCode)
-        .json({ title: "Error", message: e.message });
+      return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
   });
 
@@ -272,13 +260,14 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
   try {
     const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
     if (!allApplicants) {
-      throw "Couldn't get applications";
+      throw { statusCode: 200, message: "No Nanny for this Job Applications yet" }
     }
     return res.json(allApplicants);
-  } catch (e) {
-    // throw e;
-    return res.status(400).json({ error: e });
-  }
+} catch (e) {
+  console.log(e)
+  // throw e.message
+  return res.status(e.statusCode).json({ title: "Error", message: e.message });
+}
 });
 
 router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
@@ -309,6 +298,8 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
       };
     if (!ObjectId.isValid(nannyId))
       throw { statusCode: 400, message: "invalid object ID for Nanny" };
+    const nannyChec = await jobCollection.getJobByNannyId(nannyId)
+    //Add nanny No longer available Validation
     // Validations done
     const nannyJobSet = await jobCollection.setNannytoJob(jobId, nannyId);
     if (!nannyJobSet) {
@@ -332,10 +323,22 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
   }
 });
 
-router.route("/getJobs/AllJobs/:pageNum").get(async (req, res) => {
+router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
   // Searching Applicats from Parent side
-  let { pageNum } = req.params;
+  let { nannyId,pageNum } = req.params;
   try {
+    nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
+    if (typeof nannyId == "undefined")
+      throw { statusCode: 400, message: "nannyId parameter not provided" };
+    if (typeof nannyId !== "string")
+      throw { statusCode: 400, message: "nannyId must be a string" };
+    if (nannyId.trim().length === 0)
+      throw {
+        statusCode: 400,
+        message: "nannyId cannot be an empty string or just spaces",
+      };
+    if (!ObjectId.isValid(nannyId))
+      throw { statusCode: 400, message: "invalid object ID for Nanny" };
     if (pageNum) {
       if (isNaN(pageNum)) {
         throw { statusCode: 400, message: "Invalid page number argument" };
@@ -350,24 +353,38 @@ router.route("/getJobs/AllJobs/:pageNum").get(async (req, res) => {
         message: "Invalid negative page number argument",
       };
     }
-    const searchedApplicants = await jobCollection.getAllJobs(pageNum);
-    if (!searchedApplicants) {
-      throw { statusCode: 400, message: "No applications for this search" };
+    const foundJobs = await jobCollection.getAllJobs(nannyId,pageNum);
+    if (!foundJobs?.jobsFound) {
+      throw { statusCode: 400, message: "No Jobs for available for yet" };
     }
-    return res.json(searchedApplicants);
+    return res.json(foundJobs);
   } catch (e) {
+    console.log(e)
     // throw e.message
-    return res.status(400).json({ error: e });
+    return res.status(e.statusCode).json({ title: "Error", message: e.message });
   }
 });
 
-router.route("/searchJobs/:searchTerm/:pageNum").get(async (req, res) => {
+router.route("/searchJobs/:nannyId/:searchTerm/:pageNum").get(async (req, res) => {
+  console.log("insideee")
   ///// Searching Applicants from Parent side
-  let { pageNum, searchTerm } = req.params;
+  let { pageNum,nannyId, searchTerm } = req.params;
   try {
+    nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
+    if (typeof nannyId == "undefined")
+      throw { statusCode: 400, message: "nannyId parameter not provided" };
+    if (typeof nannyId !== "string")
+      throw { statusCode: 400, message: "nannyId must be a string" };
+    if (nannyId.trim().length === 0)
+      throw {
+        statusCode: 400,
+        message: "jobIdd cannot be an empty string or just spaces",
+      };
+    if (!ObjectId.isValid(nannyId))
+      throw { statusCode: 400, message: "invalid object ID for job" };
     if (pageNum) {
       if (isNaN(pageNum)) {
-        throw { statusCode: 400, message: "Invalid page number argument" };
+        throw { statusCode: 400, message: "Invalid page number" };
       }
       ///// pageNo = parseInt(req.query.page)/////Check if it works with convert to int,if yes then do it
     } else {
@@ -379,16 +396,13 @@ router.route("/searchJobs/:searchTerm/:pageNum").get(async (req, res) => {
         message: "Invalid negative page number argument",
       };
     }
-    const searchedApplicants = await jobCollection.searchJobsBasedOnCity(
-      searchTerm,
-      pageNum
-    );
-    if (!searchedApplicants) {
+    const searchedApplicants = await jobCollection.searchJobsBasedOnCity(nannyId,searchTerm,pageNum);
+    if (!searchedApplicants.jobsFound) {
       throw "Couldn't get applications";
     }
     return res.json(searchedApplicants);
   } catch (e) {
-    // throw e.message
+    throw e.message
     return res.status(400).json({ error: e });
   }
 });

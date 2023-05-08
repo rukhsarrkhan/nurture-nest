@@ -28,9 +28,10 @@ const initialState = {
   loading: false,
   data: {},
   applicantsData: [],
-  jobsData: [],
+  jobsData: {},
   myAppliedJobs: [],
   error: "",
+  code:"",
   status: "",
 };
 
@@ -59,7 +60,8 @@ export const jobReducer = (state = initialState, action) => {
     case DELETE_JOB_FALIURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SHOW_ALL_APPLICANTS_SUCCESS:
       return {
@@ -71,7 +73,8 @@ export const jobReducer = (state = initialState, action) => {
     case SHOW_ALL_APPLICANTS_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SEARCH_APPLICANTS_SUCCESS:
       return {
@@ -119,7 +122,8 @@ export const jobReducer = (state = initialState, action) => {
     case GET_ALL_JOBS_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SEARCH_JOBS_SUCCESS:
       return {

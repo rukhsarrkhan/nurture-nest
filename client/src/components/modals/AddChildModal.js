@@ -23,6 +23,7 @@ const AddChildModal = (props) => {
     const [imagePreview, setImagePreview] = useState(null);
     const [image, setImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [disableBtn, setdisableBtn] = useState(false);
 
     const [nameError, setNameError] = useState(false);
     const [ageError, setAgeError] = useState(false);
@@ -30,7 +31,7 @@ const AddChildModal = (props) => {
     const [imageError, setImageError] = useState(null);
 
     const [errorText, setErrorText] = useState("");
-    const validSexArr = ["male", "female", "non-binary", "transgender", "other"];
+    const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -99,6 +100,7 @@ const AddChildModal = (props) => {
         }
 
         if (name.trim() && age.trim() && sex.trim() && imageFile && errorText === "") {
+            setdisableBtn(true);
             const formData = new FormData();
             formData.append("image", imageFile);
             formData.append("name", name);
@@ -188,7 +190,7 @@ const AddChildModal = (props) => {
                                     />
                                 ))}
                             </RadioGroup>
-                            <Button variant="outlined" color="secondary" type="submit">
+                            <Button variant="outlined" color="secondary" type="submit" disabled={disableBtn}>
                                 Add
                             </Button>
                         </form>

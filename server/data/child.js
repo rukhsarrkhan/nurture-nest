@@ -18,10 +18,9 @@ const createChild = async (photoUrl, name, age, sex, mealRequirementsArr, vaccin
         name: name,
         age: age,
         sex: sex,
-        jobId: "",
+        jobId: null,
         mealRequirements: [],
         vaccine: [],
-        nannyId: "",
         appointments: [],
     };
     if (mealRequirementsArr) {
@@ -83,11 +82,14 @@ const removeChild = async (childId) => {
     childId = childId.trim();
     if (!ObjectId.isValid(childId)) throw { statusCode: 400, message: "invalid object ID" };
     const childCollection = await childs();
-    let currentChild = await getChildById(childId)
+    let currentChild = await getChildById(childId);
 
-    const deletedChild = await childCollection.findOneAndDelete({
-        _id: ObjectId(childId)
-    }, { projection: { _id: 1 } });
+    const deletedChild = await childCollection.findOneAndDelete(
+        {
+            _id: ObjectId(childId),
+        },
+        { projection: { _id: 1 } }
+    );
     if (deletedChild.value == null) {
         throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
@@ -101,16 +103,17 @@ const removeChildFromUser = async (parentId, childId) => {
     }
     const userCollection = await users();
     // let getUser = userCollection.findOne({ _id: ObjectId(parentId) })
-    const removeChildId = await userCollection.updateOne({ _id: ObjectId(parentId), p_childIds: { $elemMatch: { $eq: childId } } },
-        { $pull: { p_childIds: childId } });
+    const removeChildId = await userCollection.updateOne(
+        { _id: ObjectId(parentId), p_childIds: { $elemMatch: { $eq: childId } } },
+        { $pull: { p_childIds: childId } }
+    );
     if (!removeChildId.acknowledged || removeChildId.modifiedCount == 0)
         throw {
             statusCode: 400,
             message: "Couldn't update child from user collection",
         };
     return removeChildId;
-}
-
+};
 
 const addVaccine = async (name, date, doses, childId) => {
     childId = await helper.execValdnAndTrim(childId, "Child Id");

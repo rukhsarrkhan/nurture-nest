@@ -106,7 +106,7 @@ const AddChildModal = (props) => {
             return;
         }
 
-        let ageCheck = await validation(age, helpers.isChildAgeValid(age));
+        let ageCheck = await validation(age, helpers.isChildAgeValid(age, props.parentAge));
         if (ageCheck !== "") {
             setAgeError(true);
             setErrorText(ageCheck);

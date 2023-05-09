@@ -262,6 +262,7 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                         onClose={handleModalClose}
                         addChild={addChildApiCallAndClose}
                         parentId={id}
+                        parentAge={userData?.data?.age}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     />

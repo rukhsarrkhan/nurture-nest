@@ -9,6 +9,9 @@ import Loading from "./Loading";
 import helpers from "../helpers";
 // import ErrorPage from "../components/ErrorPage";
 
+const textColor = '#333333';
+const bgColor = '#f5f5f5';
+
 const profiles = [
     {
         value: "PARENT",
@@ -131,7 +134,7 @@ const SetProfile = ({ updateUserAPICall, userData, setUserProfileAPICall }) => {
 
     return (
         <div className="profile" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <Typography variant="h2" sx={{ mb: 2 }}>
+            <Typography variant="h1" sx={{ mb: 2 }}>
                 Tell us about yourself. What are you?
             </Typography>
             <form autoComplete="off" className="sign-form" onSubmit={handleSubmit}>
@@ -147,6 +150,7 @@ const SetProfile = ({ updateUserAPICall, userData, setUserProfileAPICall }) => {
                     value={profile}
                     error={profileError}
                     fullWidth
+                    style={{ color: textColor, backgroundColor: bgColor }}
                 >
                     {profiles.map((option) => (
                         <MenuItem key={option?.value} value={option?.value}>

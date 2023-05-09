@@ -3,6 +3,7 @@ import "../App.css";
 import { connect } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
 import { Card, CardMedia, Grid, Button, CardActionArea, CardContent, Typography } from "@mui/material";
+import { doSignOut } from "../firebase/FirebaseFunctions";
 import { AuthContext } from "../firebase/Auth";
 import Loading from "./Loading";
 import AddIcon from "@mui/icons-material/Add";
@@ -29,21 +30,29 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
     let card = null;
 
     const { currentUser } = useContext(AuthContext);
-    console.log(currentUser, " Current user in home");
 
     const id = userData?.data?._id;
 
     const setUserProfileAPICallMemo = useMemo(() => {
         return () => {
             try {
-                setUserProfileAPICall(id);
+                if (currentUser && id) setUserProfileAPICall(id);
             } catch (error) {
                 setuserObjData(undefined);
                 setLoading(false);
                 setErrorText(error.message ? error.message : error);
             }
         };
-    }, [id, setUserProfileAPICall]);
+    }, [id, setUserProfileAPICall, currentUser]);
+
+    useEffect(() => {
+        const clearLocalStorage = () => {
+            alert("Session Expired. Signing out now.");
+            doSignOut();
+        };
+        const timeoutId = setTimeout(clearLocalStorage, 3600000);
+        return () => clearTimeout(timeoutId);
+    }, []);
 
     useEffect(() => {
         setUserProfileAPICallMemo();
@@ -54,7 +63,7 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
             setuserObjData(userData?.data);
             fetchChildrenAPICall(userData?.data?._id);
         }
-    }, [userData, fetchChildrenAPICall]);
+    }, [userData, fetchChildrenAPICall, currentUser]);
     useEffect(() => {
         if (userObjData) {
             if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
@@ -202,7 +211,30 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                 )}
                 <br />
                 <br />
-                {childObjArr.length === 0 ? (
+                {userObjData?.profile === "PARENT" ? (
+                    childObjArr.length === 0 ? (
+                        <Typography
+                            variant="p"
+                            component="p"
+                            sx={{
+                                backgroundColor: "#fcebeb",
+                                color: "#333",
+                                padding: "10px",
+                                borderRadius: "5px",
+                                boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)",
+                                marginBottom: "20px",
+                                fontWeight: "bold",
+                                textAlign: "center",
+                            }}
+                        >
+                            No child found for this parent
+                        </Typography>
+                    ) : (
+                        <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
+                            {card}
+                        </Grid>
+                    )
+                ) : userObjData?.profile === "NANNY" ? (
                     <Typography
                         variant="p"
                         component="p"
@@ -217,7 +249,7 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                             textAlign: "center",
                         }}
                     >
-                        No children have been assigned to this nanny yet.
+                        No child has been assigned to this Nanny yet
                     </Typography>
                 ) : (
                     <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>

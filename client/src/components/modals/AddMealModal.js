@@ -23,6 +23,8 @@ const style = {
 const AddMealModal = (props) => {
     const today = new Date().toISOString().slice(0, 16);
 
+
+
     const tConvert = (time) => {
         // Check correct time format and split into components
         time = time
@@ -54,6 +56,12 @@ const AddMealModal = (props) => {
         if (MealCheck !== undefined) {
             setMealError(true);
             setErrorText(MealCheck.message);
+            return;
+        }
+
+        if (/^\d+$/.test(meal)) {
+            setMealError(true);
+            setErrorText("Meal name cannot contain only numbers");
             return;
         }
 

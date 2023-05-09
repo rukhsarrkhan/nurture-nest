@@ -19,6 +19,9 @@ const style = {
     borderRadius: '50px'
 };
 
+const textColor = '#333333';
+const bgColor = '#f5f5f5';
+
 const AddModal = (props) => {
 
     const formatDate = (showdate) => {
@@ -122,12 +125,13 @@ const AddModal = (props) => {
                             label="Name"
                             onChange={e => setName(e.target.value)}
                             required
-                            variant="outlined"
+                            variant="filled"
                             color="secondary"
                             sx={{ mb: 1 }}
                             helperText={nameError && errorText}
                             value={name}
                             error={nameError}
+                            style={{ color: textColor, backgroundColor: bgColor }}
                         />
                         <TextField
                             className="vacField"
@@ -140,18 +144,20 @@ const AddModal = (props) => {
                             helperText={dateError && errorText}
                             value={date}
                             error={dateError}
+                            style={{ color: textColor, backgroundColor: bgColor }}
                         />
                         <TextField
                             className="vacField"
                             label="Doses"
                             onChange={e => setDoses(e.target.value)}
                             required
-                            variant="outlined"
+                            variant="filled"
                             color="secondary"
                             sx={{ mb: 3 }}
                             helperText={dosesError && errorText}
                             value={doses}
                             error={dosesError}
+                            style={{ color: textColor, backgroundColor: bgColor }}
                         />
                         <Button variant="outlined" color="secondary" type="submit">
                             Add

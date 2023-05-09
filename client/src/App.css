@@ -1,6 +1,6 @@
 .hero {
 	height: 500px;
-	background-image: url('img/hero.jpeg');
+	background-image: url('img/nurture.jpg');
 	background-position: center;
 	background-size: cover;
 	display: flex;
@@ -16,12 +16,12 @@
 	font-size: 68px;
 	font-weight: bold;
 	text-align: center;
-	color: #998fb6;
+	color: #716298;
 	overflow: hidden;
 	white-space: nowrap;
 	margin: 0 auto;
 	padding-bottom: 20px;
-	border-right: .1em solid orange;
+	border-right: .1em solid #ffffff;
 	animation:
 		typing 3.5s steps(40, end),
 		blink-caret .75s step-end infinite;
@@ -50,7 +50,7 @@
 }
 
 .hero blockquote {
-	color: white;
+	color: #594489;
 	font-size: 24px;
 	margin: 0 auto;
 	overflow: hidden;
@@ -576,6 +576,6 @@ footer {
 }
 
 .errorText {
-	color: red;
+	color: #a50000;
 	font-weight: bold;
 }

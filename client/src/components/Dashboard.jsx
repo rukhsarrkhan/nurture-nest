@@ -99,6 +99,8 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
     }
   }, [childId]);
 
+  console.log("jobData", jobData);
+
 
   if (!currentUser) {
     return <Navigate to='/' />;
@@ -260,7 +262,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                       marginLeft: 'auto',
                       marginRight: 'auto',
                       borderRadius: 5,
-                      boxShadow:'none'
+                      boxShadow: 'none'
                     }}
                     gutterBottom
                     variant='h6'

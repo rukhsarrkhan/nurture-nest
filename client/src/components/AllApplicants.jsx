@@ -48,42 +48,44 @@ const AllApplicants = ({
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
-      if (pageNum) {
-        setLoading(true);
-        showAllApplicantsAPICall(jobId, pageNum);
-      }
-  }, [pageNum]);
+    if (pageNum && jobId) {
+      setLoading(true);
+      showAllApplicantsAPICall(jobId, pageNum);
+    }
+  }, [pageNum, jobId]);
 
   useEffect(() => {
     if (job !== undefined) {
       if (job?.error !== "") {
-          setError(true);
-          setErrorMsg(job?.error);
-          setErrorCode(job?.code);
-          setLoading(false)
-      }else{
-      if (searchTerm) {
-        setSearchData(job?.applicantsData?.allApplications);
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
         setLoading(false);
-        setError(false);
-    } else {
-        setSearchData(job?.applicantsData.allApplications);
-        setShowsData(job?.applicantsData.allApplications);
-        setLoading(false);
-        setError(false);
-  }}
-  }
-}, [job]);
+      } else {
+        if (searchTerm) {
+          setSearchData(job?.applicantsData?.allApplications);
+          setLoading(false);
+          setError(false);
+        } else {
+          setSearchData(job?.applicantsData.allApplications);
+          setShowsData(job?.applicantsData.allApplications);
+          setLoading(false);
+          setError(false);
+        }
+      }
+    }
+  }, [job]);
 
   useEffect(() => {
     if (job !== undefined) {
-    if (job?.error !== "") {
-      setError(true);
-      setErrorMsg(job?.error);
-      setErrorCode(job?.code);
-      setLoading(false)
-  }else if (searchTerm) {searchApplicantsAPICall(jobId, searchTerm, pageNum)}
-  }}, [searchTerm]);
+      if (job?.error !== "") {
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false);
+      } else if (searchTerm) { searchApplicantsAPICall(jobId, searchTerm, pageNum); }
+    }
+  }, [searchTerm]);
 
   const searchValue = async (value) => {
     setSearchTerm(value);
@@ -124,7 +126,7 @@ const AllApplicants = ({
             marginLeft: "15px",
             marginRight: "15px",
             position: "relative",
-      
+
           }}
         >
           <Grid container spacing={0}>
@@ -263,7 +265,7 @@ const AllApplicants = ({
           </Link>
         )}
         {nextButton && (
-          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
+          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum) + 1}`}>
             Next
           </Link>
         )}
@@ -278,7 +280,7 @@ const AllApplicants = ({
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
-    users:state.users
+    users: state.users
   };
 };
 

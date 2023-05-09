@@ -203,7 +203,7 @@ const MyJob = ({
               color="text.primary"
               sx={{ marginBottom: "1rem" }}
             >
-              {showData?.address}, {showData?.city}, {showData?.state}{" "}
+              {showData?.address}, {showData?.city}, {showData?.state}
               {showData?.zipCode}
             </Typography>
             <Divider sx={{ marginBottom: "1rem" }} />

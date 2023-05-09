@@ -13,7 +13,7 @@ const SocialSignIn = ({ userData, userLoginAPICall }) => {
     const { uid, error, code, email, firstName, lastName } = await doSocialSignIn(provider);
     if (uid !== "") {
       await userLoginAPICall(uid, email, firstName, lastName);
-      return <Navigate to='/home' id={uid} />;
+      return <Navigate to="/home" />;
     } else {
       setServerError(true);
       setErrorText(`Internal Server Error. Please Retry.`);

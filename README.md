@@ -7,18 +7,20 @@ This project is developed by Group Status 418.
 
 ### Requirements
 
+Please ensure to follow the below steps in the order they are written in, otherwise there might be a possibility of our project's functionalities not working on your machine. 
+
 Both Server and Client side require .env file which the team 'Status 418' must have provided seperately. If you face issues accessing the same, please contact the team!
 
-You would also have to install ImageMagick on your machine to make things work as it is one of our independent technologies that we have used in our project. 
+You would also have to make sure that you have all the Microsoft's Visual Studio C++ reditributable latest packages downloaded on your machine.
+
+For reference, visit https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170
+
+Lastly, You would also have to install ImageMagick on your machine to make things work as it is one of our independent technologies that we have used in our project. 
 Below are the links to download the same:
 
 Windows: https://imagemagick.org/script/download.php#windows
 
 Mac: https://imagemagick.org/script/download.php#macosx
-
-Lastly, make sure that you have all the Microsoft's Visual Studio C++ reditributable latest packages downloaded on your machine.
-
-For reference, visit https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170 
 
 ## Available Scripts
 

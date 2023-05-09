@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useParams, useLocation, useNavigate,Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import {
 import Avatar from "@mui/material/Avatar";
 import { purple } from "@mui/material/colors";
 import SelectNanny from "./modals/SelectNanny";
+import { AuthContext } from '../firebase/Auth';
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
 import { connect } from "react-redux";
 import "../App.css";
@@ -18,6 +19,7 @@ import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
 import { selectNannyAPICall } from "../redux/jobs/jobActions";
 import Loading from "./Loading";
+import ErrorPage from '../components/ErrorPage';
 
 const Application = ({ job, selectNannyAPICall }) => {
   const navigate = useNavigate();
@@ -27,8 +29,9 @@ const Application = ({ job, selectNannyAPICall }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [errorCode, setErrorCode] = useState("");
 
-  console.log(location.state, "appID heree");
+  const { currentUser } = useContext(AuthContext);
   let application = location.state.application;
   let jobId = location.state.jobId;
 
@@ -37,15 +40,12 @@ const Application = ({ job, selectNannyAPICall }) => {
   const handleCloseSelectNanny = () => setSelectNannyModal(false);
 
   const selectNanny = async (jobId, nannyId) => {
-    console.log("something is hapenning", jobId, nannyId);
     selectNannyAPICall(jobId, nannyId);
     setSelectNannyModal(false);
     navigate(-2)
   };
 
   useEffect(() => {
-    console.log("1st use effect fired");
-    try {
       if (application) {
         setShowData(application);
         setLoading(false);
@@ -54,27 +54,42 @@ const Application = ({ job, selectNannyAPICall }) => {
         setError(true);
         setLoading(false);
       }
-    } catch (e) {
-      console.log(e);
-      setErrorMsg(e);
-      setError(true);
-      setLoading(false);
-    }
   }, []);
 
-  if (loading) {
-    return (
-      <div>
-        <Loading />
-      </div>
-    );
-  } else if (error) {
-    return (
-      <div>
-        <h2>{errorMsg}</h2>
-      </div>
-    );
-  } else {
+useEffect(() => {
+    if (job !== undefined) {
+      if (job?.error !== "") {
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }
+      if (application) {
+        setShowData(application);
+        setLoading(false);
+        setError(false);
+      } else {
+        setError(true);
+        setLoading(false);
+      }
+  }
+}, [job]);
+
+
+if (!currentUser) {
+  return <Navigate to='/' />;
+}
+if (loading) {
+  return (
+    <div>
+      <Loading />
+    </div>
+  );
+} else if (error) {
+  return (
+    <ErrorPage error={errorMsg} code={errorCode} />
+  );
+} else {
     function getEDTTimeFromISOString(dateString) {
       const date = new Date(dateString);
       const options = { timeZone: "America/New_York", hour12: true };

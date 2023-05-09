@@ -99,6 +99,8 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
     }
   }, [childId]);
 
+  console.log("jobData", jobData);
+
 
   if (!currentUser) {
     return <Navigate to='/' />;
@@ -260,7 +262,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                       marginLeft: 'auto',
                       marginRight: 'auto',
                       borderRadius: 5,
-                      boxShadow:'none'
+                      boxShadow: 'none'
                     }}
                     gutterBottom
                     variant='h6'
@@ -378,6 +380,23 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
             </Grid>
           )}
         </Grid>
+        {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>}
+        {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
+          <CreateJobModal
+            open={openCreateJobModal}
+            onClose={handleCloseCreateJob}
+            parentId={userData?.data?._id}
+            childId={childId}
+            createJob={createJob}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          />
+        ) : null}
+        {userData?.data?.profile === "PARENT" && selectedChild?.jobId && <Button variant='contained' color='primary' onClick={() => {
+          navigate("/myJob", {
+            state: { jobId: selectedChild?.jobId },
+          });
+        }} >View My Job</Button>}
       </div>
     );
   };

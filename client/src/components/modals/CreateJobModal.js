@@ -20,6 +20,7 @@ import allStates from "../../allStates";
 import { Container } from '@mui/system';
 
 const CreateJobModal = (props) => {
+  //  CONSOLE ERRORS
   const [errorText, setErrorText] = useState("");
   const [specialCare, setSpecialCare] = useState("");
   const [description, setDescription] = useState("");
@@ -227,15 +228,15 @@ const CreateJobModal = (props) => {
 
   return (
     // <React.Fragment>
-      <div className="container">
-        <Modal
-          sx={{ overflow: "scroll" }}
-          open={props.open}
-          onClose={props.onClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Container maxWidth="sm">
+    <div className="container">
+      <Modal
+        sx={{ overflow: "scroll" }}
+        open={props.open}
+        onClose={props.onClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Container maxWidth="sm">
           <Box
             sx={{
               position: "absolute",
@@ -296,7 +297,7 @@ const CreateJobModal = (props) => {
                 <FormLabel component="legend" color="secondary">
                   Pick Shift Days
                 </FormLabel>
-                <FormGroup  sx={{ display: 'flex', flexDirection: 'row' }}>
+                <FormGroup sx={{ display: 'flex', flexDirection: 'row' }}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -497,9 +498,9 @@ const CreateJobModal = (props) => {
               </Button>
             </form>
           </Box>
-          </Container>
-        </Modal>
-      </div>
+        </Container>
+      </Modal>
+    </div>
     // </React.Fragment>
   );
 };

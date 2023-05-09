@@ -20,7 +20,10 @@ import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
 
 let noImage = "noImage";
 
-const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
+const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) => {
+  // CONSOLE ERRORS
+  // LOADING MISSING
+  // ERRORS MISSING
   let { pageNum } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -33,7 +36,6 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
   let card = null;
   let pagenum = pageNum;
 
-  let items = JSON.parse(localStorage.getItem("userData"));
   //View Applicants useEffect for apiCall
   useEffect(() => {
     try {
@@ -116,7 +118,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
       else shiftDays = shiftDays + daysArr[i];
     }
     return (
-      <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
+      <Grid item xs={12} sx={{ justifyContent: "center" }}>
         <Card
           sx={{
             maxWidth: "70%",
@@ -139,20 +141,19 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
-                <div style={{ display: "flex" }}>
-                  <Typography variant="h4" color="text.secondary" paragraph>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Typography variant="h4" color="text.secondary">
                     {show.city + ", "}
                   </Typography>
                   <Typography
                     variant="h4"
                     color="text.secondary"
                     sx={{ paddingLeft: "10px" }}
-                    paragraph
                   >
                     {show.zipCode}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -167,7 +168,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
                       getEDTTimeFromISOString(show?.shifts.timeTo)}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -176,11 +177,11 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
                   >
                     Shift Days:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>
+                  <Typography color="text.secondary">
                     {shiftDays}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -189,13 +190,13 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
                   >
                     Description:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>
+                  <Typography color="text.secondary">
                     {show.description.length > 250
                       ? show.description.substring(0, 250) + " ..."
                       : show.description}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -204,7 +205,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
                   >
                     Salary:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>
+                  <Typography color="text.secondary">
                     {show.salary + " USD per week"}
                   </Typography>
                 </div>
@@ -216,7 +217,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
                 <Button
                   variant="contained"
                   onClick={() => {
-                    navigate("/job/viewJobDetails", { state: { job: show,nanny:items } });
+                    navigate("/job/viewJobDetails", { state: { job: show, nanny: userData?.data } });
                   }}
                   sx={{ bgcolor: purple[700] }}
                 >
@@ -300,6 +301,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
+    userData: state?.users,
   };
 };
 

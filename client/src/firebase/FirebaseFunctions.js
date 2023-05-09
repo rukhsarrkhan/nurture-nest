@@ -6,11 +6,9 @@ const auth = getAuth();
 async function doSignOut(error) {
     if (error !== "") {
         await firebase.auth().signOut();
-        localStorage.removeItem("userData");
         localStorage.clear();
     } else {
         await firebase.auth().signOut();
-        localStorage.removeItem("userData");
         localStorage.clear();
     }
     window.location.href = "/";

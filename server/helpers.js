@@ -8,7 +8,7 @@ const validatePhoneNumber = async (phoneNumber, fieldName) => {
 require("dotenv").config();
 
 const isCityParentValid = async (city, fieldName) => {
-    if (city.trim().length < 5) throw { statusCode: 400, message: `${fieldName} should atleast have 5 characters` };
+    if (city.trim().length < 3) throw { statusCode: 400, message: `${fieldName} should atleast have 3 characters` };
     if (!/^[a-zA-Z ]+(?:[\s-][a-zA-Z]+)*$/.test(city)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };
 
@@ -139,7 +139,7 @@ const isSpecialcareParentValid = async (specialCare, fieldName) => {
 };
 
 const isDescriptionParentValid = async (description, fieldName) => {
-    if (description.trim().length < 25) throw { statusCode: 400, message: `${fieldName} should atleast have 25 characters` };
+    if (description.trim().length < 15) throw { statusCode: 400, message: `${fieldName} should atleast have 15 characters` };
     if (description.trim().split(" ").length < 5) throw { statusCode: 400, message: `${fieldName} should atleast have 5 words` };
     if (!/^[a-zA-Z0-9 ,.'-:]+$/.test(description)) throw { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };

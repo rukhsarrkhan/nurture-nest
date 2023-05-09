@@ -159,9 +159,12 @@ const AddChildModal = (props) => {
                                     <Avatar alt="Selected Image" sx={{ width: 200, height: 200 }} variant="circular" />
                                 )}
 
-                                <input type="file" onChange={handleImageChange} accept="image/*" required />
-                                {imageError && <Typography color="error">{imageError}</Typography>}
+                                <label htmlFor="imageInput" style={{ color: "#767676" }}>
+                                    <input id="imageInput" type="file" onChange={handleImageChange} accept="image/*" required />
+                                    {imageError && <Typography color="error">{imageError}</Typography>}
+                                </label>
                             </Box>
+                            <br />
                             <TextField
                                 className="appointmentField"
                                 label="Name"

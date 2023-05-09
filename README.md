@@ -48,10 +48,6 @@ Parent side would also be able to hire nannies through the job portal.
 
 Both the parent side and nanny side would have a chat functionality to chat with each other to give instructions to the nanny or take updates from nanny. 
 
-### Database - Mongo SRV URL
-
-mongodb+srv://swarajsingpatil:Password%401@cluster0.68unpvh.mongodb.net/test
-
 ### Important Information
 
 Forget password functionality doesn't work on microsoft(outlook) accounts. Kindly use GMAIL accounts to use/test that functionality.

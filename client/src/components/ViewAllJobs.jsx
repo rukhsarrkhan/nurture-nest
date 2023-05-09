@@ -128,11 +128,11 @@ const { currentUser } = useContext(AuthContext);
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
                 <div style={{ display: "flex",alignItems: "center" }}>
-                  <Typography variant="h4" color="text.secondary" paragraph>
+                  <Typography variant="h1" color="text.secondary" paragraph>
                     {show.state + ", "}
                   </Typography>
                   <Typography
-                    variant="h4"
+                    variant="h1"
                     color="text.secondary"
                     sx={{ paddingLeft: "10px" }}
                   >
@@ -154,7 +154,7 @@ const { currentUser } = useContext(AuthContext);
                   </div>
                   <div style={{ display: "flex" }}>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="text.secondary"
                     fontWeight="bold"
                     sx={{ paddingRight: "10px" }}
@@ -175,9 +175,9 @@ const { currentUser } = useContext(AuthContext);
                     Shifts Timings:
                   </Typography>
                   <Typography color="text.secondary">
-                    {getEDTTimeFromISOString(show?.shifts.timeFrom) +
+                    {getEDTTimeFromISOString(show?.shifts?.timeFrom) +
                       "  -  " +
-                      getEDTTimeFromISOString(show?.shifts.timeTo)}
+                      getEDTTimeFromISOString(show?.shifts?.timeTo)}
                   </Typography>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>

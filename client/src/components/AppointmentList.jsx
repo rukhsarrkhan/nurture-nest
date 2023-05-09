@@ -24,7 +24,6 @@ import { AuthContext } from '../firebase/Auth';
 import ErrorPage from '../components/ErrorPage';
 
 const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall, userData }) => {
-    // NO CONSOLE ERRORS
     // LOADING MISSING
     // REMOVE PARAMS
 
@@ -36,34 +35,67 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     const [deleteId, setDeleteId] = useState('');
     const [errorText, setErrorText] = useState("");
     const [errorCode, setErrorCode] = useState("");
+    const [success, setSuccess] = useState(false);
 
     let card = null;
     let { childId } = useParams();
     let navigate = useNavigate();
 
     useEffect(() => {
+        console.log("what the hell");
+
+        if (currentUser) {
+            setLoading(false);
+            console.log("48");
+
+            getAppointmentAPICall(childId);
+            setLoading(true);
+        }
+    }, [childId]);
+
+    console.log("loading", loading);
+    console.log("errorPage", errorPage);
+
+
+    useEffect(() => {
+        console.log("hi", errorPage);
+        setErrorPage(false);
+        setSuccess(false);
+
+
         if (appointmentData !== undefined) {
+            console.log("appointmentData?", appointmentData?.data?.length);
+
+            setLoading(false);
             if (appointmentData?.error !== "") {
+                console.log("appointmentData?.error", appointmentData?.error);
+                // setLoading(false);
                 setErrorPage(true);
                 setErrorText(appointmentData?.error);
                 setErrorCode(appointmentData?.code);
+            } else {
+                console.log("------");
+                if (appointmentData?.data?.length === 0) {
+                    console.log("WHY");
+                    getAppointmentAPICall(childId);
+                }
             }
         }
     }, [appointmentData]);
 
-    useEffect(() => {
-        getAppointmentAPICall(childId);
-        setLoading(true);
-    }, [childId]);
-
     const handleOpen = () => { setOpen(true); };
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const handleOpen2 = (id) => {
         setDeleteId(id);
         setOpen2(true);
     };
-    const handleClose2 = () => setOpen2(false);
+
+    const handleClose2 = async () => {
+        setOpen2(false);
+    };
 
 
     const addAppointment = async (obj) => {
@@ -73,8 +105,12 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
     const deleteAppointment = async (appointmentId) => {
         await delAppointmentAPICall(appointmentId);
+        console.log("√", appointmentData?.error);
+
+        console.log("√", errorPage);
+        console.log("appointmentData?", appointmentData?.data?.length);
+
         setOpen2(false);
-        await getAppointmentAPICall(childId);
     };
 
     const buildCard = (appointments) => {
@@ -135,6 +171,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
             </div>
         );
     } else if (errorPage) {
+        console.log("errorPage", errorPage);
         return (
             <div>
                 <ErrorPage error={errorText} code={errorCode} />

@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { connect } from 'react-redux';
-import '../App.css';
-import { Button } from '@mui/material';
-import { Link, useParams, Navigate, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../firebase/Auth';
+import React, { useState, useEffect, useContext } from "react";
+import { connect } from "react-redux";
+import "../App.css";
+import { Button } from "@mui/material";
+import { Link, useParams, Navigate, useNavigate } from "react-router-dom";
+import { AuthContext } from "../firebase/Auth";
 import { createJobAPICall } from "../redux/jobs/jobActions";
+import { fetchChildrenAPICall } from "../redux/child/childActions";
+
 import CreateJobModal from "./modals/CreateJobModal";
 import {
   CardActions,
@@ -14,19 +16,27 @@ import {
   Grid,
   Typography,
   Avatar,
-  Box
-} from '@mui/material';
-import { getDashboardAPICall } from '../redux/dashboard/dashboardActions';
-import { getMyJobAPICall } from '../redux/jobs/jobActions';
-import mealPlanImage from '../img/MealPlan.jpg';
-import vaccineImage from '../img/vaccineimage.png';
-import nannyImage from '../img/nanny.png';
-import appointmentImage from '../img/appointmentImage.png';
-import Loading from './Loading';
-import ErrorPage from '../components/ErrorPage';
+  Box,
+} from "@mui/material";
+import { getDashboardAPICall } from "../redux/dashboard/dashboardActions";
+import { getMyJobAPICall } from "../redux/jobs/jobActions";
+import mealPlanImage from "../img/MealPlan.jpg";
+import vaccineImage from "../img/vaccineimage.png";
+import nannyImage from "../img/nanny.png";
+import appointmentImage from "../img/appointmentImage.png";
+import Loading from "./Loading";
+import ErrorPage from "../components/ErrorPage";
 
-
-const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userData, childData, jobData, getMyJobAPICall }) => {
+const Dashboard = ({
+  getDashboardAPICall,
+  createJobAPICall,
+  dashboardData,
+  userData,
+  childData,
+  jobData,
+  getMyJobAPICall,
+  fetchChildrenAPICall
+}) => {
   // NO CONSOLE ERRORS
   // LOADING MISSING
   // ERRORS MISSING
@@ -46,14 +56,18 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
   let navigate = useNavigate();
 
   useEffect(() => {
+    console.log('hey');
     if (childData?.childObjs) {
-      const childSelected = childData?.childObjs.find(obj => obj._id === childId);
+      const childSelected = childData?.childObjs.find(
+        (obj) => obj._id === childId
+      );
       setSelectedChild(childSelected);
-      if (childSelected?.jobId) {
+      console.log('hey', childSelected?.jobId);
+      if (childSelected?.jobId && childSelected?.jobId === null && childSelected?.jobId === "") {
         getMyJobAPICall(childSelected?.jobId);
       }
     }
-  }, [childData]);
+  }, [childData, jobData]);
 
   useEffect(() => {
     if (userData !== undefined) {
@@ -70,7 +84,21 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
         setErrorCode(dashboardData?.code);
       }
     }
-  }, [userData, dashboardData]);
+    if (childData !== undefined) {
+      if (childData?.error !== "" && childData?.error !== undefined) {
+        setErrorPage(true);
+        setErrorText(childData?.error);
+        setErrorCode(childData?.code);
+      }
+    }
+    if (jobData !== undefined) {
+      if (jobData?.error !== "" && jobData?.error !== undefined) {
+        setErrorPage(true);
+        setErrorText(jobData?.error);
+        setErrorCode(jobData?.code);
+      }
+    }
+  }, [userData, dashboardData, childData, jobData]);
 
   const handleOpenCreateJob = () => setOpenCreateJobModal(true);
   const handleCloseCreateJob = () => setOpenCreateJobModal(false);
@@ -78,6 +106,8 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
   const createJob = async (data, parentId, childId) => {
     await createJobAPICall(data, parentId, childId);
     handleCloseCreateJob();
+    getMyJobAPICall(selectedChild?.jobId);
+
     navigate("/myJob", {
       state: { jobId: selectedChild?.jobId, childId: selectedChild?._id },
     });
@@ -101,9 +131,8 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
 
   console.log("jobData", jobData);
 
-
   if (!currentUser) {
-    return <Navigate to='/' />;
+    return <Navigate to="/" />;
   }
 
   if (loading) {
@@ -123,44 +152,60 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
       <div>
         <br />
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Avatar
             src={selectedChild?.photoUrl}
-            alt='Child Avatar'
+            alt="Child Avatar"
             sx={{
               width: 64,
               height: 64,
-              marginRight: 2
+              marginRight: 2,
             }}
           />
           <h1>{selectedChild?.name}</h1>
         </div>
         <br />
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Button
             variant="contained"
-            onClick={() => { navigate(-1); }}
+            onClick={() => {
+              navigate(-1);
+            }}
             sx={{
-              marginRight: '10px',
-              padding: '10px 20px'
+              marginRight: "10px",
+              padding: "10px 20px",
             }}
           >
             Back
           </Button>
-          {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && (
+          {userData?.data?.profile === "PARENT" && !(selectedChild?.jobId) && (
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               onClick={handleOpenCreateJob}
               sx={{
-                marginLeft: '10px',
-                padding: '10px 20px'
+                marginLeft: "10px",
+                padding: "10px 20px",
               }}
             >
               Create Job
             </Button>
           )}
-          {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
+          {userData?.data?.profile === "PARENT" &&
+            !selectedChild?.jobId &&
+            openCreateJobModal ? (
             <CreateJobModal
               open={openCreateJobModal}
               onClose={handleCloseCreateJob}
@@ -173,16 +218,19 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
           ) : null}
           {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
             <Button
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               onClick={() => {
                 navigate("/myJob", {
-                  state: { jobId: selectedChild?.jobId, childId: selectedChild?._id },
+                  state: {
+                    jobId: selectedChild?.jobId,
+                    childId: selectedChild?._id,
+                  },
                 });
               }}
               sx={{
-                marginLeft: '10px',
-                padding: '10px 20px'
+                marginLeft: "10px",
+                padding: "10px 20px",
               }}
             >
               View My Job
@@ -197,88 +245,100 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                 <CardMedia
                   sx={{
                     maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
+                    height: "auto",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                     borderRadius: 5,
-                    boxShadow:
-                      'none'
+                    boxShadow: "none",
                   }}
-                  component='img'
+                  component="img"
                   image={mealPlanImage}
-                  title='Meal Requirements'
+                  title="Meal Requirements"
                 />
                 <CardContent>
                   <Typography
                     sx={{
                       maxWidth: 345,
-                      height: 'auto',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
+                      height: "auto",
+                      marginLeft: "auto",
+                      marginRight: "auto",
                       borderRadius: 5,
-                      border: '1px solid #080a33',
-                      boxShadow: 'none'
+                      border: "1px solid #080a33",
+                      boxShadow: "none",
                     }}
                     gutterBottom
-                    variant='h6'
-                    component='h1'
+                    variant="h6"
+                    component="h1"
                   >
                     {"Daily Meal Plans"}
                   </Typography>
-                  <Typography variant='body2' color='textSecondary' component='p'>
-                    {selectedChild?.mealRequirements && selectedChild?.mealRequirements[0]?.meal
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {selectedChild?.mealRequirements &&
+                      selectedChild?.mealRequirements[0]?.meal
                       ? selectedChild?.mealRequirements[0]?.meal
-                      : 'No data to display'}
+                      : "No data to display"}
                     <br></br>
                     {"Click to view Details"}
                   </Typography>
-                  <dl>
-                  </dl>
+                  <dl></dl>
                 </CardContent>
               </Link>
             </CardActionArea>
           </Grid>
-          <Grid item xs={12} sm={7} md={5} lg={4} xl={3} >
-            <CardActionArea sx={{ transition: 'none' }}>
+          <Grid item xs={12} sm={7} md={5} lg={4} xl={3}>
+            <CardActionArea sx={{ transition: "none" }}>
               <Link to={`/vaccine/${selectedChild?._id?.toString()}`}>
                 <CardMedia
                   sx={{
                     maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
+                    height: "auto",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                     borderRadius: 5,
-                    boxShadow: 'none'
+                    boxShadow: "none",
                   }}
-                  component='img'
+                  component="img"
                   image={vaccineImage}
-                  title='Vaccines'
+                  title="Vaccines"
                 />
                 <CardContent>
                   <Typography
                     sx={{
                       maxWidth: 345,
-                      height: 'auto',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
+                      height: "auto",
+                      marginLeft: "auto",
+                      marginRight: "auto",
                       borderRadius: 5,
-                      boxShadow: 'none'
+                      boxShadow: "none",
                     }}
                     gutterBottom
-                    variant='h6'
-                    component='h1'
+                    variant="h6"
+                    component="h1"
                   >
                     {"Vaccines"}
                   </Typography>
-                  <Typography variant='body2' color='textSecondary' component='p'>
-                    {selectedChild && selectedChild?.vaccine && selectedChild?.vaccine[0] && selectedChild?.vaccine[0]?.name && selectedChild?.vaccine[0]?.date
-                      ? selectedChild?.vaccine[0]?.name + " due on " + selectedChild?.vaccine[0]?.date
-                      : 'No data to display'}
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {selectedChild &&
+                      selectedChild?.vaccine &&
+                      selectedChild?.vaccine[0] &&
+                      selectedChild?.vaccine[0]?.name &&
+                      selectedChild?.vaccine[0]?.date
+                      ? selectedChild?.vaccine[0]?.name +
+                      " due on " +
+                      selectedChild?.vaccine[0]?.date
+                      : "No data to display"}
                     <br></br>
                     {"Click to view details"}
                   </Typography>
-                  <dl>
-                  </dl>
+                  <dl></dl>
                 </CardContent>
               </Link>
             </CardActionArea>
@@ -289,42 +349,49 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                 <CardMedia
                   sx={{
                     maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
+                    height: "auto",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                     borderRadius: 5,
-                    boxShadow: 'none'
+                    boxShadow: "none",
                   }}
-                  component='img'
+                  component="img"
                   image={appointmentImage}
-                  title='Appointments'
+                  title="Appointments"
                 />
                 <CardContent>
                   <Typography
                     sx={{
                       maxWidth: 345,
-                      height: 'auto',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
+                      height: "auto",
+                      marginLeft: "auto",
+                      marginRight: "auto",
                       borderRadius: 5,
-                      border: '1px solid #080a33',
-                      boxShadow: 'none'
+                      border: "1px solid #080a33",
+                      boxShadow: "none",
                     }}
                     gutterBottom
-                    variant='h6'
-                    component='h1'
+                    variant="h6"
+                    component="h1"
                   >
                     {"Doctor Appointments"}
                   </Typography>
-                  <Typography variant='body2' color='textSecondary' component='p'>
-                    {selectedChild && selectedChild?.appointments && selectedChild?.appointments[0]
-                      ? selectedChild?.appointments[0]?.date + " : " + selectedChild?.appointments[0]?.doctor
-                      : 'No data to display'}
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {selectedChild &&
+                      selectedChild?.appointments &&
+                      selectedChild?.appointments[0]
+                      ? selectedChild?.appointments[0]?.date +
+                      " : " +
+                      selectedChild?.appointments[0]?.doctor
+                      : "No data to display"}
                     <br></br>
                     {"Click to view details"}
                   </Typography>
-                  <dl>
-                  </dl>
+                  <dl></dl>
                 </CardContent>
               </Link>
             </CardActionArea>
@@ -335,53 +402,67 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                 <CardMedia
                   sx={{
                     maxWidth: 345,
-                    height: 'auto',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
+                    height: "auto",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                     borderRadius: 5,
-                    boxShadow: 'none'
+                    boxShadow: "none",
                   }}
-                  component='img'
-                  height='200'
-                  alt=''
-                  image={dashboardData && dashboardData.data && dashboardData.data.nannyPhotoUrl
-                    ? dashboardData.data.nannyPhotoUrl
-                    : nannyImage
+                  component="img"
+                  height="200"
+                  alt=""
+                  image={
+                    dashboardData &&
+                      dashboardData.data &&
+                      dashboardData.data.nannyPhotoUrl
+                      ? dashboardData.data.nannyPhotoUrl
+                      : nannyImage
                   }
-                  title='Nanny Details'
+                  title="Nanny Details"
                 />
                 <CardContent>
                   <Typography
                     sx={{
                       maxWidth: 345,
-                      height: 'auto',
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
+                      height: "auto",
+                      marginLeft: "auto",
+                      marginRight: "auto",
                       borderRadius: 5,
-                      border: '1px solid #080a33',
-                      boxShadow: 'none'
+                      border: "1px solid #080a33",
+                      boxShadow: "none",
                     }}
                     gutterBottom
-                    variant='h6'
-                    component='h1'
+                    variant="h6"
+                    component="h1"
                   >
                     {"Nanny Details"}
                   </Typography>
-                  <Typography variant='body2' color='textSecondary' component='p'>
-                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  ></Typography>
                 </CardContent>
               </CardActionArea>
-              <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant='contained' color='primary' onClick={() => { navigate(`/nanny/${jobData?.data?.nannyId}`, { state: { childId: selectedChild?._id } }); }}>
-
+              <CardActions sx={{ display: "flex", justifyContent: "center" }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    navigate(`/nanny/${jobData?.data?.nannyId}`, {
+                      state: { childId: selectedChild?._id },
+                    });
+                  }}
+                >
                   View Nanny Details
                 </Button>
               </CardActions>
             </Grid>
           )}
         </Grid>
-        {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && <Button variant='contained' color='primary' onClick={handleOpenCreateJob} >Create Job</Button>}
-        {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
+        {userData?.data?.profile === "PARENT" &&
+          !selectedChild?.jobId &&
+          openCreateJobModal ? (
           <CreateJobModal
             open={openCreateJobModal}
             onClose={handleCloseCreateJob}
@@ -392,37 +473,29 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
             aria-describedby="modal-modal-description"
           />
         ) : null}
-        {userData?.data?.profile === "PARENT" && selectedChild?.jobId && <Button variant='contained' color='primary' onClick={() => {
-          navigate("/myJob", {
-            state: { jobId: selectedChild?.jobId },
-          });
-        }} >View My Job</Button>}
+
       </div>
     );
-  };
+  }
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     dashboardData: state?.dashboard,
     job: state?.jobs,
     userData: state.users,
     childData: state.child,
     jobData: state.jobs,
-
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     getDashboardAPICall: (nannyId) => dispatch(getDashboardAPICall(nannyId)),
-    createJobAPICall: (data, parentId, childId) => dispatch(createJobAPICall(data, parentId, childId)),
+    createJobAPICall: (data, parentId, childId) =>
+      dispatch(createJobAPICall(data, parentId, childId)),
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
-
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

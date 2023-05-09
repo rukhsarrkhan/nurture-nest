@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Navigate,Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -68,11 +68,12 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
   useEffect(() => {
     if (job !== undefined) {
       if (job?.error !== "") {
-          setError(true);
-          setErrorMsg(job?.error);
-          setErrorCode(job?.code);
-          setLoading(false)
-      }}
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false);
+      }
+    }
   }, [job]);
 
 

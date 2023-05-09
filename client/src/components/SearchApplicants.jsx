@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 
 const SearchApplicants = (props) => {
+  // EVERYTHING DONE
+
   const [searchInput, setSearchInput] = React.useState("");
 
   const handleSearch = (e) => {

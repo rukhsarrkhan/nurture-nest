@@ -4,6 +4,8 @@ import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 
 const SearchJobs = (props) => {
+  // THIS FILE NEEDS TO BE DELETED
+
   const [searchInput, setSearchInput] = React.useState("");
 
   const handleSearch = (e) => {

@@ -215,7 +215,10 @@ router
 
 router
     .route("/appointment/:childId")
+    // return res.status(400).json({ title: "Error", message: "Error" });
+
     .get(async (req, res) => {
+
         childId = req.params.childId;
         try {
             childId = await helper.execValdnAndTrim(childId, "Child Id");
@@ -288,23 +291,26 @@ router.route("/vaccine/:vaccineId").delete(async (req, res) => {
     //code here for DELETE
 });
 
-router.route("/appointment/:appointmentId").delete(async (req, res) => {
-    const appointmentId = req.params.appointmentId;
-    try {
-        await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
-        if (!ObjectId.isValid(appointmentId)) {
-            throw { statusCode: 400, message: "Appointment Id is not valid" };
+router.route("/appointment/:appointmentId")
+    .delete(async (req, res) => {
+        return res.status(400).json({ title: "Error", message: "Error" });
+
+        const appointmentId = req.params.appointmentId;
+        try {
+            await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
+            if (!ObjectId.isValid(appointmentId)) {
+                throw { statusCode: 400, message: "Appointment Id is not valid" };
+            }
+        } catch (e) {
+            return res.status(400).json({ error: e });
         }
-    } catch (e) {
-        return res.status(400).json({ error: e });
-    }
-    try {
-        const removedAppointment = await childCollection.removeAppointment(appointmentId);
-        return res.status(200).json(removedAppointment);
-    } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
-    }
-});
+        try {
+            const removedAppointment = await childCollection.removeAppointment(appointmentId);
+            return res.status(200).json(removedAppointment);
+        } catch (e) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        }
+    });
 
 router
     .route("/mealplan/:childId")

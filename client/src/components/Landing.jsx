@@ -4,6 +4,8 @@ import { AuthContext } from "../firebase/Auth";
 import { Navigate } from "react-router-dom";
 
 const Landing = () => {
+    // EVERYTHING DONE
+
     const { currentUser } = useContext(AuthContext);
     if (currentUser) {
         return <Navigate to="/home" />;

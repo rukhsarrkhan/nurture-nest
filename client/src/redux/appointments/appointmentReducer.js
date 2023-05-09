@@ -24,7 +24,10 @@ export const appointmentReducer = (state = initialState, action) => {
     case SET_APPOINTMENT_TRIGGER:
       return {
         ...state,
-        data: []
+        data: [],
+        error: "",
+        code: "",
+        status: "",
       };
     case GET_APPOINTMENT_SUCCESS:
       return {
@@ -32,6 +35,7 @@ export const appointmentReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case GET_APPOINTMENT_FAILURE:
       return {
@@ -45,6 +49,7 @@ export const appointmentReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SET_APPOINTMENT_FAILURE:
       return {
@@ -58,6 +63,7 @@ export const appointmentReducer = (state = initialState, action) => {
         deleteSuccess: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case APPOINTMENT_DELETE_FAILURE:
       return {

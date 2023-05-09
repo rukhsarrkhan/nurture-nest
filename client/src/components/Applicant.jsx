@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams, useLocation, useNavigate,Navigate } from "react-router-dom";
+import { Link, useParams, useLocation, useNavigate, Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -21,10 +21,11 @@ import { selectNannyAPICall } from "../redux/jobs/jobActions";
 import Loading from "./Loading";
 import ErrorPage from '../components/ErrorPage';
 
-const Application = ({ job, selectNannyAPICall }) => {
+const Applicant = ({ job, selectNannyAPICall }) => {
+  // EVERYTHING DONE
+  // CHECK QUESTION MARKS
   const navigate = useNavigate();
   const location = useLocation();
-  // console.log(props, "yaha dekhleee")
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
@@ -32,8 +33,8 @@ const Application = ({ job, selectNannyAPICall }) => {
   const [errorCode, setErrorCode] = useState("");
 
   const { currentUser } = useContext(AuthContext);
-  let application = location.state.application;
-  let jobId = location.state.jobId;
+  let application = location?.state?.application || null;
+  let jobId = location?.state?.jobId;
 
   const [selectNannyModal, setSelectNannyModal] = React.useState(false);
   const handleOpenSelectNanny = () => setSelectNannyModal(true);
@@ -41,28 +42,30 @@ const Application = ({ job, selectNannyAPICall }) => {
 
   const selectNanny = async (jobId, nannyId) => {
     selectNannyAPICall(jobId, nannyId);
+    setLoading(true);
     setSelectNannyModal(false);
-    navigate(-2)
+    navigate(-2);
   };
 
   useEffect(() => {
-      if (application) {
-        setShowData(application);
-        setLoading(false);
-        setError(false);
-      } else {
-        setError(true);
-        setLoading(false);
-      }
-  }, []);
+    if (application !== null) {
+      setShowData(application);
+      setLoading(false);
+      setError(false);
+    } else {
+      setError(true);
+      setLoading(false);
+    }
+  }, [application]);
 
-useEffect(() => {
+  useEffect(() => {
+    setError(false);
     if (job !== undefined) {
       if (job?.error !== "") {
-          setError(true);
-          setErrorMsg(job?.error);
-          setErrorCode(job?.code);
-          setLoading(false)
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false);
       }
       if (application) {
         setShowData(application);
@@ -72,24 +75,24 @@ useEffect(() => {
         setError(true);
         setLoading(false);
       }
+    }
+  }, [job]);
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
   }
-}, [job]);
 
-
-if (!currentUser) {
-  return <Navigate to='/' />;
-}
-if (loading) {
-  return (
-    <div>
-      <Loading />
-    </div>
-  );
-} else if (error) {
-  return (
-    <ErrorPage error={errorMsg} code={errorCode} />
-  );
-} else {
+  if (loading) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  } else if (error) {
+    return (
+      <ErrorPage error={errorMsg} code={errorCode} />
+    );
+  } else {
     function getEDTTimeFromISOString(dateString) {
       const date = new Date(dateString);
       const options = { timeZone: "America/New_York", hour12: true };
@@ -257,6 +260,6 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Application);
+export default connect(mapStateToProps, mapDispatchToProps)(Applicant);
 
 // export default Application;

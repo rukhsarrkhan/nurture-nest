@@ -271,7 +271,7 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
         return res.json(nannyJobSet);
     } catch (e) {
         // throw e.message
-        return res.status(400).json({ error: e });
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
 });
 

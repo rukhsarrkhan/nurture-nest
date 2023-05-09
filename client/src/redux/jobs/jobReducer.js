@@ -33,7 +33,7 @@ const initialState = {
   jobsData: {},
   myAppliedJobs: [],
   error: "",
-  code:"",
+  code: "",
   status: "",
 };
 
@@ -47,17 +47,21 @@ export const jobReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case CREATE_JOB_FALIURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case DELETE_JOB_SUCCESS:
       return {
         ...state,
-        error: "",
         status: payload,
+        error: "",
+        status: "OK",
+        code: "",
       };
     case DELETE_JOB_FALIURE:
       return {
@@ -71,6 +75,7 @@ export const jobReducer = (state = initialState, action) => {
         applicantsData: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SHOW_ALL_APPLICANTS_FAILURE:
       return {
@@ -84,6 +89,7 @@ export const jobReducer = (state = initialState, action) => {
         applicantsData: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SEARCH_APPLICANTS_FAILURE:
       return {
@@ -97,11 +103,13 @@ export const jobReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SELECT_NANNY_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case GET_MY_JOB_SUCCESS:
       return {
@@ -109,11 +117,13 @@ export const jobReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case GET_MY_JOB_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case GET_ALL_JOBS_SUCCESS:
       return {
@@ -121,6 +131,7 @@ export const jobReducer = (state = initialState, action) => {
         jobsData: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case GET_ALL_JOBS_FAILURE:
       return {
@@ -134,6 +145,7 @@ export const jobReducer = (state = initialState, action) => {
         jobsData: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SEARCH_JOBS_FAILURE:
       return {
@@ -147,11 +159,13 @@ export const jobReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case APPLY_TO_JOB_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SEARCH_INITIATE:
       return {
@@ -165,33 +179,39 @@ export const jobReducer = (state = initialState, action) => {
         myAppliedJobs: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case VIEW_ALL_MY_APPLIED_JOBS_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case EXIT_JOB_SUCCESS:
       return {
         ...state,
         error: "",
         status: payload,
+        code: "",
       };
     case EXIT_JOB_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
-      case FIRE_NANNY_SUCCESS:
+    case FIRE_NANNY_SUCCESS:
       return {
         ...state,
         error: "",
+        code: "",
         status: payload,
       };
     case FIRE_NANNY_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     default:
       return state;

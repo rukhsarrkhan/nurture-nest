@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-
+import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
+import { Navigate } from "react-router-dom";
 import "../../App.css";
 import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
 import helpers from "../../helpers";
@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
 import ErrorPage from "../../components/ErrorPage";
+import { AuthContext } from '../../firebase/Auth';
 
 const sexes = [
     {
@@ -32,6 +33,9 @@ const sexes = [
 ];
 
 const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updateProfileImageAPICall }) => {
+    // EVERYTHING DONE
+    // CHECK QUESTION MARKS
+    const { currentUser } = useContext(AuthContext);
     const [userObjData, setuserObjData] = useState(userData?.data);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
@@ -96,6 +100,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         formData.append("image", imageFile);
 
         await updateProfileImageAPICall(userId, formData);
+        setLoading(true);
         // const response = await axios.put("http://localhost:3000/users/image", formData);
         setDisableSave(false);
     };
@@ -118,11 +123,14 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const setUserProfileAPICallMemo = useMemo(() => {
         return () => {
             setUserProfileAPICall(userId);
+            setLoading(true);
         };
     }, [userId, setUserProfileAPICall]);
 
     useEffect(() => {
-        setUserProfileAPICallMemo();
+        if (currentUser) {
+            setUserProfileAPICallMemo();
+        }
     }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
@@ -245,8 +253,8 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 if (userObjData.sex !== sex) newObj.sex = sex;
 
                 if (Object.keys(newObj).length > 0) {
-                    console.log("newObj", newObj);
                     await updateUserAPICall(userId, newObj);
+                    setLoading(true);
                     setDisableSave(false);
                 } else {
                     alert("No fields were changed to save");
@@ -256,6 +264,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         }
         setEditMode(!editMode);
     };
+
+    if (!currentUser) {
+        return <Navigate to='/' />;
+    }
 
     if (loading) {
         return (

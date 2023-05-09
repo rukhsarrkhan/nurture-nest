@@ -59,7 +59,7 @@ const SetProfile = ({ updateUserAPICall, userData, setUserProfileAPICall }) => {
 
     useEffect(() => {
         if (userObjData) {
-            if (userObjData?.profile !== null && userObjData?.profile !== undefined && userObjData?.profile !== "") {
+            if (userObjData?.data !== null && userObjData?.data !== undefined && userObjData?.data !== "") {
                 setProileSelected(true);
             }
         }

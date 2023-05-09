@@ -198,7 +198,7 @@ router
             await helper.execValdnAndTrim(postVaccine.doses, "Doses");
             await helper.onlyNumbers(postVaccine.doses, "doses");
         } catch (e) {
-            return res.status(400).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
 
         try {

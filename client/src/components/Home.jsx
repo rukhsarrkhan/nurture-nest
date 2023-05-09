@@ -11,10 +11,12 @@ import AddChildModal from "./modals/AddChildModal";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
-import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
-const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
+const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
+    // NO CONSOLE ERRORS
+    // LOADING MISSING
+    // ERRORS MISSING
     const [userObjData, setuserObjData] = useState(userData?.data);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,8 +26,8 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
     const [open2, setOpen2] = useState(false);
     const [deleteId, setDeleteId] = useState("");
     const [redirectProfile, setRedirectProfile] = useState(false);
-
     let card = null;
+
     const { currentUser } = useContext(AuthContext);
     console.log(currentUser, " Current user in home");
 
@@ -48,7 +50,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
     }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
-        if (userData?.data) {
+        if (userData?.data && currentUser) {
             setuserObjData(userData?.data);
             fetchChildrenAPICall(userData?.data?._id);
         }
@@ -62,18 +64,11 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
             }
         }
     }, [userObjData]);
+
     useEffect(() => {
         setChildObjArr(childData);
         setLoading(false);
     }, [childData]);
-
-    if (!currentUser) {
-        return <Navigate to="/" />;
-    }
-
-    if (redirectProfile) {
-        return <Navigate to="/setProfile" />;
-    }
 
     const buildCard = (child) => {
         return (
@@ -167,6 +162,7 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
         setDeleteId(id);
         setOpen2(true);
     };
+
     const handleClose2 = () => setOpen2(false);
 
     const deleteChild = async (childId) => {
@@ -175,8 +171,16 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
         await fetchChildrenAPICall(id);
     };
 
+    const handleAddChildClick = () => {
+        setModalOpen(true);
+    };
+
     if (!currentUser) {
         return <Navigate to="/" />;
+    }
+
+    if (redirectProfile) {
+        return <Navigate to="/setProfile" />;
     }
 
     if (loading) {
@@ -188,9 +192,6 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
     } else if (error) {
         return <div>Error here</div>;
     } else {
-        const handleAddChildClick = () => {
-            setModalOpen(true);
-        };
         return (
             <div>
                 <br />
@@ -202,8 +203,21 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                 <br />
                 <br />
                 {childObjArr.length === 0 ? (
-                    <Typography variant="h1" component="h2">
-                        No children found
+                    <Typography
+                        variant="p"
+                        component="p"
+                        sx={{
+                            backgroundColor: "#fcebeb",
+                            color: "#333",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)",
+                            marginBottom: "20px",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                        }}
+                    >
+                        No children have been assigned to this nanny yet.
                     </Typography>
                 ) : (
                     <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
@@ -220,7 +234,6 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                         aria-describedby="modal-modal-description"
                     />
                 )}
-
                 {open2 && (
                     <DeleteChildModal
                         open={open2}
@@ -237,7 +250,6 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
 };
 
 const mapStateToProps = (state) => {
-    console.log(state, " State here");
     return {
         userData: state.users,
         childData: state.child.childObjs,
@@ -246,7 +258,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
         createChildAPICall: (obj) => dispatch(createChildAPICall(obj)),
         fetchChildrenAPICall: (id) => dispatch(fetchChildrenAPICall(id)),
         deleteChilDAPICall: (childId, obj) => dispatch(deleteChilDAPICall(childId, obj)),

@@ -78,9 +78,9 @@ export const NavBtn = styled.nav`
 
 export const ProfileBtn = styled.button`
   border-radius: 50px;
-  background: #f1c40f;
+  background: #8f7300;
   padding: 10px 22px;
-  color: #2c3e50;
+  color: #fffefd;
   outline: none;
   border: none;
   cursor: pointer;
@@ -92,7 +92,7 @@ export const ProfileBtn = styled.button`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #2c3e50;
-    color: #ffffff;
+    color: #fffefd;
   }
   @media screen and (max-width: 768px) {
     margin-left: 0;

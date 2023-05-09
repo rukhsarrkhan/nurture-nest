@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   data: {},
   error: "",
+  code: "",
   status: "",
 };
 
@@ -26,7 +27,8 @@ export const dashboardReducer = (state = initialState, action) => {
     case GET_DASHBOARD_FAILURE:
       return {
         ...state,
-        error: payload?.response?.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SET_DASHBOARD_SUCCESS:
       return {
@@ -38,7 +40,8 @@ export const dashboardReducer = (state = initialState, action) => {
     case SET_DASHBOARD_FAILURE:
       return {
         ...state,
-        error: payload?.response?.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     default:
       return state;

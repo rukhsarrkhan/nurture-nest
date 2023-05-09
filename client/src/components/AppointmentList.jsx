@@ -23,13 +23,12 @@ import Loading from './Loading';
 import { AuthContext } from '../firebase/Auth';
 import ErrorPage from '../components/ErrorPage';
 
-const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall }) => {
-    let navigate = useNavigate();
+const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall, userData }) => {
+    // NO CONSOLE ERRORS
+    // LOADING MISSING
+    // REMOVE PARAMS
+
     const { currentUser } = useContext(AuthContext);
-    let card = null;
-    let { childId } = useParams();
-    let items = JSON.parse(localStorage.getItem('userData'));
-    let profile = items?.profile;
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -38,14 +37,9 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     const [errorText, setErrorText] = useState("");
     const [errorCode, setErrorCode] = useState("");
 
-    const handleOpen = () => { setOpen(true); };
-    const handleClose = () => setOpen(false);
-
-    const handleOpen2 = (id) => {
-        setDeleteId(id);
-        setOpen2(true);
-    };
-    const handleClose2 = () => setOpen2(false);
+    let card = null;
+    let { childId } = useParams();
+    let navigate = useNavigate();
 
     useEffect(() => {
         if (appointmentData !== undefined) {
@@ -61,6 +55,16 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
         getAppointmentAPICall(childId);
         setLoading(false);
     }, [childId]);
+
+    const handleOpen = () => { setOpen(true); };
+    const handleClose = () => setOpen(false);
+
+    const handleOpen2 = (id) => {
+        setDeleteId(id);
+        setOpen2(true);
+    };
+    const handleClose2 = () => setOpen2(false);
+
 
     const addAppointment = async (obj) => {
         await appointmentSetAPICall(obj, childId);
@@ -94,23 +98,21 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                     <CardMedia
                         component="img"
                         height="194"
+                        alt='Appointment'
                         image={image}
                     />
                     <CardActions disableSpacing>
-
-                        {profile === "PARENT" ? (
+                        {userData?.data?.profile === "PARENT" ? (
                             <IconButton onClick={() => handleOpen2(appointments && appointments?._id)} color='textSecondary' aria-label="Delete Vaccine">
                                 <DeleteIcon />
                             </IconButton>
                         ) : null}
-
                     </CardActions>
                 </Card>
             </Grid >
 
         );
     };
-
 
     card =
         appointmentData &&
@@ -143,7 +145,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
             <div>
                 <div>
                     <br />
-                    {profile === "PARENT" ? (
+                    {userData?.data?.profile === "PARENT" ? (
                         <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
                             Add Appointment
                         </Button>
@@ -162,7 +164,6 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                         }}
                     >
                         {card}
-
                     </Grid>
 
                     {open2 && <DeleteAppointmentModal
@@ -192,8 +193,8 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 const mapStateToProps = state => {
     return {
         userData: state?.users,
-        appointmentData: state?.appointments
-
+        appointmentData: state?.appointments,
+        userData: state?.users,
     };
 };
 

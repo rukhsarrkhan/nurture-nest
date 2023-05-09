@@ -17,8 +17,8 @@ const initialState = {
     loading: false,
     data: {},
     error: "",
+    code: "",
     status: "",
-    userProfile: null,
     userId: "",
     code: "",
 };
@@ -39,7 +39,6 @@ export const userReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
-                userProfile: payload,
             };
         case USER_LOGIN_FALIURE:
             doSignOut(payload?.response?.data?.message);

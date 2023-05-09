@@ -29,7 +29,7 @@ import {
 const initialState = {
   loading: false,
   data: {},
-  applicantsData: [],
+  applicantsData: {},
   jobsData: {},
   myAppliedJobs: [],
   error: "",

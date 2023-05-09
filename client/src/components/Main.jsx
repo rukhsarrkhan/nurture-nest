@@ -11,7 +11,6 @@ import Dashboard from "../components/Dashboard";
 import MealList from "../components/MealList";
 import VaccineList from "../components/VaccineList";
 import AppointmentList from "../components/AppointmentList";
-import CreateJob from "../components/CreateJob";
 import ChatPage from "./ChatPage";
 import Navbar from "../components/Navbar";
 import Home from "../components/Home";
@@ -55,7 +54,6 @@ const Main = ({ userData }) => {
                     <Route path="/chat" element={<ChatPage socket={socket} />} />
                     <Route path="/job/allApplicantions/:pageNum" element={<AllApplicants />} /> // can this not be /allApplicantions - SWARAJ
                     <Route path="/job/applications/viewApplication" element={<Applicant />} /> // can this not be /viewApplication - SWARAJ
-                    <Route path="/createJob" element={<CreateJob />} />
                     <Route path="/myJob" element={<MyJob />} />
                     <Route path="/job/viewAllJobs/:pageNum" element={<ViewAllJobs />} />
                     <Route path="/job/viewJobDetails" element={<ViewJobDetails />} />

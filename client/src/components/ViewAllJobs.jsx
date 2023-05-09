@@ -175,9 +175,9 @@ const { currentUser } = useContext(AuthContext);
                     Shifts Timings:
                   </Typography>
                   <Typography color="text.secondary">
-                    {getEDTTimeFromISOString(show?.shifts.timeFrom) +
+                    {getEDTTimeFromISOString(show?.shifts?.timeFrom) +
                       "  -  " +
-                      getEDTTimeFromISOString(show?.shifts.timeTo)}
+                      getEDTTimeFromISOString(show?.shifts?.timeTo)}
                   </Typography>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>

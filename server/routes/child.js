@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const data = require("../data");
 const childCollection = data.child;
+const jobCollection = data.job;
 const userData = data.users;
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
@@ -366,7 +367,6 @@ router.route("/mealplan/:mealId").delete(async (req, res) => {
         return res.status(500).json({ error: e });
     }
 });
-
 router.route("/removeChild/:childId").delete(async (req, res) => {
     const childId = req.params.childId;
     const parentId = req.body._id;
@@ -381,11 +381,31 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
             throw { statusCode: 400, message: "Parent Id is not valid" };
         }
     } catch (e) {
-        return res.status(400).json({ error: e });
+        return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
     try {
+        let childObj = await childCollection.getChildById(childId);
+        if (childObj === null || childObj === undefined) {
+            throw { statusCode: 404, message: "No child found for that id" };
+        }
+	/////idhar start hoora hai new code addition
+	   let jobObj = await jobCollection.getJobByChildId(childId)
+	   if(jobObj!==null){
+	   if(jobObj?.nannyId!==null){throw { statusCode: 400, message: "This child has a Nanny assigned. Fire the nanny first to remove this child from the system" }};		
+	}
+
+	/////idhar end hoora hai new code addition
+        let imageKey = childObj?.photoUrl?.substring(childObj?.photoUrl?.lastIndexOf("/") + 1);
+        if (imageKey) {
+            const params = {
+                Bucket: BUCKET,
+                Key: imageKey,
+            };
+            await s3.deleteObject(params).promise();
+        }
         const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId, childId.toString());
         const removeChildIdFrmChild = await childCollection.removeChild(childId);
+        const removeJobforChild = await jobCollection.removeJob(childId)
         if (!removeChildFrmUserCllcn.acknowledged || removeChildFrmUserCllcn.modifiedCount == 0)
             throw {
                 statusCode: 400,
@@ -397,9 +417,11 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
         }
         return res.status(200).json(removeChildIdFrmChild);
     } catch (e) {
-        return res.status(500).json({ error: e });
-    }
-
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+   }}
 });
 
 

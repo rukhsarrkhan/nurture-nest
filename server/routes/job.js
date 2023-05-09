@@ -184,13 +184,8 @@ router.route("/searchApplicants/:jobId/:searchTerm/:pageNum").get(async (req, re
     let { jobId, searchTerm, pageNum } = req.params;
     try {
         const searchedApplicants = await jobCollection.searchApplications(jobId, searchTerm, pageNum);
-        if (!searchedApplicants) {
-            throw { statusCode: 400, message: "Couldn't get applications" };
-        }
-        console.log(searchedApplicants.allApplications[0].applications[0]);
         return res.json(searchedApplicants);
     } catch (e) {
-        // throw e;
         return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
 });
@@ -203,33 +198,21 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
         if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
         if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
         if (jobId.trim().length === 0)
-            throw {
-                statusCode: 400,
-                message: "jobIdd cannot be an empty string or just spaces",
-            };
+            throw {statusCode: 400,message: "jobIdd cannot be an empty string or just spaces"};
         if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for job" };
         if (pageNum) {
             if (isNaN(pageNum)) {
                 throw { statusCode: 400, message: "Invalid page number argument" };
-            }
-            // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
-        } else {
-            pageNum = 1;
-        }
-        if (pageNum < 1) {
-            throw {
-                statusCode: 400,
-                message: "Invalid negative page number argument",
-            };
+            }} else {pageNum = 1}
+        if (pageNum < 1) { throw {statusCode: 400,message: "Invalid negative page number argument"};
         }
         const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
-        if (!allApplicants) {
+        console.log(allApplicants)
+        if (allApplicants==null) {
             throw { statusCode: 200, message: "No Nanny for this Job Applications yet" };
         }
         return res.json(allApplicants);
     } catch (e) {
-        console.log(e);
-        // throw e.message
         return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
 });
@@ -287,6 +270,7 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
                 statusCode: 400,
                 message: "nannyId cannot be an empty string or just spaces",
             };
+            console.log("hereeee",nannyId)
         if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
         if (pageNum) {
             if (isNaN(pageNum)) {
@@ -303,9 +287,6 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
             };
         }
         const foundJobs = await jobCollection.getAllJobs(nannyId, pageNum);
-        // if (!foundJobs?.jobsFound) {
-        //   throw { statusCode: 400, message: "No Jobs for available for yet" };
-        // }
         return res.json(foundJobs);
     } catch (e) {
         console.log(e);
@@ -315,7 +296,6 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
 });
 
 router.route("/searchJobs/:nannyId/:searchTerm/:pageNum").get(async (req, res) => {
-    console.log("insideee");
     ///// Searching Applicants from Parent side
     let { pageNum, nannyId, searchTerm } = req.params;
     try {

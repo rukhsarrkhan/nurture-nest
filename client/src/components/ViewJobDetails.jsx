@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { Navigate,Link, useParams, useLocation, useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -18,6 +18,9 @@ import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
 import { applyToJobAPICall } from "../redux/jobs/jobActions";
 import ApplyToJobModal from "./modals/ApplyToJobModal";
+import { AuthContext } from '../firebase/Auth';
+import Loading from "./Loading";
+import ErrorPage from '../components/ErrorPage';
 
 const JobDetails = ({ job, applyToJobAPICall }) => {
   const navigate = useNavigate();
@@ -27,8 +30,10 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [errorCode, setErrorCode] = useState("");
 
-  console.log(location.state, "appID heree");
+  const { currentUser } = useContext(AuthContext);
+
   let jobData = location.state.job;
   let nanny = location.state.nanny;
   // let jobId = location.state.jobId
@@ -44,7 +49,6 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
   };
 
   useEffect(() => {
-    console.log("1st use effect fired");
     try {
       if (jobData) {
         setShowData(jobData);
@@ -55,24 +59,35 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
         setLoading(false);
       }
     } catch (e) {
-      console.log(e);
       setError(true);
       setErrorMsg(e);
       setLoading(false);
     }
   }, []);
 
+  useEffect(() => {
+    if (job !== undefined) {
+      if (job?.error !== "") {
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }}
+  }, [job]);
+
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
-  } else if (errorMsg) {
+  } else if (error) {
     return (
-      <div>
-        <h2>Error404: No data found</h2>
-      </div>
+      <ErrorPage error={errorMsg} code={errorCode} />
     );
   } else {
     const getEDTTimeFromISOString = (dateString) => {
@@ -178,13 +193,25 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
                 {showData?.salary + " USD per week"}
               </Typography>
             </div>
-            <Button
-              onClick={handleOpenApplyToJob}
-              variant="filled"
-              sx={{ bgcolor: "purple[700]", textcolor: "white" }}
-            >
-              Apply
-            </Button>
+            {showData.applied ? (
+              <Button
+                onClick={handleOpenApplyToJob}
+                variant="filled"
+                sx={{ bgcolor: "purple[700]", textcolor: "white" }}
+                disabled={showData.applied}
+              >
+                Applied
+              </Button>
+            ) : (
+              <Button
+                onClick={handleOpenApplyToJob}
+                variant="filled"
+                sx={{ bgcolor: "purple[700]", textcolor: "white" }}
+                disabled={showData.applied}
+              >
+                Apply
+              </Button>
+            )}
 
             {openApplyToJobModal && (
               <ApplyToJobModal

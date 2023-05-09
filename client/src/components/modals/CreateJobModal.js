@@ -98,12 +98,12 @@ const CreateJobModal = (props) => {
       setErrorText(shiftToChec);
       return;
     }
-    let shiftTimingsCheck = await helpers.isTime1BeforeTime2(timeFrom, timeTo);
-    if (shiftTimingsCheck !== "") {
-      setShiftError(true);
-      setErrorText(shiftTimingsCheck.message);
-      return;
-    }
+    // let shiftTimingsCheck = await helpers.isTime1BeforeTime2(timeFrom, timeTo);
+    // if (shiftTimingsCheck !== "") {
+    //   setShiftError(true);
+    //   setErrorText(shiftTimingsCheck.message);
+    //   return;
+    // }
 
     let days = [];
     if (monday) days.push("Monday");
@@ -276,7 +276,7 @@ const CreateJobModal = (props) => {
                     value={shift}
                     fullWidth
                     onChange={(newValue) => setShift(newValue)}
-                    helperText={shiftError && errorText}
+                    helperText={shiftError && errorText?errorText:"Shift hours can be minimum 2hrs to maximum 40 hrs per week"}
                     error={shiftError}
                   />
                 </DemoContainer>

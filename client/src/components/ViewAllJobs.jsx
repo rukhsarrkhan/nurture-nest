@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
 import {
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
   Grid,
   Typography,
-  getAlertTitleUtilityClass,
 } from "@mui/material";
 import { connect } from "react-redux";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Navigate } from "react-router-dom";
 import "../App.css";
+import Loading from "./Loading";
+import ErrorPage from '../components/ErrorPage';
 import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
+import { AuthContext } from '../firebase/Auth';
 
 let noImage = "noImage";
 
@@ -30,73 +31,59 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
   const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [searchData, setSearchData] = useState(undefined);
+  // const [searchPage, setSearchPage] = useState(1);
   const [showsData, setShowsData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [nextButton, setLastButton] = useState(true);
+  const [errorCode, setErrorCode] = useState("");
   let card = null;
-  let pagenum = pageNum;
+let searchPage=1
+const { currentUser } = useContext(AuthContext);
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
-    try {
-      console.log("1st use effect fired", pageNum);
       if (pageNum) {
-        getallJobsAPICall(pageNum);
+        getallJobsAPICall(userData?.data?._id,pageNum);
       }
-    } catch (e) {
-      setError(true);
-      setErrorMsg(e);
-      setLoading(false);
-    }
   }, [pageNum]);
 
   // Common useEffect for setting data for rendering
   useEffect(() => {
-    console.log("2nd use effect fired", job);
-
-    if (searchTerm) {
-      try {
-        setSearchData(job.jobsData);
+    if (job !== undefined) {
+      if (job?.error !== "") {
+        console.log(2)
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }
+      else if (searchTerm) {
+        setSearchData(job.jobsData.jobsFound);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
     } else {
-      try {
-        setSearchData(job.jobsData);
-        setShowsData(job.jobsData);
+        setSearchData(job.jobsData.jobsFound);
+        setShowsData(job.jobsData.jobsFound);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
     }
-  }, [job]);
+  }}, [job]);
 
   //Search Applicants useEffect for apiCall
   useEffect(() => {
     async function fetchData() {
-      try {
-        console.log("search use effect fired", pageNum);
         if (pageNum) {
-          searchJobsAPICall(searchTerm, 1);
-        }
-      } catch (e) {
-        console.log(e);
-      }
+          searchJobsAPICall(userData?.data?._id,searchTerm, searchPage)}
     }
     if (searchTerm) {
       fetchData();
     }
-  }, [searchTerm]);
+}, [searchTerm]);
 
   const searchValue = async (value) => {
+    console.log("helooo",value)
     setSearchTerm(value);
+    console.log(searchTerm,"searchterm heree")
   };
 
   const getEDTTimeFromISOString = (dateString) => {
@@ -110,7 +97,6 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
   };
 
   const buildCard = (show) => {
-    console.log(show);
     let shiftDays = "";
     let daysArr = show?.shifts?.days;
     for (let i in daysArr) {
@@ -135,15 +121,15 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                 component="img"
                 height="100%"
                 width={100}
-                image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
+                image={show?.photoUrl}
                 alt="Paella dish"
               />
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography variant="h4" color="text.secondary">
-                    {show.city + ", "}
+                <div style={{ display: "flex",alignItems: "center" }}>
+                  <Typography variant="h4" color="text.secondary" paragraph>
+                    {show.state + ", "}
                   </Typography>
                   <Typography
                     variant="h4"
@@ -151,6 +137,32 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                     sx={{ paddingLeft: "10px" }}
                   >
                     {show.zipCode}
+                  </Typography>
+                </div>
+                <div style={{ display: "flex" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                    sx={{ paddingRight: "10px" }}
+                  >
+                    Child Name:
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {show.name}
+                  </Typography>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                    sx={{ paddingRight: "10px" }}
+                  >
+                    Age:
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {show.age}
                   </Typography>
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
@@ -181,7 +193,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                     {shiftDays}
                   </Typography>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                {/* <div style={{ display: "flex" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -190,12 +202,12 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                   >
                     Description:
                   </Typography>
-                  <Typography color="text.secondary">
-                    {show.description.length > 250
-                      ? show.description.substring(0, 250) + " ..."
+                  <Typography color="text.secondary" paragraph>
+                    {show.description.length > 150
+                      ? show.description.substring(0, 150) + " ..."
                       : show.description}
                   </Typography>
-                </div>
+                </div> */}
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
@@ -205,8 +217,8 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                   >
                     Salary:
                   </Typography>
-                  <Typography color="text.secondary">
-                    {show.salary + " USD per week"}
+                  <Typography color="text.secondary" paragraph>
+                    {show.salary + " USD per hour"}
                   </Typography>
                 </div>
               </CardContent>
@@ -234,29 +246,28 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
   if (searchTerm) {
     card =
       searchData &&
-      searchData.map((shows) => {
-        console.log("coming here");
-        return buildCard(shows);
+      searchData.map((show) => {
+        return buildCard(show);
       });
   } else {
     card =
       showsData &&
-      showsData.map((show) => {
+      showsData.map((show) => {;
         return buildCard(show);
       });
   }
 
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
-      <div>
-        <h2>Loading....</h2>
-      </div>
+        <Loading />
     );
   } else if (error) {
     return (
-      <div>
-        <h2>{errorMsg}</h2>
-      </div>
+      <ErrorPage error={errorMsg} code={errorCode} />
     );
   } else {
     return (
@@ -278,19 +289,31 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
         <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
           {card}
         </Grid>
-        <br />
-        <br />
-        {pagenum > 1 && (
-          <Link className="showlink" to={`/job/job/viewAllJobs/${pageNum - 1}`}>
+        {pageNum > 1 && searchTerm=="" && (
+          <Link className="showlink" to={`/job/viewAllJobs/${pageNum - 1}`}>
             Previous
           </Link>
         )}
-        {nextButton && (
-          <Link
-            className="showlink"
-            to={`/job/viewAllJobs/${parseInt(pagenum) + 1}`}
-          >
+        {nextButton && searchTerm=="" &&job.jobsData.remaining>0 && (
+          <Link className="showlink" to={`/job/viewAllJobs/${parseInt(pageNum) + 1}`}>
             Next
+          </Link>
+        )}
+        <p>{searchPage}</p>
+        {searchTerm!="" && searchPage>1 && (
+          <Link component="button" className="showlink" onClick={()=>{
+            searchPage=searchPage-1
+            console.log(searchPage,"did it go back?")
+            searchJobsAPICall(searchTerm,searchPage )}}>
+            Previous Search
+          </Link>
+        )}
+        {searchTerm!="" && job.jobsData.remaining>0 && job.jobsData.remaining>0 && (
+          <Link component="button" className="showlink" onClick={()=>{
+            searchPage=searchPage+1
+            console.log(searchPage)
+            searchJobsAPICall(searchTerm,searchPage )}}>
+            Next Search
           </Link>
         )}
       </div>
@@ -307,8 +330,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getallJobsAPICall: (pageNum) => dispatch(getallJobsAPICall(pageNum)),
-    searchJobsAPICall: (searchTerm, pageNum) => dispatch(searchJobsAPICall(searchTerm, pageNum)),
+    getallJobsAPICall: (nannyId,pageNum) => dispatch(getallJobsAPICall(nannyId,pageNum)),
+    searchJobsAPICall: (nannyId,searchTerm, pageNum) => dispatch(searchJobsAPICall(nannyId,searchTerm, pageNum)),
   };
 };
 

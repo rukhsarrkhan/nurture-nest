@@ -113,7 +113,7 @@ const isSpecialcareParentValid = async (specialCare, fieldName) => {
 };
 
 const isDescriptionParentValid = async (description, fieldName) => {
-    if (description.trim().length < 25) return { statusCode: 400, message: `${fieldName} should atleast have 15 characters` };
+    if (description.trim().length < 15) return { statusCode: 400, message: `${fieldName} should atleast have 15 characters` };
     if (description.trim().split(" ").length < 5) return { statusCode: 400, message: `${fieldName} should atleast have 5 words` };
     if (!/^[a-zA-Z0-9 ,.'-:]+$/.test(description)) return { statusCode: 400, message: `${fieldName} contains invalid characters` };
 };

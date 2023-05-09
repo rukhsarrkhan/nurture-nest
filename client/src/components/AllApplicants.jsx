@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
 import {
@@ -15,15 +15,17 @@ import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
 import { searchApplicantsAPICall } from "../redux/jobs/jobActions";
 import CardHeader from "@mui/material/CardHeader";
 import CardActions from "@mui/material/CardActions";
+import { AuthContext } from '../firebase/Auth';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import Loading from "./Loading";
-import Container from "@mui/material/Container";
+import ErrorPage from '../components/ErrorPage';
 import "../App.css";
 
 const AllApplicants = ({
+  users,
   job,
   showAllApplicantsAPICall,
   searchApplicantsAPICall,
@@ -39,67 +41,49 @@ const AllApplicants = ({
   const [showsData, setShowsData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [nextButton, setLastButton] = useState(true);
+  const [errorCode, setErrorCode] = useState("");
   let card = null;
   let pagenum = pageNum;
+  const { currentUser } = useContext(AuthContext);
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
-    try {
-      if (pageNum && jobId) {
+      if (pageNum) {
         setLoading(true);
         showAllApplicantsAPICall(jobId, pageNum);
       }
-    } catch (e) {
-      setError(true);
-      setLoading(false);
-    }
-  }, [pageNum, jobId]);
+  }, [pageNum]);
 
   useEffect(() => {
-    if (searchTerm) {
-      try {
-        setSearchData(job?.applicantsData);
-        console.log(searchData);
+    if (job !== undefined) {
+      if (job?.error !== "") {
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }else{
+      if (searchTerm) {
+        setSearchData(job?.applicantsData?.allApplications);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
     } else {
-      try {
-        setSearchData(job?.applicantsData);
-        setShowsData(job?.applicantsData);
+        setSearchData(job?.applicantsData.allApplications);
+        setShowsData(job?.applicantsData.allApplications);
         setLoading(false);
         setError(false);
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-      }
-    }
-  }, [job]);
+  }}
+  }
+}, [job]);
 
-  //Search Applicants useEffect for apiCall
   useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log("search use effect fired", jobId, pageNum);
-        if (pageNum) {
-          searchApplicantsAPICall(jobId, searchTerm, pageNum);
-        }
-      } catch (e) {
-        setError(true);
-        setErrorMsg(e);
-        setLoading(false);
-        console.log(e);
-      }
-    }
-    if (searchTerm) {
-      fetchData();
-    }
-  }, [searchTerm]);
+    if (job !== undefined) {
+    if (job?.error !== "") {
+      setError(true);
+      setErrorMsg(job?.error);
+      setErrorCode(job?.code);
+      setLoading(false)
+  }else if (searchTerm) {searchApplicantsAPICall(jobId, searchTerm, pageNum)}
+  }}, [searchTerm]);
 
   const searchValue = async (value) => {
     setSearchTerm(value);
@@ -127,8 +111,8 @@ const AllApplicants = ({
       const options = { timeZone: "America/New_York", hour12: true };
       return date.toLocaleString("en-US", options);
     }
+
     const formattedDate = date.toLocaleString("en-US", options);
-    console.log(show);
     return (
       // <Container fixed maxWidth="70%">
       <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
@@ -149,8 +133,8 @@ const AllApplicants = ({
                 component="img"
                 height="100%"
                 width={100}
-                image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
-                alt="Paella dish"
+                image={show.photoUrl}
+                alt="client\public\download.jpeg"
               />
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
@@ -163,9 +147,7 @@ const AllApplicants = ({
                       </Avatar>
                     }
                     title={show.nannyName}
-                    subheader={`Applied to job on ${getEDTTimeFromISOString(
-                      show?.applyDate
-                    )}`}
+                    subheader={`Applied to job on ${getEDTTimeFromISOString(show?.applyDate)}`}
                   />
                 </div>
                 <div style={{ display: "flex", paddingLeft: "16px" }}>
@@ -239,18 +221,20 @@ const AllApplicants = ({
   if (searchTerm) {
     card =
       searchData &&
-      searchData.map((shows) => {
-        console.log("coming here");
-        return buildCard(shows);
+      searchData.map((show) => {
+        return buildCard(show);
       });
   } else {
-    card =
-      showsData &&
+    card = showsData &&
       showsData.map((show) => {
         return buildCard(show);
       });
   }
 
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
       <div>
@@ -259,9 +243,7 @@ const AllApplicants = ({
     );
   } else if (error) {
     return (
-      <div>
-        <h2>{errorMsg}</h2>
-      </div>
+      <ErrorPage error={errorMsg} code={errorCode} />
     );
   } else {
     return (
@@ -272,22 +254,22 @@ const AllApplicants = ({
           {card}
         </Grid>
 
-        {pagenum > 1 && (
+        {pageNum > 1 && (
           <Link
             className="showlink"
-            to={`/job/${jobId}/allApplicants/${pagenum - 1}`}
+            to={`/job/allApplicants/${parseInt(pagenum) - 1}`}
           >
             Previous
           </Link>
         )}
         {nextButton && (
-          <Link
-            className="showlink"
-            to={`/job/${jobId}/allApplicants/${parseInt(pagenum) + 1}`}
-          >
+          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
             Next
           </Link>
         )}
+        {/* <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
+            Next2
+          </Link> */}
       </div>
     );
   }
@@ -296,6 +278,7 @@ const AllApplicants = ({
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
+    users:state.users
   };
 };
 

@@ -59,7 +59,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
 
     useEffect(() => {
         console.log("hi", errorPage);
-        setErrorPage(false);
+        // setErrorPage(false);
         setSuccess(false);
 
 

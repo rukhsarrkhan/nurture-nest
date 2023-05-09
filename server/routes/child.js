@@ -215,12 +215,13 @@ router
 
 router
     .route("/appointment/:childId")
-    // return res.status(400).json({ title: "Error", message: "Error" });
 
     .get(async (req, res) => {
 
         childId = req.params.childId;
         try {
+            // return res.status(400).json({ title: "Error", message: "Error" });
+
             childId = await helper.execValdnAndTrim(childId, "Child Id");
             if (!ObjectId.isValid(childId)) {
                 throw { statusCode: 400, message: "Child Id is not valid" };
@@ -243,6 +244,8 @@ router
         childId = req.params.childId;
         const postAppointment = req.body;
         try {
+            // return res.status(400).json({ title: "Error", message: "Error" });
+
             childId = await helper.execValdnAndTrim(childId, "Child Id");
             if (!ObjectId.isValid(childId)) {
                 throw { statusCode: 400, message: "Child Id is not valid" };
@@ -293,7 +296,7 @@ router.route("/vaccine/:vaccineId").delete(async (req, res) => {
 
 router.route("/appointment/:appointmentId")
     .delete(async (req, res) => {
-        return res.status(400).json({ title: "Error", message: "Error" });
+        // return res.status(400).json({ title: "Error", message: "Error" });
 
         const appointmentId = req.params.appointmentId;
         try {

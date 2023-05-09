@@ -9,7 +9,6 @@ import DeleteJobModal from "./modals/DeleteJobModal";
 
 
 const CreateJob = ({ jobData, userRegistrationAPICall }) => {
-  // THIS FILE NEEDS TO BE DELETED
   const { job } = useSelector((state) => state.jobs);
   const dispatch = useDispatch();
   // Modal states

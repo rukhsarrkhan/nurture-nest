@@ -145,6 +145,12 @@ const ApplyToJobModal = (props) => {
       return;
     }
 
+    if(distance > 100 ) {
+      setDistanceError(true);
+      setErrorText("Maximum distance can be 100 miles or lower");
+      return;
+    }
+
     if (shift) {
       setShift(shift.trim());
     }
@@ -217,7 +223,7 @@ const ApplyToJobModal = (props) => {
               onSubmit={handleSubmit}
               className="sign-form"
             >
-              <Typography id="modal-modal-title" variant="h2" color="secondary">
+              <Typography id="modal-modal-title" variant="h1" color="secondary">
                 Apply
               </Typography>
 

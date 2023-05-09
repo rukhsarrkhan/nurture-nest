@@ -90,13 +90,13 @@ const removeChild = async (childId) => {
     if (deletedChild.value == null) {
         throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
     }
-    return deletedChild.value._id;
+    return deletedChild?.value?._id.toString();
 };
 
 const removeChildFromUser = async (parentId, childId) => {
-    parentId = await helper.execValdnAndTrim(parentId, "Child Id");
+    parentId = await helper.execValdnAndTrim(parentId, "Parent Id");
     if (!ObjectId.isValid(parentId)) {
-        throw { statusCode: 400, message: "Child Id is not valid" };
+        throw { statusCode: 400, message: "Parent Id is not valid" };
     }
     const userCollection = await users();
     // let getUser = userCollection.findOne({ _id: ObjectId(parentId) })
@@ -115,6 +115,23 @@ const addVaccine = async (name, date, doses, childId) => {
     if (!ObjectId.isValid(childId)) {
         throw { statusCode: 400, message: "Child Id is not valid" };
     }
+    if (/^\d+$/.test(name)) throw { statusCode: 400, message: "vaccine name cannot contain only numbers" };
+    const childCollection = await childs();
+    const childFound = await childCollection.findOne({ _id: ObjectId(childId) });
+
+    if (doses > 6) throw { statusCode: 400, message: "vaccine doses cannot be more than 6 for a vaccine" };
+
+    // let childAge = childFound.age;
+    // const currentDate = new Date();
+    // const vaccineDate = new Date(date);
+    // const childAgeInYears = childAge;
+    // const ageMillisecondsPerYear = childAgeInYears * 365.25 * 24 * 60 * 60 * 1000;
+
+    // const differenceInMilliseconds = currentDate.getTime() - vaccineDate.getTime();
+    // if (differenceInMilliseconds > ageMillisecondsPerYear) {
+    //     throw { statusCode: 400, message: "vaccine date cannot be older than child's age" };
+    // }
+
     name = await helper.execValdnAndTrim(name, "name");
     await helper.onlyLettersNumbersAndSpaces(name, "name");
 
@@ -132,7 +149,6 @@ const addVaccine = async (name, date, doses, childId) => {
         doses: doses,
     };
 
-    const childCollection = await childs();
     const vaccineList = await childCollection.updateOne({ _id: ObjectId(childId) }, { $push: { vaccine: newVaccine } });
     if (!vaccineList.acknowledged || vaccineList.modifiedCount !== 1) throw { statusCode: 500, message: "Could not add vaccine" };
 

@@ -1,6 +1,0 @@
-{
-  "mongoConfig": {
-    "serverUrl": "mongodb+srv://swarajsingpatil:Password%401@cluster0.68unpvh.mongodb.net/test",
-    "database": "Nurture-Nest"
-  }
-}

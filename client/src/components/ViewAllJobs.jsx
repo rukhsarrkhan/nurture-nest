@@ -21,7 +21,10 @@ import { AuthContext } from '../firebase/Auth';
 
 let noImage = "noImage";
 
-const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
+const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) => {
+  // CONSOLE ERRORS
+  // LOADING MISSING
+  // ERRORS MISSING
   let { pageNum } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -37,11 +40,10 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
 let searchPage=1
 const { currentUser } = useContext(AuthContext);
 
-  let items = JSON.parse(localStorage.getItem("userData"));
   //View Applicants useEffect for apiCall
   useEffect(() => {
       if (pageNum) {
-        getallJobsAPICall(items._id,pageNum);
+        getallJobsAPICall(userData?.data?._id,pageNum);
       }
   }, [pageNum]);
 
@@ -71,7 +73,7 @@ const { currentUser } = useContext(AuthContext);
   useEffect(() => {
     async function fetchData() {
         if (pageNum) {
-          searchJobsAPICall(items._id,searchTerm, searchPage)}
+          searchJobsAPICall(userData?.data?._id,searchTerm, searchPage)}
     }
     if (searchTerm) {
       fetchData();
@@ -102,7 +104,7 @@ const { currentUser } = useContext(AuthContext);
       else shiftDays = shiftDays + daysArr[i];
     }
     return (
-      <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
+      <Grid item xs={12} sx={{ justifyContent: "center" }}>
         <Card
           sx={{
             maxWidth: "70%",
@@ -125,7 +127,7 @@ const { currentUser } = useContext(AuthContext);
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex",alignItems: "center" }}>
                   <Typography variant="h4" color="text.secondary" paragraph>
                     {show.state + ", "}
                   </Typography>
@@ -133,7 +135,6 @@ const { currentUser } = useContext(AuthContext);
                     variant="h4"
                     color="text.secondary"
                     sx={{ paddingLeft: "10px" }}
-                    paragraph
                   >
                     {show.zipCode}
                   </Typography>
@@ -164,7 +165,7 @@ const { currentUser } = useContext(AuthContext);
                     {show.age}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -179,7 +180,7 @@ const { currentUser } = useContext(AuthContext);
                       getEDTTimeFromISOString(show?.shifts.timeTo)}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -188,7 +189,7 @@ const { currentUser } = useContext(AuthContext);
                   >
                     Shift Days:
                   </Typography>
-                  <Typography color="text.secondary" paragraph>
+                  <Typography color="text.secondary">
                     {shiftDays}
                   </Typography>
                 </div>
@@ -207,7 +208,7 @@ const { currentUser } = useContext(AuthContext);
                       : show.description}
                   </Typography>
                 </div> */}
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -228,7 +229,7 @@ const { currentUser } = useContext(AuthContext);
                 <Button
                   variant="contained"
                   onClick={() => {
-                    navigate("/job/viewJobDetails", { state: { job: show,nanny:items } });
+                    navigate("/job/viewJobDetails", { state: { job: show, nanny: userData?.data } });
                   }}
                   sx={{ bgcolor: purple[700] }}
                 >
@@ -323,6 +324,7 @@ const { currentUser } = useContext(AuthContext);
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
+    userData: state?.users,
   };
 };
 

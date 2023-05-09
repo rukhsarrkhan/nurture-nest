@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useParams, useLocation, useNavigate,Navigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Link,
+  useParams,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -7,8 +13,10 @@ import {
   CardMedia,
   Typography,
   CardHeader,
+  Divider,
+  IconButton,
 } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { purple } from "@mui/material/colors";
 import SelectNanny from "./modals/SelectNanny";
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
@@ -16,14 +24,21 @@ import { connect } from "react-redux";
 import "../App.css";
 import Container from "@mui/material/Container";
 import Box, { BoxProps } from "@mui/material/Box";
-import { getMyJobAPICall } from "../redux/jobs/jobActions";
+import AddIcon from "@mui/icons-material/Add";
+import { getMyJobAPICall, fireNannyAPICall } from "../redux/jobs/jobActions";
 import { deleteJobAPICall } from "../redux/jobs/jobActions";
 import DeleteJobModal from "./modals/DeleteJobModal";
-import { AuthContext } from '../firebase/Auth';
+import { AuthContext } from "../firebase/Auth";
 import Loading from "./Loading";
-import ErrorPage from '../components/ErrorPage';
+import ErrorPage from "../components/ErrorPage";
+import FireNannyModal from "./modals/FireNannyModal";
 
-const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
+const MyJob = ({
+  job,
+  getMyJobAPICall,
+  deleteJobAPICall,
+  fireNannyAPICall,
+}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
@@ -32,46 +47,71 @@ const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const { currentUser } = useContext(AuthContext);
   const [errorCode, setErrorCode] = useState("");
+  const [open2, setOpen2] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
 
   const [openDeleteJobModal, setOpenDeleteJobModal] = useState(false);
   const handleOpenDeleteJob = () => setOpenDeleteJobModal(true);
   const handleCloseDeleteJob = () => setOpenDeleteJobModal(false);
 
-  
-  console.log(location.state, "appID heree");
+  const handleOpen2 = (id) => {
+    setDeleteId(id);
+    setOpen2(true);
+  };
+
+  const handleClose2 = () => setOpen2(false);
+
   //   let application = location.state.application
-  let jobId = location.state.jobId
+
+  let jobId = location.state.jobId;
+  let childId = location.state.childId;
   let pageNum = 1;
 
-const deleteJob = async (jobId) => {
+  const deleteJob = async (jobId) => {
     deleteJobAPICall(jobId);
     setOpenDeleteJobModal(false);
-    navigate(-1)
-}
+    navigate(-1);
+  };
+
+  const fireNanny = async (childId) => {
+    await fireNannyAPICall(childId, job?.data?.nannyId);
+    setOpen2(false);
+    await getMyJobAPICall(jobId);
+  };
 
   useEffect(() => {
+    try {
+      console.log("1st use effect fired", jobId, pageNum);
       if (jobId) {
         getMyJobAPICall(jobId);
       }
+    } catch (e) {
+      console.log("error===>", e);
+      setError(true);
+      setErrorMsg(e);
+      setLoading(false);
+    }
   }, [jobId]);
 
   useEffect(() => {
     if (job !== undefined) {
       if (job?.error !== "") {
-          setError(true);
-          setErrorMsg(job?.error);
-          setErrorCode(job?.code);
-          setLoading(false)
-      }else{
-      setShowData(job.data);
-      setLoading(false);
-      setError(false);
-    }}
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false);
+      } else {
+        setShowData(job.data);
+        setLoading(false);
+        setError(false);
+      }
+    }
   }, [job]);
 
   if (!currentUser) {
-    return <Navigate to='/' />;
+    return <Navigate to="/" />;
   }
+
   if (loading) {
     return (
       <div>
@@ -80,7 +120,9 @@ const deleteJob = async (jobId) => {
     );
   } else if (error) {
     return (
-      <ErrorPage error={errorMsg} code={errorCode} />
+      <div>
+        <ErrorPage error={errorMsg} code={errorCode} />
+      </div>
     );
   } else {
     let shiftDays = "";
@@ -101,147 +143,104 @@ const deleteJob = async (jobId) => {
 
     return (
       <Container sx={{ justifyContent: "center" }}>
-        <Button
-          onClick={() => {
-            navigate(-1);
-          }}
-          variant="filled"
-          sx={{ bgcolor: purple[700] }}
-        >
-          Back
-        </Button>
         <br />
-        <br />
-        <Card sx={{ maxWidth: "70%", marginLeft: "15%" }}>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Button
+            onClick={() => {
+              navigate(-1);
+            }}
+            variant="contained"
+            color="primary"
+            sx={{ marginBottom: "2rem", marginLeft: "auto" }}
+          >
+            Back
+          </Button>
+
+          <Button
+            onClick={handleOpenDeleteJob}
+            variant="contained"
+            color="error"
+            sx={{
+              marginBottom: "2rem",
+              marginRight: "auto",
+              marginLeft: "0.5rem",
+            }}
+          >
+            Delete Job
+          </Button>
+          {/* <IconButton onClick={() => handleOpen2(childId)} color='textSecondary' aria-label="Fire Nanny" sx={{ marginBottom: "1rem" }}>
+          <DeleteIcon /> Fire Nanny
+          </IconButton> */}
+        </div>
+        <Card sx={{ maxWidth: "80%", margin: "0 auto" }}>
           <CardContent>
-            <Typography variant="h3" component="h1" color="text.primary">
-              My Job
+            <Typography
+              variant="h4"
+              component="h1"
+              color="text.primary"
+              gutterBottom
+              sx={{ fontWeight: "bold", fontFamily: "Arial, sans-serif" }}
+            >
+              My Listed Job
             </Typography>
-          </CardContent>
-          <CardContent>
-            <div style={{ display: "flex" }}>
-              <Typography paragraph color="text.primary">
-                Description:
-              </Typography>
-              <Typography
-                paragraph
-                color="text.secondary"
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.description}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Address:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.address}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                City:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.city}
-              </Typography>
-
-              <Typography
-                color="text.primary"
-                paragraph
-                sx={{ paddingLeft: "15px" }}
-              >
-                State:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.state}
-              </Typography>
-
-              <Typography
-                color="text.primary"
-                paragraph
-                sx={{ paddingLeft: "15px" }}
-              >
-                ZipCode:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "5px" }}
-              >
-                {showData?.zipCode}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Special Care:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.specialCare}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift Time From:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {getEDTTimeFromISOString(showData?.shifts?.timeFrom)}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift Time To:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {getEDTTimeFromISOString(showData?.shifts?.timeTo)}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Shift days:
-              </Typography>
-
-              <Typography color="text.secondary" paragraph>
-                {shiftDays}
-              </Typography>
-            </div>
-            <div style={{ display: "flex" }}>
-              <Typography color="text.primary" paragraph>
-                Salary:
-              </Typography>
-              <Typography
-                color="text.secondary"
-                paragraph
-                sx={{ paddingLeft: "7px" }}
-              >
-                {showData?.salary + " USD per hour"}
-              </Typography>
-            </div>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Description:
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {showData?.description}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Address:
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {showData?.address}, {showData?.city}, {showData?.state}{" "}
+              {showData?.zipCode}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Special Care:
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {showData?.specialCare}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Shift:
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {shiftDays} from{" "}
+              {getEDTTimeFromISOString(showData?.shifts?.timeFrom)} to{" "}
+              {getEDTTimeFromISOString(showData?.shifts?.timeTo)}
+            </Typography>
+            <Divider sx={{ marginBottom: "1rem" }} />
+            <Typography variant="h5" component="h2" color="text.secondary">
+              Salary:
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.primary"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {showData?.salary} USD per hour
+            </Typography>
           </CardContent>
         </Card>
         <br />
@@ -253,21 +252,47 @@ const deleteJob = async (jobId) => {
                 state: { jobId: showData._id },
               });
             }}
-            sx={{ bgcolor: purple[700] }}
+            color="primary"
+            sx={{ marginTop: "2rem", marginRight: "0.5rem" }}
           >
             View Nanny Applications
           </Button>
         )}
+        {showData.nannyId && (
+          <Button
+            onClick={() => handleOpen2(childId)}
+            variant="contained"
+            color="error"
+            sx={{
+              marginTop: "2rem",
+              marginRight: "auto",
+              marginLeft: "0.5rem",
+            }}
+          >
+            Fire Nanny
+          </Button>
+        )}
         <br />
-        <Button onClick={handleOpenDeleteJob} variant="filled" sx={{bgcolor:purple[700]}}>Delete Job</Button>
-        {openDeleteJobModal && <DeleteJobModal
-                        open={openDeleteJobModal}
-                        onClose={handleCloseDeleteJob}
-                        jobId={jobId}
-                        deleteJob={deleteJob}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    />}
+        {openDeleteJobModal && (
+          <DeleteJobModal
+            open={openDeleteJobModal}
+            onClose={handleCloseDeleteJob}
+            jobId={jobId}
+            deleteJob={deleteJob}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          />
+        )}
+        {open2 && (
+          <FireNannyModal
+            open={open2}
+            onClose={handleClose2}
+            _id={deleteId}
+            fireNanny={fireNanny}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          />
+        )}
         <br />
       </Container>
     );
@@ -283,7 +308,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
-    deleteJobAPICall:(jobId) => dispatch(deleteJobAPICall(jobId))
+    deleteJobAPICall: (jobId) => dispatch(deleteJobAPICall(jobId)),
+    fireNannyAPICall: (childId, obj) =>
+      dispatch(fireNannyAPICall(childId, obj)),
   };
 };
 

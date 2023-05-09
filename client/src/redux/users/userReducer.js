@@ -17,9 +17,10 @@ const initialState = {
     loading: false,
     data: {},
     error: "",
+    code: "",
     status: "",
-    userProfile: null,
-    userId: ""
+    userId: "",
+    code: "",
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -39,7 +40,6 @@ export const userReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
-                userProfile: payload,
             };
         case USER_LOGIN_FALIURE:
             doSignOut(payload?.response?.data?.message);
@@ -48,6 +48,7 @@ export const userReducer = (state = initialState, action) => {
                 ...state,
                 userLoggedIn: false,
                 error: payload?.response?.data?.message,
+                code: payload?.response?.status,
             };
         case USER_LOGOUT:
             return {
@@ -69,21 +70,23 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 error: payload?.response?.data?.message,
+                code: payload?.response?.status,
             };
         case SET_USER_PROFILE:
             return {
                 ...state,
-                userProfile: payload,
+                data: payload,
             };
         case SET_PROFILE_SUCCESS:
             return {
                 ...state,
-                userProfile: payload,
+                data: payload,
             };
         case SET_PROFILE_FAILURE:
             return {
                 ...state,
-                error: payload?.response?.data,
+                error: payload?.response?.data?.message,
+                code: payload?.response?.status,
             };
         default:
             return state;

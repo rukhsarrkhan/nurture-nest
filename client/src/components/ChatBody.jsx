@@ -1,13 +1,15 @@
 import React from 'react';
+import { connect } from "react-redux";
 
-const ChatBody = ({ messages }) => {
+const ChatBody = ({ messages, userData }) => {
+    // ADD THIS TO STATE
     localStorage.setItem("messages", JSON.stringify(messages));
 
     return (
         <>
             <div className="message__container">
                 {messages?.map((message) =>
-                    message?.name === localStorage.getItem('userName') ? (
+                    message?.name === userData?.data?.firstName ? (
                         <div className="message__chats" key={message?.id}>
                             <p className="sender__name">You</p>
                             <div className="message__sender">
@@ -28,4 +30,12 @@ const ChatBody = ({ messages }) => {
     );
 };
 
-export default ChatBody;
+const mapStateToProps = state => {
+    return {
+        userData: state?.users,
+    };
+};
+
+export default connect(
+    mapStateToProps
+)(ChatBody);

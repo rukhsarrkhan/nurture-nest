@@ -24,6 +24,8 @@ import {
   VIEW_ALL_MY_APPLIED_JOBS_FAILURE,
   EXIT_JOB_SUCCESS,
   EXIT_JOB_FAILURE,
+  FIRE_NANNY_SUCCESS,
+  FIRE_NANNY_FAILURE
 } from "./jobActionTypes";
 
 export const searchInitiate = () => {
@@ -185,6 +187,20 @@ export const applyToJobFailure = (error) => {
   };
 };
 
+export const fireNannySuccess = (data) => {
+  return {
+    type: FIRE_NANNY_SUCCESS,
+    payload: data,
+  };
+};
+
+export const fireNannyFailure = (error) => {
+  return {
+    type: FIRE_NANNY_FAILURE,
+    payload: error,
+  };
+};
+
 export const createJobAPICall = (obj, parentId, childId) => {
   return async (dispatch) => {
     try {
@@ -319,6 +335,18 @@ export const exitJobAPICall = (jobId) => {
       dispatch(deleteJobSuccess(resp.data));
     } catch (error) {
       dispatch(deleteJobFailure(error));
+    }
+  };
+};
+
+export const fireNannyAPICall = (childId, nannyId) => {
+  return async (dispatch) => {
+    try {
+      let { data } = await axios.delete('http://localhost:3000/job/fireNanny/' + childId, { data: { nannyId } });
+
+      dispatch(fireNannySuccess(data));
+    } catch (error) {
+      dispatch(fireNannyFailure(error));
     }
   };
 };

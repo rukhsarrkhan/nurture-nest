@@ -198,7 +198,7 @@ router
             await helper.execValdnAndTrim(postVaccine.doses, "Doses");
             await helper.onlyNumbers(postVaccine.doses, "doses");
         } catch (e) {
-            return res.status(400).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
 
         try {
@@ -392,7 +392,7 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
                 message: "Couldn't update child from user collection",
             };
 
-        if (removeChildIdFrmChild._id == null) {
+        if (removeChildIdFrmChild._id === null) {
             throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
         }
         return res.status(200).json(removeChildIdFrmChild);

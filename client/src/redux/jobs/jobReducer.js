@@ -22,6 +22,8 @@ import {
   VIEW_ALL_MY_APPLIED_JOBS_FAILURE,
   EXIT_JOB_SUCCESS,
   EXIT_JOB_FAILURE,
+  FIRE_NANNY_SUCCESS,
+  FIRE_NANNY_FAILURE
 } from "./jobActionTypes";
 
 const initialState = {
@@ -176,6 +178,17 @@ export const jobReducer = (state = initialState, action) => {
         status: payload,
       };
     case EXIT_JOB_FAILURE:
+      return {
+        ...state,
+        error: payload.response.data,
+      };
+      case FIRE_NANNY_SUCCESS:
+      return {
+        ...state,
+        error: "",
+        status: payload,
+      };
+    case FIRE_NANNY_FAILURE:
       return {
         ...state,
         error: payload.response.data,

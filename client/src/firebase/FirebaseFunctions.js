@@ -1,4 +1,4 @@
-import firebase from 'firebase/compat/app';
+import firebase from "firebase/compat/app";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 
 const auth = getAuth();
@@ -6,21 +6,26 @@ const auth = getAuth();
 async function doSignOut(error) {
   if (error !== "") {
     await firebase.auth().signOut();
-    localStorage.removeItem("userData");
     localStorage.clear();
   } else {
     await firebase.auth().signOut();
-    localStorage.removeItem("userData");
     localStorage.clear();
-    window.location.href = "/";
   }
+  window.location.href = "/";
 }
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
   try {
-    const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
-    if (resp?.additionalUserInfo?.isNewUser === true && resp?.user?.multiFactor?.user?.uid !== "") {
-      await firebase.auth().currentUser.updateProfile({ displayName: firstName });
+    const resp = await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password);
+    if (
+      resp?.additionalUserInfo?.isNewUser === true &&
+      resp?.user?.multiFactor?.user?.uid !== ""
+    ) {
+      await firebase
+        .auth()
+        .currentUser.updateProfile({ displayName: firstName });
       return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
     }
   } catch (e) {
@@ -40,7 +45,9 @@ async function doChangePassword(email, oldPassword, newPassword) {
 
 async function doSignInWithEmailAndPassword(email, password) {
   try {
-    const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const resp = await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password);
     if (resp?.user?.multiFactor?.user?.uid !== "") {
       return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
     }
@@ -51,12 +58,12 @@ async function doSignInWithEmailAndPassword(email, password) {
 
 async function doSocialSignIn(provider) {
   let socialProvider = null;
-  if (provider === 'google') {
+  if (provider === "google") {
     socialProvider = new firebase.auth.GoogleAuthProvider();
-    socialProvider.addScope('email');
-  } else if (provider === 'facebook') {
+    socialProvider.addScope("email");
+  } else if (provider === "facebook") {
     socialProvider = new firebase.auth.FacebookAuthProvider();
-    socialProvider.addScope('email');
+    socialProvider.addScope("email");
   }
   try {
     const resp = await firebase.auth().signInWithPopup(socialProvider);
@@ -70,12 +77,18 @@ async function doSocialSignIn(provider) {
         firstName = resp?.additionalUserInfo?.profile?.given_name;
         lastName = resp?.additionalUserInfo?.profile?.family_name;
       }
-      return { uid: resp?.user?.multiFactor?.user?.uid, code: null, error: null, email: email, firstName: firstName, lastName: lastName };
+      return {
+        uid: resp?.user?.multiFactor?.user?.uid,
+        code: null,
+        error: null,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+      };
     }
   } catch (e) {
     return { uid: "", code: e?.code, error: e?.message };
   }
-
 }
 
 async function doPasswordReset(email) {
@@ -91,8 +104,6 @@ async function doPasswordUpdate(password) {
   await firebase.auth().updatePassword(password);
 }
 
-
-
 export {
   doCreateUserWithEmailAndPassword,
   doSocialSignIn,
@@ -100,5 +111,5 @@ export {
   doPasswordReset,
   doPasswordUpdate,
   doSignOut,
-  doChangePassword
+  doChangePassword,
 };

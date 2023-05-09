@@ -78,10 +78,12 @@ export const userIdStore = (id) => {
 export const userRegistrationAPICall = (obj) => {
     return async (dispatch) => {
         try {
+            dispatch(userInitiate());
+
             dispatch(userIdStore(obj.uuid));
             let resp = await axios.post("http://localhost:3000/users/signup", obj);
             dispatch(userRegisterSuccess(resp?.data));
-            localStorage.setItem("userData", JSON.stringify(resp.data));
+            dispatch(setProfileSuccess(resp?.data));
         } catch (error) {
             dispatch(userRegisterFailure(error));
         }
@@ -96,8 +98,9 @@ export const userLoginAPICall = (uuId, email, firstName, lastName) => {
                 email: email, firstName: firstName, lastName: lastName
             };
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`, obj);
-            localStorage.setItem("userData", JSON.stringify(resp?.data));
             dispatch(userLoginSuccess(resp?.data));
+            dispatch(setProfileSuccess(resp?.data));
+
         } catch (error) {
             dispatch(userLoginFailure(error));
         }
@@ -139,7 +142,6 @@ export const updateProfileImageAPICall = (id, formData) => {
 export const userLogoutCall = (obj) => {
     return async (dispatch) => {
         dispatch(userLogout());
-        localStorage.removeItem("userData");
         localStorage.clear();
     };
 };

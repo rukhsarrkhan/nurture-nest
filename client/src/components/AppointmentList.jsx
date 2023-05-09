@@ -83,6 +83,11 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
         }
     }, [appointmentData]);
 
+    useEffect(() => {
+        getAppointmentAPICall(childId);
+        setLoading(true);
+    }, [childId]);
+
     const handleOpen = () => { setOpen(true); };
     const handleClose = () => {
         setOpen(false);

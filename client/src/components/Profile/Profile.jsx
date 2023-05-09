@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
+import { Navigate } from "react-router-dom";
 import "../../App.css";
 import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
 import helpers from "../../helpers";
@@ -6,8 +7,7 @@ import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
 import ErrorPage from "../../components/ErrorPage";
-import { Navigate } from "react-router-dom";
-import { AuthContext } from "../../firebase/Auth";
+import { AuthContext } from '../../firebase/Auth';
 
 const sexes = [
     {
@@ -125,9 +125,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             if (currentUser && userId) {
                 setUserProfileAPICall(userId);
                 setLoading(true);
-
             }
-
         };
     }, [userId, setUserProfileAPICall, currentUser]);
 
@@ -270,7 +268,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     if (!currentUser) {
-        return <Navigate to="/" />;
+        return <Navigate to='/' />;
     }
 
     if (loading) {

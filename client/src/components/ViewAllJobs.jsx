@@ -130,7 +130,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
               <CardContent>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography variant="h1" color="text.secondary" paragraph>
+                  <Typography variant="h4" color="text.secondary" paragraph>
                     {show.state + ", "}
                   </Typography>
                   <Typography

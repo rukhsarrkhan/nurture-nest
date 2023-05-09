@@ -103,7 +103,7 @@ router
             return res.json(deletedJob);
         } catch (e) {
             console.log(e);
-            throw e
+            // throw e
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     });

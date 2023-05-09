@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const data = require("../data");
 const childCollection = data.child;
+const jobCollection = data.job;
 const userData = data.users;
 const helper = require("../helpers");
 const { ObjectId } = require("mongodb");
@@ -37,14 +38,26 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
             throw { statusCode: 400, message: `No file uploaded` };
         }
         let photoUrl = "";
-        let { name, age, sex, mealRequirementsArr, vaccineArr, appointmentsArr, parentId } = req.body;
+        let {
+            name,
+            age,
+            sex,
+            mealRequirementsArr,
+            vaccineArr,
+            appointmentsArr,
+            parentId,
+        } = req.body;
         name = await helper.execValdnAndTrim(name, "Name");
         await helper.isNameValid(name, "Name");
         age = await helper.execValdnAndTrim(age, "Age");
         if (isNaN(age)) {
             throw { statusCode: 400, message: `${fieldName} should be a number` };
         }
-        if (parseInt(age) > 12) throw { statusCode: 400, message: "child cannnot be more than 12 years old" };
+        if (parseInt(age) > 12)
+            throw {
+                statusCode: 400,
+                message: "child cannnot be more than 12 years old",
+            };
         sex = await helper.execValdnAndTrim(sex, "Sex");
         await helper.isSexValid(sex);
         if (mealRequirementsArr) {
@@ -57,12 +70,19 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
             await helper.execValdnForArr(appointmentsArr, "Appointments");
         }
         let parentObj = await userData.getUserById(parentId);
-        if (!parentObj) throw { statusCode: 404, message: "No parent with that id" };
+        if (!parentObj)
+            throw { statusCode: 404, message: "No parent with that id" };
         if (parseInt(parentObj.age) - parseInt(age) < 16) {
-            throw { statusCode: 400, message: "Invalid age difference between parent and child" };
+            throw {
+                statusCode: 400,
+                message: "Invalid age difference between parent and child",
+            };
         }
         if (parentObj.profile !== global.userTypeParent) {
-            throw { statusCode: 400, message: "ParentId doesn't belong to a parent." };
+            throw {
+                statusCode: 400,
+                message: "ParentId doesn't belong to a parent.",
+            };
         }
         const fileType = mime.getExtension(req.file.mimetype);
         if (fileType !== "jpeg" && fileType !== "png" && fileType !== "gif") {
@@ -100,13 +120,21 @@ router.route("/").post(parseForm.single("image"), async (req, res) => {
                             throw { statusCode: 500, message: "Internal Server error" };
                         }
                         childCreated._id = childCreated._id.toString();
-                        let userUpdated = await userData.addChildToUser(xss(parentId), xss(childCreated._id.toString()));
+                        let userUpdated = await userData.addChildToUser(
+                            xss(parentId),
+                            xss(childCreated._id.toString())
+                        );
                         if (userUpdated) {
                             // parentObj = await userData.getUserById(parentId);
                         }
                         return res.json(childCreated);
                     } catch (error) {
-                        return res.status(500).json({ title: "Error", message: "An unexpected error occurred" });
+                        return res
+                            .status(500)
+                            .json({
+                                title: "Error",
+                                message: "An unexpected error occurred",
+                            });
                     }
                 }
             });
@@ -131,7 +159,16 @@ router
     })
     .put(async (req, res) => {
         try {
-            let { name, age, sex, jobId, mealRequirements, vaccine, nannyId, appointments } = req.body;
+            let {
+                name,
+                age,
+                sex,
+                jobId,
+                mealRequirements,
+                vaccine,
+                nannyId,
+                appointments,
+            } = req.body;
             const updatedChild = await childCollection.updateChild(
                 req.params.childId,
                 name,
@@ -153,8 +190,12 @@ router
     })
     .delete(async (req, res) => {
         try {
-            const childDeleted = await childCollection.removeChild(req.params.childId);
-            res.json({ Awesome: `child with id: ${req.params.childId} deleted successfully` });
+            const childDeleted = await childCollection.removeChild(
+                req.params.childId
+            );
+            res.json({
+                Awesome: `child with id: ${req.params.childId} deleted successfully`,
+            });
         } catch (e) {
             return res.status(404).json({ error: e });
         }
@@ -198,12 +239,19 @@ router
             await helper.execValdnAndTrim(postVaccine.doses, "Doses");
             await helper.onlyNumbers(postVaccine.doses, "doses");
         } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            return res
+                .status(e.statusCode)
+                .json({ title: "Error", message: e.message });
         }
 
         try {
             const { name, date, doses } = postVaccine;
-            const vaccineAdded = await childCollection.addVaccine(xss(name), xss(date), xss(doses), xss(childId));
+            const vaccineAdded = await childCollection.addVaccine(
+                xss(name),
+                xss(date),
+                xss(doses),
+                xss(childId)
+            );
             if (!vaccineAdded) {
                 throw "Couldn't creatva";
             }
@@ -215,19 +263,17 @@ router
 
 router
     .route("/appointment/:childId")
-
     .get(async (req, res) => {
-
         childId = req.params.childId;
         try {
-            // return res.status(400).json({ title: "Error", message: "Error" });
-
             childId = await helper.execValdnAndTrim(childId, "Child Id");
             if (!ObjectId.isValid(childId)) {
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
         } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            return res
+                .status(e.statusCode)
+                .json({ title: "Error", message: e.message });
         }
 
         try {
@@ -237,34 +283,54 @@ router
             }
             return res.json(appointmentFound);
         } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            return res
+                .status(e.statusCode)
+                .json({ title: "Error", message: e.message });
         }
     })
     .post(async (req, res) => {
         childId = req.params.childId;
         const postAppointment = req.body;
         try {
-            // return res.status(400).json({ title: "Error", message: "Error" });
-
             childId = await helper.execValdnAndTrim(childId, "Child Id");
             if (!ObjectId.isValid(childId)) {
                 throw { statusCode: 400, message: "Child Id is not valid" };
             }
-            postAppointment.doctor = await helper.execValdnAndTrim(postAppointment.doctor, "doctor");
+            postAppointment.doctor = await helper.execValdnAndTrim(
+                postAppointment.doctor,
+                "doctor"
+            );
             await helper.isNameValid(postAppointment.doctor, "doctor");
 
-            postAppointment.hospital = await helper.execValdnAndTrim(postAppointment.hospital, "hospital");
-            await helper.onlyLettersNumbersAndSpaces(postAppointment.hospital, "hospital");
+            postAppointment.hospital = await helper.execValdnAndTrim(
+                postAppointment.hospital,
+                "hospital"
+            );
+            await helper.onlyLettersNumbersAndSpaces(
+                postAppointment.hospital,
+                "hospital"
+            );
 
-            postAppointment.date = await helper.execValdnAndTrim(postAppointment.date, "date");
+            postAppointment.date = await helper.execValdnAndTrim(
+                postAppointment.date,
+                "date"
+            );
             await helper.isDateValid(postAppointment.date, "Date");
         } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            return res
+                .status(e.statusCode)
+                .json({ title: "Error", message: e.message });
         }
 
         try {
             const { doctor, hospital, date, time } = postAppointment;
-            const appointmentAdded = await childCollection.addAppointment(xss(doctor), xss(hospital), xss(date), xss(time), xss(childId));
+            const appointmentAdded = await childCollection.addAppointment(
+                xss(doctor),
+                xss(hospital),
+                xss(date),
+                xss(time),
+                xss(childId)
+            );
             if (!appointmentAdded) {
                 throw "Couldn't create";
             }
@@ -294,26 +360,27 @@ router.route("/vaccine/:vaccineId").delete(async (req, res) => {
     //code here for DELETE
 });
 
-router.route("/appointment/:appointmentId")
-    .delete(async (req, res) => {
-        // return res.status(400).json({ title: "Error", message: "Error" });
-
-        const appointmentId = req.params.appointmentId;
-        try {
-            await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
-            if (!ObjectId.isValid(appointmentId)) {
-                throw { statusCode: 400, message: "Appointment Id is not valid" };
-            }
-        } catch (e) {
-            return res.status(400).json({ error: e });
+router.route("/appointment/:appointmentId").delete(async (req, res) => {
+    const appointmentId = req.params.appointmentId;
+    try {
+        await helper.execValdnAndTrim(appointmentId, "Vaccine Id");
+        if (!ObjectId.isValid(appointmentId)) {
+            throw { statusCode: 400, message: "Appointment Id is not valid" };
         }
-        try {
-            const removedAppointment = await childCollection.removeAppointment(appointmentId);
-            return res.status(200).json(removedAppointment);
-        } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
-        }
-    });
+    } catch (e) {
+        return res.status(400).json({ error: e });
+    }
+    try {
+        const removedAppointment = await childCollection.removeAppointment(
+            appointmentId
+        );
+        return res.status(200).json(removedAppointment);
+    } catch (e) {
+        return res
+            .status(e.statusCode)
+            .json({ title: "Error", message: e.message });
+    }
+});
 
 router
     .route("/mealplan/:childId")
@@ -348,7 +415,12 @@ router
 
         try {
             const { meal, time, directions } = postMeal;
-            const mealAdded = await childCollection.addAMealPlan(xss(meal), xss(time), xss(directions), xss(childId));
+            const mealAdded = await childCollection.addAMealPlan(
+                xss(meal),
+                xss(time),
+                xss(directions),
+                xss(childId)
+            );
             if (!mealAdded) {
                 throw "Couldn't create";
             }
@@ -375,7 +447,6 @@ router.route("/mealplan/:mealId").delete(async (req, res) => {
         return res.status(500).json({ error: e });
     }
 });
-
 router.route("/removeChild/:childId").delete(async (req, res) => {
     const childId = req.params.childId;
     const parentId = req.body._id;
@@ -390,26 +461,78 @@ router.route("/removeChild/:childId").delete(async (req, res) => {
             throw { statusCode: 400, message: "Parent Id is not valid" };
         }
     } catch (e) {
-        return res.status(400).json({ error: e });
+        return res
+            .status(e.statusCode)
+            .json({ title: "Error", message: e.message });
     }
     try {
-        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(parentId, childId.toString());
+        let childObj = await childCollection.getChildById(childId);
+        if (childObj === null || childObj === undefined) {
+            throw { statusCode: 404, message: "No child found for that id" };
+        }
+        let jobObj = await jobCollection.getJobByChildId(childId);
+        if (jobObj && Object.keys(jobObj).length !== 0) {
+            if (jobObj?.nannyId !== "" && jobObj?.nannyId !== undefined && jobObj?.nannyId !== null) {
+                throw {
+                    statusCode: 400,
+                    message:
+                        "This child has a Nanny assigned. Fire the nanny first to remove this child from the system",
+                };
+            }
+
+        }
+
+        let imageKey = childObj?.photoUrl?.substring(
+            childObj?.photoUrl?.lastIndexOf("/") + 1
+        );
+        if (imageKey) {
+            const params = {
+                Bucket: BUCKET,
+                Key: imageKey,
+            };
+            await s3.deleteObject(params).promise();
+        }
+        const removeChildFrmUserCllcn = await childCollection.removeChildFromUser(
+            parentId,
+            childId.toString()
+        );
         const removeChildIdFrmChild = await childCollection.removeChild(childId);
-        if (!removeChildFrmUserCllcn.acknowledged || removeChildFrmUserCllcn.modifiedCount == 0)
+        if (jobObj !== null) {
+            const removeJobforChild = await jobCollection.removeJob(
+                jobObj._id.toString()
+            );
+        }
+        if (
+            !removeChildFrmUserCllcn.acknowledged ||
+            removeChildFrmUserCllcn.modifiedCount == 0
+        )
             throw {
                 statusCode: 400,
                 message: "Couldn't update child from user collection",
             };
 
         if (removeChildIdFrmChild._id === null) {
-            throw { statusCode: 401, message: `Could not delete child with id of ${childId}` };
+            throw {
+                statusCode: 401,
+                message: `Could not delete child with id of ${childId}`,
+            };
         }
         return res.status(200).json(removeChildIdFrmChild);
     } catch (e) {
-        return res.status(500).json({ error: e });
+        if (
+            e.statusCode !== "" &&
+            e.statusCode !== undefined &&
+            e.statusCode !== null
+        ) {
+            return res
+                .status(e.statusCode)
+                .json({ title: "Error", message: e.message });
+        } else {
+            return res
+                .status(500)
+                .json({ title: "Error", message: "Some Error Occured" });
+        }
     }
-
 });
-
 
 module.exports = router;

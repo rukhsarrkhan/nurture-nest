@@ -280,6 +280,7 @@ export const getMyJobAPICall = (jobId) => {
 export const getallJobsAPICall = (nannyId,pageNum) => {
   return async (dispatch) => {
     try {
+      console.log(`http://localhost:3000/job/getJobs/AllJobs/${nannyId}/${pageNum}`,"inreduxxx")
       let resp = await axios.get(
         `http://localhost:3000/job/getJobs/AllJobs/${nannyId}/${pageNum}`
       );

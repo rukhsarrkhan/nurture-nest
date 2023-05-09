@@ -63,7 +63,6 @@ const MyJob = ({
     setOpen2(false);
   };
 
-  //   let application = location.state.application
 
   let jobId = location.state.jobId;
   let childId = location.state.childId;
@@ -83,7 +82,6 @@ const MyJob = ({
 
   useEffect(() => {
     try {
-      console.log("1st use effect fired", jobId, pageNum);
       if (jobId) {
         // if (error === true || job?.error !== "") {
         //   alert("Failed to assign nanny to job. Please try again");
@@ -92,7 +90,6 @@ const MyJob = ({
         setError(false);
       }
     } catch (e) {
-      console.log("error===>", e);
       setError(true);
       setErrorMsg(e);
       setLoading(false);
@@ -285,7 +282,7 @@ const MyJob = ({
           <DeleteJobModal
             open={openDeleteJobModal}
             onClose={handleCloseDeleteJob}
-            jobId={jobId}
+            jobId={showData._id}
             deleteJob={deleteJob}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"

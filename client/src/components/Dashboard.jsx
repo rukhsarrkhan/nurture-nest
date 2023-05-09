@@ -124,6 +124,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Avatar
             src={selectedChild?.photoUrl}
+            alt='Child Avatar'
             sx={{
               width: 64,
               height: 64,
@@ -218,7 +219,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                     }}
                     gutterBottom
                     variant='h6'
-                    component='h2'
+                    component='h1'
                   >
                     {"Daily Meal Plans"}
                   </Typography>
@@ -245,8 +246,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                     marginLeft: 'auto',
                     marginRight: 'auto',
                     borderRadius: 5,
-                    boxShadow:
-                      '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    boxShadow: 'none'
                   }}
                   component='img'
                   image={vaccineImage}
@@ -260,12 +260,11 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                       marginLeft: 'auto',
                       marginRight: 'auto',
                       borderRadius: 5,
-                      boxShadow:
-                        '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                      boxShadow:'none'
                     }}
                     gutterBottom
                     variant='h6'
-                    component='h2'
+                    component='h1'
                   >
                     {"Vaccines"}
                   </Typography>
@@ -292,8 +291,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                     marginLeft: 'auto',
                     marginRight: 'auto',
                     borderRadius: 5,
-                    boxShadow:
-                      '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                    boxShadow: 'none'
                   }}
                   component='img'
                   image={appointmentImage}
@@ -308,12 +306,11 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                       marginRight: 'auto',
                       borderRadius: 5,
                       border: '1px solid #080a33',
-                      boxShadow:
-                        '0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);'
+                      boxShadow: 'none'
                     }}
                     gutterBottom
                     variant='h6'
-                    component='h2'
+                    component='h1'
                   >
                     {"Doctor Appointments"}
                   </Typography>

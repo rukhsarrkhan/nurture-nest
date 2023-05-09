@@ -16,19 +16,22 @@ const Landing = () => {
             </section>
             <section className="card-container">
                 <div className="card">
-                    <h2>Expert Care</h2>
+                    <h2>Personalized Managing</h2>
                     <hr></hr>
-                    <p>Our team of experts is highly trained in caring for babies and will provide the best care possible for your child.</p>
+                    <p>You can now leave the worry of noting everything down and use our app to manage your child!</p>
+                    <hr></hr>
                 </div>
                 <div className="card">
                     <h2>Personalized Attention</h2>
                     <hr></hr>
-                    <p>We understand that every baby is unique and has different needs. That's why we provide personalized attention to each baby.</p>
+                    <p>You can now keep track of the vaccine information, meal plans and doctor's appointments</p>
+                    <hr></hr>
                 </div>
                 <div className="card">
-                    <h2>Safe and Secure Environment</h2>
+                    <h2>Personalized Nanny Hiring</h2>
                     <hr></hr>
-                    <p>Our facility is designed to be safe and secure for babies, so you can be sure your child is in good hands.</p>
+                    <p>Our facility is designed to be safe and secure for you to find nannies for your child with in built chat feature.</p>
+                    <hr></hr>
                 </div>
             </section>
             <footer>

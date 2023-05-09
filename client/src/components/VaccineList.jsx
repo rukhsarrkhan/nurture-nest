@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import Loading from './Loading';
 import { AuthContext } from '../firebase/Auth';
 import { Navigate } from "react-router-dom";
+import ErrorPage from '../components/ErrorPage';
 
 const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall, userData }) => {
     // NO CONSOLE ERRORS
@@ -33,6 +34,9 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     const [loading, setLoading] = useState(true);
     const [errorPage, setErrorPage] = useState(false);
     const [deleteId, setDeleteId] = useState('');
+    const [errorText, setErrorText] = useState("");
+    const [errorCode, setErrorCode] = useState("");
+
 
     let card = null;
     let { childId } = useParams();
@@ -52,6 +56,17 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     };
 
     const handleClose2 = () => setOpen2(false);
+
+    useEffect(() => {
+        if (vaccineData !== undefined) {
+            if (vaccineData?.error !== "") {
+                setErrorPage(true);
+                setErrorText(vaccineData?.error?.error?.message);
+                setErrorCode(vaccineData?.error?.error?.statusCode);
+            }
+        }
+    }, [vaccineData]);
+
 
     const addVaccine = async (obj) => {
         await vaccineSetAPICall(obj, childId);
@@ -85,6 +100,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                     <CardMedia
                         component="img"
                         height="194"
+                        alt='Vaccine'
                         image={image}
                     />
                     <CardActions disableSpacing>
@@ -123,8 +139,8 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     } else if (errorPage) {
         return (
             <div>
-                <h2>Error 404: No data for this page</h2>
-            </div>
+            <ErrorPage error={errorText} code={errorCode} />
+        </div>
         );
 
     } else {

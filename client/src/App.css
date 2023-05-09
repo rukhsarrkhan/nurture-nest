@@ -6,7 +6,7 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	color: #ffffff;
+	color: #7c6fa0;
 	padding-left: 20px;
 	padding-left: 100px;
 	text-shadow: 6px 6px 14px #000000;
@@ -18,7 +18,7 @@
 	font-size: 68px;
 	font-weight: bold;
 	text-align: center;
-	color: #ffffff;
+	color: #998fb6;
 	overflow: hidden;
 	white-space: nowrap;
 	margin: 0 auto;
@@ -95,7 +95,7 @@
 
 body {
 	background: rgb(197, 190, 219);
-	color: #fff;
+	color: #ffffff;
 	font-size: 1.5em;
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", sans-serif;
 	font-weight: 100;
@@ -503,14 +503,12 @@ footer {
 .chat__footer {
 	width: 100%;
 	display: flex;
-
 	padding: 10px;
-	background-color: #f9f5eb;
+	background-color: #807658; 
 	height: 10vh;
 	align-items: center;
 	justify-content: center;
-	/* added */
-}
+  }
 
 .form_chat {
 	width: 100%;
@@ -534,11 +532,11 @@ footer {
 
 .sendBtn {
 	width: 150px;
-	background-color: green;
+	background-color: #008000;
 	padding: 10px;
 	border: none;
 	outline: none;
-	color: #eae3d2;
+	color: #f6f0e0;
 	cursor: pointer;
 	margin-left: 10px;
 	/* added */

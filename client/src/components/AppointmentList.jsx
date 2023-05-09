@@ -98,6 +98,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                     <CardMedia
                         component="img"
                         height="194"
+                        alt='Appointment'
                         image={image}
                     />
                     <CardActions disableSpacing>

@@ -98,6 +98,7 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
           <CardMedia
             component="img"
             height="200"
+            alt='Meal Plan'
             image={mealPlanImage}
           />
           <CardActions disableSpacing>

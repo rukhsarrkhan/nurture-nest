@@ -41,7 +41,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
 
   useEffect(() => {
     if (jobData) {
-      const applyDetails = jobData?.data?.applications.find(obj => obj.nannyId === nannyId);
+      const applyDetails = jobData?.data?.applications?.find(obj => obj.nannyId === nannyId);
       setApplicationDtls(applyDetails);
     }
   }, [jobData]);

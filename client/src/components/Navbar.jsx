@@ -6,6 +6,9 @@ import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from "./NavbarElement
 
 const Navbar = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
+    const profileLink = `/profile`;
+    const loginLink = `/login`;
+    const registerLink = `/register`;
 
     return (
         <>
@@ -23,17 +26,17 @@ const Navbar = ({ userData }) => {
                 <NavBtn>
                     {!currentUser && (
                         <ProfileBtn>
-                            <NavLink to="/login">Login</NavLink>
+                            <NavLink to={loginLink}>Login</NavLink>
                         </ProfileBtn>
                     )}
                     {!currentUser && (
                         <ProfileBtn>
-                            <NavLink to="/register">Register</NavLink>
+                            <NavLink to={registerLink}>Register</NavLink>
                         </ProfileBtn>
                     )}
                     {currentUser && (
                         <ProfileBtn>
-                            <NavLink to="/profile">Profile</NavLink>
+                            <NavLink to={profileLink}>Profile</NavLink>
                         </ProfileBtn>
                     )}
                     {currentUser && <ProfileBtn onClick={doSignOut}>Logout</ProfileBtn>}

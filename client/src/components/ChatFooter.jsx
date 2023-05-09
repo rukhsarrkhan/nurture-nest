@@ -18,17 +18,19 @@ const ChatFooter = ({ socket, userData }) => {
     };
     return (
         <div className="chat__footer">
-            <form className="form_chat" onSubmit={handleSendMessage}>
-                <input
-                    type="text"
-                    placeholder="Write message"
-                    className="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                />
-                <button className="sendBtn">SEND</button>
-            </form>
-        </div>
+        <form className="form_chat" onSubmit={handleSendMessage}>
+          <label htmlFor="message-input">Write message:</label>
+          <input
+            type="text"
+            id="message-input"
+            placeholder="Write message"
+            className="message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button className="sendBtn">SEND</button>
+        </form>
+      </div>      
     );
 };
 

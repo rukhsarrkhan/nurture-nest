@@ -320,7 +320,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     sx={{ mb: 3 }}
                     fullWidth
                     aria-readonly={!editMode}
-                    style={{ pointerEvents: !editMode ? "none" : "auto" }}
+                    style={{ pointerEvents: !editMode ? "auto" : "none" }}
                     InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
                     value={lastName}
                     helperText={lastNameError && errorText}
@@ -333,12 +333,12 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     onChange={(e) => setLastName(e.target.value)}
                     variant="filled"
                     color="secondary"
-                    inputProps={{ style: { color: "black", background: "#e3e9ff" } }}
+                    inputProps={{ style: { color: "black", background: "#ffffff" } }} // Update the background color
                     sx={{ mb: 3 }}
                     fullWidth
                     disabled={true}
                     style={{ pointerEvents: !editMode ? "none" : "auto" }}
-                    InputLabelProps={{ style: { pointerEvents: !editMode ? "none" : "auto" } }}
+                    InputLabelProps={{ style: { color: "#767676", pointerEvents: !editMode ? "none" : "auto" } }} // Update the label color
                     value={userObjData.email}
                     required
                 />
@@ -454,10 +454,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     </Box>
 
                     <Grid item xs={12} md={8}>
-                        <Typography variant="h4" sx={{ mt: 2 }}>
+                        <Typography variant="h1" sx={{ mt: 2 }}>
                             {userObjData.firstName + " " + userObjData.lastName}
                         </Typography>
-                        <Typography variant="h6" sx={{ mt: 1 }}>
+                        <Typography variant="h2" sx={{ mt: 1 }}>
                             {userObjData.profile}
                         </Typography>
 

@@ -249,7 +249,17 @@ const AllApplicants = ({
     return (
       <div>
         <SearchApplicants searchValue={searchValue} />
-
+        <br/>
+        <Button
+          onClick={() => {
+            navigate(-1);
+          }}
+          variant="filled"
+          sx={{ bgcolor: purple[700] }}
+        >
+          Back
+        </Button>
+        <br/><br/>
         <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
           {card}
         </Grid>
@@ -261,7 +271,7 @@ const AllApplicants = ({
           >
             Previous
           </Link>
-        )}
+        )}<br/>
         {nextButton && (
           <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
             Next

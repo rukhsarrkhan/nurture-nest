@@ -20,6 +20,7 @@ const initialState = {
     code: "",
     status: "",
     userId: "",
+    code: "",
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -78,7 +79,7 @@ export const userReducer = (state = initialState, action) => {
         case SET_PROFILE_SUCCESS:
             return {
                 ...state,
-                data: { ...payload },
+                data: payload,
             };
         case SET_PROFILE_FAILURE:
             return {

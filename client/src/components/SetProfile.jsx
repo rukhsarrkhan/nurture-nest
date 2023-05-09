@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { AuthContext } from "../firebase/Auth";
 import "../App.css";
 import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { TextField, Button, MenuItem, Typography } from "@mui/material";
-import { updateUserAPICall } from "../redux/users/userActions";
+import { updateUserAPICall, setUserProfileAPICall } from "../redux/users/userActions";
 import Loading from "./Loading";
 import helpers from "../helpers";
 // import ErrorPage from "../components/ErrorPage";
@@ -19,7 +19,7 @@ const profiles = [
         label: "I'm a Nanny. I am looking for a job managing kid(s)",
     },
 ];
-const SetProfile = ({ updateUserAPICall, userData }) => {
+const SetProfile = ({ updateUserAPICall, userData, setUserProfileAPICall }) => {
     const [profileSelected, setProileSelected] = useState(false);
     const [userObjData, setuserObjData] = useState(undefined);
     const [loading, setLoading] = useState(true);
@@ -33,6 +33,23 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
     const [errorText, setErrorText] = useState("");
     const [error, setError] = useState(false);
     const [errorCode, setErrorCode] = useState("");
+    let userId = userData?.data?._id;
+
+    const setUserProfileAPICallMemo = useMemo(() => {
+        return () => {
+            try {
+                setUserProfileAPICall(userId);
+            } catch (error) {
+                setuserObjData(undefined);
+                setLoading(false);
+                setErrorText(error.message ? error.message : error);
+            }
+        };
+    }, [userId, setUserProfileAPICall]);
+
+    useEffect(() => {
+        setUserProfileAPICallMemo();
+    }, [setUserProfileAPICallMemo]);
     useEffect(() => {
         if (userData?.data !== null && userData?.data !== undefined) {
             setuserObjData(userData?.data);
@@ -156,6 +173,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         updateUserAPICall: (id, obj) => dispatch(updateUserAPICall(id, obj)),
+        setUserProfileAPICall: (id) => dispatch(setUserProfileAPICall(id)),
     };
 };
 

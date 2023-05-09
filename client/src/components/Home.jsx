@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import "../App.css";
 import { connect } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall } from "../redux/child/childActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
-const Home = ({ userData, childData, createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
+const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
     // NO CONSOLE ERRORS
     // LOADING MISSING
     // ERRORS MISSING
@@ -27,17 +27,34 @@ const Home = ({ userData, childData, createChildAPICall, fetchChildrenAPICall, d
     const [deleteId, setDeleteId] = useState("");
     const [redirectProfile, setRedirectProfile] = useState(false);
     let card = null;
-    const id = userData?.data?._id;
 
     const { currentUser } = useContext(AuthContext);
+    console.log(currentUser, " Current user in home");
+
+    const id = userData?.data?._id;
+
+    const setUserProfileAPICallMemo = useMemo(() => {
+        return () => {
+            try {
+                setUserProfileAPICall(id);
+            } catch (error) {
+                setuserObjData(undefined);
+                setLoading(false);
+                setErrorText(error.message ? error.message : error);
+            }
+        };
+    }, [id, setUserProfileAPICall]);
+
+    useEffect(() => {
+        setUserProfileAPICallMemo();
+    }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
         if (userData?.data && currentUser) {
             setuserObjData(userData?.data);
-            fetchChildrenAPICall(userData.data._id);
+            fetchChildrenAPICall(userData?.data?._id);
         }
     }, [userData, fetchChildrenAPICall]);
-
     useEffect(() => {
         if (userObjData) {
             if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
@@ -116,7 +133,7 @@ const Home = ({ userData, childData, createChildAPICall, fetchChildrenAPICall, d
                         </Link>
                     </CardActionArea>
                     {userObjData?.profile === "PARENT" ? (
-                        <IconButton onClick={() => handleOpen2(child?._id)} color='textSecondary' aria-label="Delete Child" >
+                        <IconButton onClick={() => handleOpen2(child?._id)} color="textSecondary" aria-label="Delete Child">
                             <DeleteIcon sx={{ position: "absolute", bottom: 0, right: 150 }} />
                         </IconButton>
                     ) : null}
@@ -186,16 +203,19 @@ const Home = ({ userData, childData, createChildAPICall, fetchChildrenAPICall, d
                 <br />
                 <br />
                 {childObjArr.length === 0 ? (
-                    <Typography variant="p" component="p" sx={{
-                        backgroundColor: '#fcebeb',
-                        color: '#333',
-                        padding: '10px',
-                        borderRadius: '5px',
-                        boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.3)',
-                        marginBottom: '20px',
-                        fontWeight: 'bold',
-                        textAlign: 'center'
-                    }}
+                    <Typography
+                        variant="p"
+                        component="p"
+                        sx={{
+                            backgroundColor: "#fcebeb",
+                            color: "#333",
+                            padding: "10px",
+                            borderRadius: "5px",
+                            boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)",
+                            marginBottom: "20px",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                        }}
                     >
                         No children have been assigned to this nanny yet.
                     </Typography>

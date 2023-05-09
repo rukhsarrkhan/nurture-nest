@@ -97,6 +97,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                     <CardMedia
                         component="img"
                         height="194"
+                        alt='Vaccine'
                         image={image}
                     />
                     <CardActions disableSpacing>

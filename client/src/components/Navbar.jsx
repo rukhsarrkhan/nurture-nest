@@ -8,6 +8,8 @@ const Navbar = () => {
     const { currentUser } = useContext(AuthContext);
     let items = JSON.parse(localStorage.getItem("userData"));
     const profileLink = `/profile`;
+    const loginLink = `/login`;
+    const registerLink = `/register`;
 
     return (
         <>
@@ -25,12 +27,12 @@ const Navbar = () => {
                 <NavBtn>
                     {!currentUser && (
                         <ProfileBtn>
-                            <NavLink to="/login">Login</NavLink>
+                            <NavLink to={loginLink}>Login</NavLink>
                         </ProfileBtn>
                     )}
                     {!currentUser && (
                         <ProfileBtn>
-                            <NavLink to="/register">Register</NavLink>
+                            <NavLink to={registerLink}>Register</NavLink>
                         </ProfileBtn>
                     )}
                     {currentUser && (

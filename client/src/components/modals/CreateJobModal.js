@@ -272,7 +272,7 @@ const CreateJobModal = (props) => {
                     sx={{ mb: 3 }}
                     fullWidth
                     onChange={(newValue) => setShift(newValue)}
-                    helperText={shiftError && errorText}
+                    helperText={shiftError && errorText?errorText:"Shift hours can be minimum 2hrs to maximum 40 hrs per week"}
                     error={shiftError}
                   />
                 </DemoContainer>

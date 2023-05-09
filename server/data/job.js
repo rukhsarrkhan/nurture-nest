@@ -8,6 +8,7 @@ const childData = require("./child");
 const userData = require("./users");
 const { application } = require("express");
 const { getChildById } = require("./child");
+const { getNannyById } = require("./nanny");
 
 const assignJobToChild = async (childId, jobId) => {
   childId = await helpers.execValdnAndTrim(childId, "Child Id");
@@ -211,10 +212,7 @@ const getJobByNannyId = async (nannyId) => {
   if (!ObjectId.isValid(nannyId))
     throw { statusCode: 400, message: "invalid object ID" };
   const jobCollection = await jobs();
-  let myJob = await jobCollection.findOne(
-    { nannyId: ObjectId(nannyId) },
-    { projection: { applications: 0 } }
-  );
+  let myJob = await jobCollection.findOne({ nannyId: ObjectId(nannyId) });
   if (myJob === null) throw { statusCode: 400, message: "No Job with that id" };
   myJob._id = myJob._id.toString();
   return myJob;
@@ -419,9 +417,11 @@ const setNannytoJob = async (jobId, nannyId) => {
     }else{
       for(let i in jobsFound){
         if(jobsFound[i]?.childId){
-          console.log(1)
-          const tempChild = await childData.getChildById(jobsFound[i]?.childId.toString())
+          console.log(jobsFound[i]?.childId.toString())
+          const tempChild = await childData.getChildById(jobsFound[i]?.childId?.toString())
           jobsFound[i].photoUrl=tempChild.photoUrl
+          jobsFound[i].name=tempChild.name
+          jobsFound[i].age=tempChild.age
           let applications =jobsFound[i].applications
           for(let j in applications){
             if(applications[j].nannyId.toString()==nannyId){
@@ -437,7 +437,7 @@ const setNannytoJob = async (jobId, nannyId) => {
     return {remaining:totalCount-(parseInt(pageNum)*5),jobsFound:jobsFound};
   };
   
-  const searchJobsBasedOnCity = async (nannyId,searchTerm, pageNum) => {
+  const searchJobsBasedOnZipCode = async (nannyId,searchTerm, pageNum) => {
     console.log("Inside search Job dataFunction");
     if (pageNum) {
       if (isNaN(pageNum)) {
@@ -452,7 +452,7 @@ const setNannytoJob = async (jobId, nannyId) => {
     const jobCollection = await jobs();
     let jobsFound = await jobCollection
       .find(
-        { state: { $regex: searchTerm, $options: "i" } }
+        { zipCode: { $regex: searchTerm, $options: "i" } }
       )
       .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
       .limit(5)
@@ -460,7 +460,7 @@ const setNannytoJob = async (jobId, nannyId) => {
 
     let totalCount = await jobCollection.find({ state: { $regex: searchTerm, $options: "i" } }).count();
     if (jobsFound === null || jobsFound.length==0){
-      throw { statusCode: 500, message: "No Jobs for now" };
+      // throw { statusCode: 500, message: "No Jobs for now" };
     }else{
       for(let i in jobsFound){
         if(jobsFound[i]?.childId){
@@ -487,7 +487,13 @@ const setNannytoJob = async (jobId, nannyId) => {
     if (jobId.trim().length === 0)throw {statusCode: 400,message: "jobIdd cannot be an empty string or just spaces"};
     jobId = jobId.trim();
     if (!ObjectId.isValid(jobId))throw { statusCode: 400, message: "invalid object ID" };
+    if (pageNum) {
+      if (isNaN(pageNum)) {throw { statusCode: 400, message: "Invalid page number argument" }}
+      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+    } else {pageNum = 1}
+    if (pageNum < 1) {throw {statusCode: 400,message: "Invalid negative page number argument"}}
     const jobCollection = await jobs();
+    console.log("fired query with page",pageNum,jobId)
     let allApplications = await jobCollection
       .aggregate([
         { $match: { _id: ObjectId(jobId) } },
@@ -495,14 +501,19 @@ const setNannytoJob = async (jobId, nannyId) => {
         { $group: { _id: null, applications: { $push: "$applications" } } },
       ])
       .toArray();
-    if (allApplications.length==0)throw { statusCode: 400, message: "No applications till now" };
+      let query1 = await jobCollection.findOne({_id:ObjectId(jobId)})
+      let totalCount = query1.applications.length
+    // if (allApplications.length==0)throw { statusCode: 400, message: "No applications till now" };
     if(allApplications.length>0){
       allApplications = allApplications[0]["applications"]
       for (let i in allApplications) {
+        let tempNanny = await getNannyById(allApplications[i].nannyId.toString())
+        allApplications[i].photoUrl=tempNanny.photoUrl
+        allApplications[i].age=tempNanny.age
         allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
       }
     }
-    return allApplications;
+    return {remaining:totalCount-(parseInt(pageNum)*3),allApplications:allApplications};
   };
   
   
@@ -521,24 +532,36 @@ const setNannytoJob = async (jobId, nannyId) => {
       if (!ObjectId.isValid(jobId))
         throw { statusCode: 400, message: "invalid object ID" };
       const jobCollection = await jobs();
-      let nanniesFound = await jobCollection
-        .aggregate([
+      let nanniesFound = await jobCollection.aggregate([
           { $match: { _id: ObjectId(jobId) } },
           { $unwind: "$applications" },
-          {
-            $match: {
-              "applications.nannyName": { $regex: searchTerm, $options: "i" },
-            },
-          },
+          {$match: {"applications.nannyName": { $regex: searchTerm, $options: "i" }}},
           { $skip: (pageNum - 1) * 3 },
           { $limit: 3},
           { $group: { _id: null, applications: { $push: "$applications" } } },
-        ])
-        .toArray();
+        ]).toArray();
+
+      let checkLimit = await jobCollection.aggregate([
+        { $match: { _id: ObjectId(jobId) } },
+        { $unwind: "$applications" },
+        {$match: {"applications.nannyName": { $regex: searchTerm, $options: "i" }}},
+        { $group: { _id: null, applications: { $push: "$applications" } } },
+      ]).toArray();
       if (nanniesFound === null)
-        throw { statusCode: 500, message: "No applications with that search term" };
+        // throw { statusCode: 500, message: "No applications with that search term" };
+        if(nanniesFound){
+          totalCount = checkLimit[0]?.applications?.length
       nanniesFound = nanniesFound[0]?.applications;
-      return nanniesFound;
+        let allApplications=nanniesFound
+      for (let i in allApplications) {
+        let tempNanny = await getNannyById(allApplications[i].nannyId.toString())
+        allApplications[i].photoUrl=tempNanny.photoUrl
+        allApplications[i].age=tempNanny.age
+        allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
+      }
+      return {remaining:totalCount-(parseInt(pageNum)*3),allApplications:allApplications};
+    }
+      return {remaining:0,allApplications:nanniesFound};
   };
 
 const findMyAppliedJobs = async (nannyId) => {
@@ -613,7 +636,7 @@ module.exports = {
   setNannytoJob,
   getMyJob,
   getAllJobs,
-  searchJobsBasedOnCity,
+  searchJobsBasedOnZipCode,
   findMyAppliedJobs,
   getJobByChildId,
   getJobByNannyId

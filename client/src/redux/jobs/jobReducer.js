@@ -86,7 +86,8 @@ export const jobReducer = (state = initialState, action) => {
     case SEARCH_APPLICANTS_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case SELECT_NANNY_SUCCESS:
       return {
@@ -135,7 +136,8 @@ export const jobReducer = (state = initialState, action) => {
     case SEARCH_JOBS_FAILURE:
       return {
         ...state,
-        error: payload.response.data,
+        error: payload?.response?.data?.message,
+        code: payload?.response?.status,
       };
     case APPLY_TO_JOB_SUCCESS:
       return {

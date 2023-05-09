@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useParams, useLocation, useNavigate,Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import {
 import Avatar from "@mui/material/Avatar";
 import { purple } from "@mui/material/colors";
 import SelectNanny from "./modals/SelectNanny";
+import { AuthContext } from '../firebase/Auth';
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
 import { connect } from "react-redux";
 import "../App.css";
@@ -30,6 +31,7 @@ const Application = ({ job, selectNannyAPICall }) => {
   const [errorMsg, setErrorMsg] = useState("");
   const [errorCode, setErrorCode] = useState("");
 
+  const { currentUser } = useContext(AuthContext);
   let application = location.state.application;
   let jobId = location.state.jobId;
 
@@ -38,7 +40,6 @@ const Application = ({ job, selectNannyAPICall }) => {
   const handleCloseSelectNanny = () => setSelectNannyModal(false);
 
   const selectNanny = async (jobId, nannyId) => {
-    console.log("something is hapenning", jobId, nannyId);
     selectNannyAPICall(jobId, nannyId);
     setSelectNannyModal(false);
     navigate(-2)
@@ -74,6 +75,10 @@ useEffect(() => {
   }
 }, [job]);
 
+
+if (!currentUser) {
+  return <Navigate to='/' />;
+}
 if (loading) {
   return (
     <div>

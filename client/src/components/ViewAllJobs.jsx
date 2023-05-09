@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
 import {
@@ -12,11 +12,12 @@ import { connect } from "react-redux";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Navigate } from "react-router-dom";
 import "../App.css";
 import Loading from "./Loading";
 import ErrorPage from '../components/ErrorPage';
 import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
+import { AuthContext } from '../firebase/Auth';
 
 let noImage = "noImage";
 
@@ -34,6 +35,7 @@ const ViewAllJobs = ({ job, id, getallJobsAPICall, searchJobsAPICall }) => {
   const [errorCode, setErrorCode] = useState("");
   let card = null;
 let searchPage=1
+const { currentUser } = useContext(AuthContext);
 
   let items = JSON.parse(localStorage.getItem("userData"));
   //View Applicants useEffect for apiCall
@@ -143,6 +145,32 @@ let searchPage=1
                     fontWeight="bold"
                     sx={{ paddingRight: "10px" }}
                   >
+                    Child Name:
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {show.name}
+                  </Typography>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                    sx={{ paddingRight: "10px" }}
+                  >
+                    Age:
+                  </Typography>
+                  <Typography color="text.secondary">
+                    {show.age}
+                  </Typography>
+                </div>
+                <div style={{ display: "flex" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontWeight="bold"
+                    sx={{ paddingRight: "10px" }}
+                  >
                     Shifts Timings:
                   </Typography>
                   <Typography color="text.secondary">
@@ -164,7 +192,7 @@ let searchPage=1
                     {shiftDays}
                   </Typography>
                 </div>
-                <div style={{ display: "flex" }}>
+                {/* <div style={{ display: "flex" }}>
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -174,11 +202,11 @@ let searchPage=1
                     Description:
                   </Typography>
                   <Typography color="text.secondary" paragraph>
-                    {show.description.length > 250
-                      ? show.description.substring(0, 250) + " ..."
+                    {show.description.length > 150
+                      ? show.description.substring(0, 150) + " ..."
                       : show.description}
                   </Typography>
-                </div>
+                </div> */}
                 <div style={{ display: "flex" }}>
                   <Typography
                     variant="body2"
@@ -228,6 +256,10 @@ let searchPage=1
       });
   }
 
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
         <Loading />

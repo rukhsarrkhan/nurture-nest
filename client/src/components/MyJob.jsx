@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useParams, useLocation, useNavigate,Navigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -19,6 +19,9 @@ import Box, { BoxProps } from "@mui/material/Box";
 import { getMyJobAPICall } from "../redux/jobs/jobActions";
 import { deleteJobAPICall } from "../redux/jobs/jobActions";
 import DeleteJobModal from "./modals/DeleteJobModal";
+import { AuthContext } from '../firebase/Auth';
+import Loading from "./Loading";
+import ErrorPage from '../components/ErrorPage';
 
 const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   const navigate = useNavigate();
@@ -26,7 +29,9 @@ const MyJob = ({ job, getMyJobAPICall,deleteJobAPICall }) => {
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
-  const [errorMsg, setErrorMsg] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+  const { currentUser } = useContext(AuthContext);
+  const [errorCode, setErrorCode] = useState("");
 
   const [openDeleteJobModal, setOpenDeleteJobModal] = useState(false);
   const handleOpenDeleteJob = () => setOpenDeleteJobModal(true);
@@ -45,43 +50,37 @@ const deleteJob = async (jobId) => {
 }
 
   useEffect(() => {
-    try {
-      console.log("1st use effect fired", jobId, pageNum);
       if (jobId) {
         getMyJobAPICall(jobId);
       }
-    } catch (e) {
-      console.log("error===>", e);
-      setError(true);
-      setErrorMsg(e);
-      setLoading(false);
-    }
   }, [jobId]);
 
   useEffect(() => {
-    console.log("2nd use effect fired", job);
-    try {
+    if (job !== undefined) {
+      if (job?.error !== "") {
+          setError(true);
+          setErrorMsg(job?.error);
+          setErrorCode(job?.code);
+          setLoading(false)
+      }else{
       setShowData(job.data);
       setLoading(false);
       setError(false);
-    } catch (e) {
-      setError(true);
-      setErrorMsg(e);
-      setLoading(false);
-    }
+    }}
   }, [job]);
 
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
       <div>
-        <h2>Loading....</h2>
+        <Loading />
       </div>
     );
   } else if (error) {
     return (
-      <div>
-        <h2>Error404: No data found</h2>
-      </div>
+      <ErrorPage error={errorMsg} code={errorCode} />
     );
   } else {
     let shiftDays = "";

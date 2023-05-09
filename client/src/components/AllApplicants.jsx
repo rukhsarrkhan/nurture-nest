@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
 import {
@@ -15,6 +15,7 @@ import { showAllApplicantsAPICall } from "../redux/jobs/jobActions";
 import { searchApplicantsAPICall } from "../redux/jobs/jobActions";
 import CardHeader from "@mui/material/CardHeader";
 import CardActions from "@mui/material/CardActions";
+import { AuthContext } from '../firebase/Auth';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
@@ -24,6 +25,7 @@ import ErrorPage from '../components/ErrorPage';
 import "../App.css";
 
 const AllApplicants = ({
+  users,
   job,
   showAllApplicantsAPICall,
   searchApplicantsAPICall,
@@ -42,6 +44,7 @@ const AllApplicants = ({
   const [errorCode, setErrorCode] = useState("");
   let card = null;
   let pagenum = pageNum;
+  const { currentUser } = useContext(AuthContext);
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
@@ -58,17 +61,17 @@ const AllApplicants = ({
           setErrorMsg(job?.error);
           setErrorCode(job?.code);
           setLoading(false)
-      }
+      }else{
       if (searchTerm) {
-        setSearchData(job?.applicantsData);
+        setSearchData(job?.applicantsData?.allApplications);
         setLoading(false);
         setError(false);
     } else {
-        setSearchData(job?.applicantsData);
-        setShowsData(job?.applicantsData);
+        setSearchData(job?.applicantsData.allApplications);
+        setShowsData(job?.applicantsData.allApplications);
         setLoading(false);
         setError(false);
-  }
+  }}
   }
 }, [job]);
 
@@ -108,8 +111,8 @@ const AllApplicants = ({
       const options = { timeZone: "America/New_York", hour12: true };
       return date.toLocaleString("en-US", options);
     }
+
     const formattedDate = date.toLocaleString("en-US", options);
-    console.log(show);
     return (
       // <Container fixed maxWidth="70%">
       <Grid item xs={12} key={show.id} sx={{ justifyContent: "center" }}>
@@ -130,8 +133,8 @@ const AllApplicants = ({
                 component="img"
                 height="100%"
                 width={100}
-                image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
-                alt="Paella dish"
+                image={show.photoUrl}
+                alt="client\public\download.jpeg"
               />
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
@@ -144,9 +147,7 @@ const AllApplicants = ({
                       </Avatar>
                     }
                     title={show.nannyName}
-                    subheader={`Applied to job on ${getEDTTimeFromISOString(
-                      show?.applyDate
-                    )}`}
+                    subheader={`Applied to job on ${getEDTTimeFromISOString(show?.applyDate)}`}
                   />
                 </div>
                 <div style={{ display: "flex", paddingLeft: "16px" }}>
@@ -220,18 +221,20 @@ const AllApplicants = ({
   if (searchTerm) {
     card =
       searchData &&
-      searchData.map((shows) => {
-        console.log("coming here");
-        return buildCard(shows);
+      searchData.map((show) => {
+        return buildCard(show);
       });
   } else {
-    card =
-      showsData &&
+    card = showsData &&
       showsData.map((show) => {
         return buildCard(show);
       });
   }
 
+
+  if (!currentUser) {
+    return <Navigate to='/' />;
+  }
   if (loading) {
     return (
       <div>
@@ -260,25 +263,13 @@ const AllApplicants = ({
           </Link>
         )}
         {nextButton && (
-          <Link
-            className="showlink"
-            // to={`/job/allApplicantions/${parseInt(pageNum)+1}`}
-          component="button"
-          onClick={() => {
-            pageNum=parseInt(pageNum)+1
-            console.log(pageNum)
-            navigate(`/job/allApplicantions/${pageNum}`, {
-              state: { jobId: jobId },
-            });
-          }}
-          >
+          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
             Next
           </Link>
-          
         )}
-        <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
+        {/* <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
             Next2
-          </Link>
+          </Link> */}
       </div>
     );
   }
@@ -287,6 +278,7 @@ const AllApplicants = ({
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
+    users:state.users
   };
 };
 

@@ -244,13 +244,12 @@ router
         searchTerm,
         pageNum
       );
-      if (!searchedApplicants) {
-        throw "Couldn't get applications";
-      }
+      if (!searchedApplicants) {throw { statusCode: 400, message:"Couldn't get applications"}}
+      console.log(searchedApplicants.allApplications[0].applications[0])
       return res.json(searchedApplicants);
     } catch (e) {
       // throw e;
-      return res.status(400).json({ error: e });
+      return res.status(e.statusCode).json({ title: "Error", message: e.message });
     }
   });
 
@@ -258,6 +257,32 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
   // Find all Applicants from Parent side
   let { jobId, pageNum } = req.params;
   try {
+    jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+    if (typeof jobId == "undefined")
+      throw { statusCode: 400, message: "jobId parameter not provided" };
+    if (typeof jobId !== "string")
+      throw { statusCode: 400, message: "jobId must be a string" };
+    if (jobId.trim().length === 0)
+      throw {
+        statusCode: 400,
+        message: "jobIdd cannot be an empty string or just spaces",
+      };
+    if (!ObjectId.isValid(jobId))
+      throw { statusCode: 400, message: "invalid object ID for job" };
+    if (pageNum) {
+      if (isNaN(pageNum)) {
+        throw { statusCode: 400, message: "Invalid page number argument" };
+      }
+      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+    } else {
+      pageNum = 1;
+    }
+    if (pageNum < 1) {
+      throw {
+        statusCode: 400,
+        message: "Invalid negative page number argument",
+      };
+    }
     const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
     if (!allApplicants) {
       throw { statusCode: 200, message: "No Nanny for this Job Applications yet" }
@@ -298,7 +323,7 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
       };
     if (!ObjectId.isValid(nannyId))
       throw { statusCode: 400, message: "invalid object ID for Nanny" };
-    const nannyChec = await jobCollection.getJobByNannyId(nannyId)
+    // const nannyChec = await jobCollection.getJobByNannyId(nannyId)
     //Add nanny No longer available Validation
     // Validations done
     const nannyJobSet = await jobCollection.setNannytoJob(jobId, nannyId);
@@ -354,14 +379,14 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
       };
     }
     const foundJobs = await jobCollection.getAllJobs(nannyId,pageNum);
-    if (!foundJobs?.jobsFound) {
-      throw { statusCode: 400, message: "No Jobs for available for yet" };
-    }
+    // if (!foundJobs?.jobsFound) {
+    //   throw { statusCode: 400, message: "No Jobs for available for yet" };
+    // }
     return res.json(foundJobs);
   } catch (e) {
     console.log(e)
     // throw e.message
-    return res.status(e.statusCode).json({ title: "Error", message: e.message });
+   return res.status(e.statusCode).json({ title: "Error", message: e.message });
   }
 });
 
@@ -396,14 +421,14 @@ router.route("/searchJobs/:nannyId/:searchTerm/:pageNum").get(async (req, res) =
         message: "Invalid negative page number argument",
       };
     }
-    const searchedApplicants = await jobCollection.searchJobsBasedOnCity(nannyId,searchTerm,pageNum);
+    const searchedApplicants = await jobCollection.searchJobsBasedOnZipCode(nannyId,searchTerm,pageNum);
     if (!searchedApplicants.jobsFound) {
-      throw "Couldn't get applications";
+      throw  { statusCode: 400, message: "Couldn't get Jobs" };
     }
+    
     return res.json(searchedApplicants);
   } catch (e) {
-    throw e.message
-    return res.status(400).json({ error: e });
+    return res.status(e.statusCode).json({ title: "Error", message: e.message });
   }
 });
 

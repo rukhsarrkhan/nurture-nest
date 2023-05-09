@@ -74,7 +74,7 @@ router
         try {
             let jobId = req.params.jobId;
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
-            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job hai idhar" };
             const jobFound = await jobCollection.getMyJob(jobId);
             if (!jobFound) {
                 throw "Couldn't find Job with that id";
@@ -88,12 +88,12 @@ router
     .delete(async (req, res) => {
         // Parent deleting a job
         let jobId = req.params.jobId;
-        try {
+        try {console.log(jobId)
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
             if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
             if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
             if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
-            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job" };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job111111",jobId:jobId };
             jobId = jobId.trim();
             const deletedJob = await jobCollection.removeJob(jobId);
             if (!deletedJob) {
@@ -103,7 +103,7 @@ router
             return res.json(deletedJob);
         } catch (e) {
             console.log(e);
-            // throw e.message;
+            throw e
             return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     });

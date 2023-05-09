@@ -604,21 +604,26 @@ const searchApplications = async (jobId, searchTerm, pageNum) => {
       { $group: { _id: null, applications: { $push: "$applications" } } },
     ])
     .toArray();
-    if (allApplications.length==0){
-      return { remaining: 0, allApplications: [] }
-    }else {
-      totalCount = checkLimit[0]?.applications?.length;
-      allApplications = allApplications[0]?.applications;
-      for (let i in allApplications) {
-        let tempNanny = await getNannyById(allApplications[i].nannyId.toString());
-        allApplications[i].photoUrl = tempNanny.photoUrl;
-        allApplications[i].age = tempNanny.age;
-        allApplications[i]["nannyId"] =
-          allApplications[i]["nannyId"].toString();
-      }
-      console.log({remaining: totalCount - parseInt(pageNum) * 3,allApplications: allApplications})
-      return {remaining: totalCount - parseInt(pageNum) * 3,allApplications: allApplications};
+  if (allApplications.length == 0) {
+    return { remaining: 0, allApplications: [] };
+  } else {
+    totalCount = checkLimit[0]?.applications?.length;
+    allApplications = allApplications[0]?.applications;
+    for (let i in allApplications) {
+      let tempNanny = await getNannyById(allApplications[i].nannyId.toString());
+      allApplications[i].photoUrl = tempNanny.photoUrl;
+      allApplications[i].age = tempNanny.age;
+      allApplications[i]["nannyId"] = allApplications[i]["nannyId"].toString();
     }
+    console.log({
+      remaining: totalCount - parseInt(pageNum) * 3,
+      allApplications: allApplications,
+    });
+    return {
+      remaining: totalCount - parseInt(pageNum) * 3,
+      allApplications: allApplications,
+    };
+  }
 
   return { remaining: 0, allApplications: nanniesFound };
 };

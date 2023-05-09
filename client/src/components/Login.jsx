@@ -79,7 +79,7 @@ const Login = ({ userData, userLoginAPICall }) => {
             } else {
                 if (code === "auth/wrong-password") {
                     setPasswordError(true);
-                    setErrorText("Wrong password.");
+                    setErrorText("Wrong email/password.");
                 } else if (code === "auth/user-not-found") {
                     setEmailError(true);
                     setErrorText("User not found.");

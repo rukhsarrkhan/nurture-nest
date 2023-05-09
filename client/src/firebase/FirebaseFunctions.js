@@ -11,7 +11,7 @@ async function doSignOut(error) {
         await firebase.auth().signOut();
         localStorage.clear();
     }
-    window.location.href = "/";
+    window.history.pushState({}, "", "/");
 }
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {

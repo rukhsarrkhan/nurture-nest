@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
 
 import "../../App.css";
 import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
@@ -7,6 +7,8 @@ import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
 import ErrorPage from "../../components/ErrorPage";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../../firebase/Auth";
 
 const sexes = [
     {
@@ -61,6 +63,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
     let userId = userData?.data?._id;
+    const { currentUser } = useContext(AuthContext);
 
     const handleImageChange = (event) => {
         const file = event?.target?.files[0];
@@ -128,14 +131,14 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const setUserProfileAPICallMemo = useMemo(() => {
         return () => {
             try {
-                setUserProfileAPICall(userId);
+                if (currentUser && userId) setUserProfileAPICall(userId);
             } catch (error) {
                 setuserObjData(undefined);
                 setLoading(false);
                 setErrorText(error.message ? error.message : error);
             }
         };
-    }, [userId, setUserProfileAPICall]);
+    }, [userId, setUserProfileAPICall, currentUser]);
 
     useEffect(() => {
         setUserProfileAPICallMemo();
@@ -268,6 +271,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         }
         setEditMode(!editMode);
     };
+
+    if (!currentUser) {
+        return <Navigate to="/" />;
+    }
 
     if (loading) {
         return (

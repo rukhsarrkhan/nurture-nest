@@ -16,16 +16,12 @@ async function doSignOut(error) {
 
 async function doCreateUserWithEmailAndPassword(email, password, firstName) {
   try {
-    const resp = await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password);
+    const resp = await firebase.auth().createUserWithEmailAndPassword(email, password);
     if (
       resp?.additionalUserInfo?.isNewUser === true &&
       resp?.user?.multiFactor?.user?.uid !== ""
     ) {
-      await firebase
-        .auth()
-        .currentUser.updateProfile({ displayName: firstName });
+      await firebase.auth().currentUser.updateProfile({ displayName: firstName });
       return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
     }
   } catch (e) {
@@ -45,9 +41,7 @@ async function doChangePassword(email, oldPassword, newPassword) {
 
 async function doSignInWithEmailAndPassword(email, password) {
   try {
-    const resp = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password);
+    const resp = await firebase.auth().signInWithEmailAndPassword(email, password);
     if (resp?.user?.multiFactor?.user?.uid !== "") {
       return { uid: resp?.user?.multiFactor?.user?.uid, error: null };
     }

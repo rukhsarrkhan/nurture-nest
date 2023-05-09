@@ -86,28 +86,18 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     const handleImageSubmit = async () => {
-        try {
-            setDisableSave(true);
-            if (!imageFile) {
-                setImageError("No image available");
-                setImagePreview(null);
-                return;
-            }
-            const formData = new FormData();
-            formData.append("image", imageFile);
-
-            await updateProfileImageAPICall(userId, formData);
-            // const response = await axios.put("http://localhost:3000/users/image", formData);
-            setDisableSave(false);
-        } catch (error) {
-            console.error(error);
-            if (userData?.error !== "") {
-                setErrorPage(true);
-                setErrorText(userData?.error);
-                setErrorCode(userData?.code);
-            }
-            setDisableSave(false);
+        setDisableSave(true);
+        if (!imageFile) {
+            setImageError("No image available");
+            setImagePreview(null);
+            return;
         }
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        await updateProfileImageAPICall(userId, formData);
+        // const response = await axios.put("http://localhost:3000/users/image", formData);
+        setDisableSave(false);
     };
 
     const validation = async (field, valFunc) => {
@@ -127,13 +117,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
     const setUserProfileAPICallMemo = useMemo(() => {
         return () => {
-            try {
-                setUserProfileAPICall(userId);
-            } catch (error) {
-                setuserObjData(undefined);
-                setLoading(false);
-                setErrorText(error.message ? error.message : error);
-            }
+            setUserProfileAPICall(userId);
         };
     }, [userId, setUserProfileAPICall]);
 
@@ -142,6 +126,14 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
+        setErrorPage(false);
+        if (userData !== undefined) {
+            if (userData?.error !== "") {
+                setErrorPage(true);
+                setErrorText(userData?.error);
+                setErrorCode(userData?.code);
+            }
+        }
         if (userData?.data) {
             setuserObjData(userData?.data);
         }
@@ -243,25 +235,21 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             }
 
             if (errorText === "") {
-                try {
-                    let newObj = {};
-                    if (userObjData.firstName !== firstName) newObj.firstName = firstName;
-                    if (userObjData.lastName !== lastName) newObj.lastName = lastName;
-                    if (userObjData.age !== age) newObj.age = age;
-                    if (userObjData.address !== address) newObj.address = address;
+                let newObj = {};
+                if (userObjData.firstName !== firstName) newObj.firstName = firstName;
+                if (userObjData.lastName !== lastName) newObj.lastName = lastName;
+                if (userObjData.age !== age) newObj.age = age;
+                if (userObjData.address !== address) newObj.address = address;
 
-                    if (userObjData.phone !== phone) newObj.phone = phone;
-                    if (userObjData.sex !== sex) newObj.sex = sex;
+                if (userObjData.phone !== phone) newObj.phone = phone;
+                if (userObjData.sex !== sex) newObj.sex = sex;
 
-                    if (Object.keys(newObj).length > 0) {
-                        await updateUserAPICall(userId, newObj);
-                        setDisableSave(false);
-                    } else {
-                        alert("No fields were changed to save");
-                        setDisableSave(false);
-                    }
-                } catch (error) {
-                    alert(error);
+                if (Object.keys(newObj).length > 0) {
+                    console.log("newObj", newObj);
+                    await updateUserAPICall(userId, newObj);
+                    setDisableSave(false);
+                } else {
+                    alert("No fields were changed to save");
                     setDisableSave(false);
                 }
             }

@@ -194,7 +194,6 @@ const mapStateToProps = state => {
     return {
         userData: state?.users,
         appointmentData: state?.appointments,
-        userData: state?.users,
     };
 };
 

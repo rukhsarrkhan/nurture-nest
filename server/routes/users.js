@@ -149,7 +149,7 @@ router
             if (!userObj || userObj === null || userObj === undefined) throw { statusCode: 404, message: `No user exists with that id` };
             return res.json(userObj);
         } catch (e) {
-            return res.status(404).json({ error: e });
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
         }
     })
     .put(async (req, res) => {

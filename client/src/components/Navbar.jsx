@@ -36,7 +36,7 @@ const Navbar = ({ userData }) => {
                     )}
                     {currentUser && (
                         <ProfileBtn>
-                            <NavLink to={profileLink}>Profile</NavLink>
+                            <NavLink to="/profile">Profile</NavLink>
                         </ProfileBtn>
                     )}
                     {currentUser && <ProfileBtn onClick={doSignOut}>Logout</ProfileBtn>}

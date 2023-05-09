@@ -6,7 +6,7 @@ import helpers from "../../helpers";
 import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
-// import axios from "axios";
+import ErrorPage from "../../components/ErrorPage";
 
 const sexes = [
     {
@@ -32,11 +32,12 @@ const sexes = [
 ];
 
 const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updateProfileImageAPICall }) => {
-    const [userObjData, setuserObjData] = useState(undefined);
+    const [userObjData, setuserObjData] = useState(userData?.data);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [profile, setProfile] = useState("");
     const [age, setAge] = useState("");
     const [sex, setSex] = useState("");
     const [address, setAddress] = useState("");
@@ -54,9 +55,12 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [phoneError, setPhoneError] = useState(false);
     const [sexError, setSexError] = useState(false);
     const [errorText, setErrorText] = useState("");
+    const [errorPage, setErrorPage] = useState(false);
+    const [errorCode, setErrorCode] = useState("");
+
     const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
-    let userId = userData?.userProfile?._id;
+    let userId = userData?.data?._id;
 
     const handleImageChange = (event) => {
         const file = event?.target?.files[0];
@@ -102,7 +106,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     const validation = async (field, valFunc) => {
-        //need to change valdn function.. it'll fail if str is empty spaces.
         let fieldVal = await helpers.execValdnAndTrim(field);
         let check = "";
         if (valFunc) {
@@ -134,41 +137,28 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
-        if (userData?.userProfile) {
-            setuserObjData(userData?.userProfile);
-            setLoading(false);
+        if (userData?.data) {
+            setuserObjData(userData?.data);
         }
     }, [userData]);
 
     const setVariablesFromUserObj = useCallback((value) => {
         if (value) {
-            if (value?.firstName !== undefined && value?.firstName !== "" && value?.firstName !== null) {
-                setFirstName(value.firstName);
-            }
-            if (value?.lastName !== undefined && value?.lastName !== "" && value?.lastName !== null) {
-                setLastName(value.lastName);
-            }
-            if (value?.age !== undefined && value?.age !== "" && value?.age !== null) {
-                setAge(value.age);
-            }
-            if (value?.address !== undefined && value?.address !== "" && value?.address !== null) {
-                setAddress(value.address);
-            }
-            if (value?.phone !== undefined && value?.phone !== "" && value?.phone !== null) {
-                setPhone(value.phone);
-            }
-            if (value?.sex !== undefined && value?.sex !== "" && value?.sex !== null) {
-                setSex(value.sex);
-            }
-            if (value?.photoUrl !== undefined && value?.photoUrl !== "" && value?.photoUrl !== null) {
-                setImage(value.photoUrl);
-                setImagePreview(null);
-            }
+            setFirstName(value?.firstName);
+            setLastName(value?.lastName);
+            setAge(value?.age);
+            setAddress(value?.address);
+            setPhone(value?.phone);
+            setImage(value?.photoUrl);
+            setImagePreview(null);
+            setSex(value?.sex);
+            setProfile(value?.profile);
         }
     }, []);
 
     useEffect(() => {
         setVariablesFromUserObj(userObjData);
+        setLoading(false);
     }, [userObjData, setVariablesFromUserObj]);
 
     const handleEdit = (event) => {
@@ -278,6 +268,12 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
         return (
             <div>
                 <Loading />
+            </div>
+        );
+    } else if (errorPage) {
+        return (
+            <div>
+                <ErrorPage error={errorText} code={errorCode} />
             </div>
         );
     } else {
@@ -426,10 +422,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
                     <Grid item xs={12} md={8}>
                         <Typography variant="h4" sx={{ mt: 2 }}>
-                            {userObjData.firstName + " " + userObjData.lastName}
+                            {firstName + " " + lastName}
                         </Typography>
                         <Typography variant="h6" sx={{ mt: 1 }}>
-                            {userObjData.profile}
+                            {profile}
                         </Typography>
 
                         <Paper sx={{ p: 2 }}>

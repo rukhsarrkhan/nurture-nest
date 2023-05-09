@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import "../App.css";
 import { connect } from "react-redux";
 import { Link, Navigate } from "react-router-dom";
@@ -15,7 +15,7 @@ import { setUserProfileAPICall } from "../redux/users/userActions";
 import DeleteChildModal from "./modals/DeleteChildModal";
 
 const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, fetchChildrenAPICall, deleteChilDAPICall }) => {
-    const [userObjData, setuserObjData] = useState(userData?.userProfile);
+    const [userObjData, setuserObjData] = useState(userData?.data);
     const [childObjArr, setChildObjArr] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -29,19 +29,30 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
     const { currentUser } = useContext(AuthContext);
     console.log(currentUser, " Current user in home");
 
-    const id = userData?.userProfile?._id;
+    const id = userData?.data?._id;
+
+    const setUserProfileAPICallMemo = useMemo(() => {
+        return () => {
+            try {
+                setUserProfileAPICall(id);
+            } catch (error) {
+                setuserObjData(undefined);
+                setLoading(false);
+                setErrorText(error.message ? error.message : error);
+            }
+        };
+    }, [id, setUserProfileAPICall]);
 
     useEffect(() => {
-        if (userData?.userProfile) {
-            setuserObjData(userData?.userProfile);
-            fetchChildrenAPICall(userData.userProfile._id);
+        setUserProfileAPICallMemo();
+    }, [setUserProfileAPICallMemo]);
+
+    useEffect(() => {
+        if (userData?.data) {
+            setuserObjData(userData?.data);
+            fetchChildrenAPICall(userData?.data?._id);
         }
     }, [userData, fetchChildrenAPICall]);
-    useEffect(() => {
-        setChildObjArr(childData);
-        setLoading(false);
-    }, [childData]);
-
     useEffect(() => {
         if (userObjData) {
             if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
@@ -51,6 +62,10 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
             }
         }
     }, [userObjData]);
+    useEffect(() => {
+        setChildObjArr(childData);
+        setLoading(false);
+    }, [childData]);
 
     if (!currentUser) {
         return <Navigate to="/" />;
@@ -122,11 +137,11 @@ const Home = ({ userData, childData, createChildAPICall, setUserProfileAPICall, 
                             </CardContent>
                         </Link>
                     </CardActionArea>
-                        {userObjData?.profile === "PARENT" ? (
-                            <IconButton onClick={() => handleOpen2(child?._id)} color='textSecondary' aria-label="Delete Child" >
-                                <DeleteIcon sx={{ position: "absolute", bottom: 0, right: 150 }} />
-                            </IconButton>
-                        ) : null}
+                    {userObjData?.profile === "PARENT" ? (
+                        <IconButton onClick={() => handleOpen2(child?._id)} color="textSecondary" aria-label="Delete Child">
+                            <DeleteIcon sx={{ position: "absolute", bottom: 0, right: 150 }} />
+                        </IconButton>
+                    ) : null}
                 </Card>
             </Grid>
         );

@@ -72,12 +72,12 @@ export const userReducer = (state = initialState, action) => {
         case SET_USER_PROFILE:
             return {
                 ...state,
-                userProfile: payload,
+                data: payload,
             };
         case SET_PROFILE_SUCCESS:
             return {
                 ...state,
-                userProfile: { ...payload },
+                data: payload,
             };
         case SET_PROFILE_FAILURE:
             return {

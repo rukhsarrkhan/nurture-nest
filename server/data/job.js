@@ -190,7 +190,6 @@ const getMyJob = async (jobId) => {
   const jobCollection = await jobs();
   let myJob = await jobCollection.findOne(
     { _id: ObjectId(jobId) },
-    { projection: { applications: 0 } }
   );
   if (myJob === null) throw { statusCode: 400, message: "No Job with that id" };
   myJob._id = myJob._id.toString();
@@ -317,7 +316,7 @@ const addApplication = async (
   await helpers.isNameValid(nannyName, "Nanny Name");
   contact = await helpers.execValdnAndTrim(contact, "Phone Number");
   await helpers.validatePhoneNumber(contact, "Phone Number");
-  nannyAddress = await helpers.execValdnAndTrim(nannyAddress,"Nanny Address");
+  nannyAddress = await helpers.execValdnAndTrim(nannyAddress, "Nanny Address");
   await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
   city = await helpers.execValdnAndTrim(city, "City");
   await helpers.isCityParentValid(city, "City");
@@ -411,91 +410,91 @@ const searchApplications = async (jobId, searchTerm, pageNum) => {
 };
 
 const setNannytoJob = async (jobId, nannyId) => {
-    jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
-    if (typeof jobId == "undefined")
-      throw { statusCode: 400, message: "jobId parameter not provided" };
-    if (typeof jobId !== "string")
-      throw { statusCode: 400, message: "jobId must be a string" };
-    if (jobId.trim().length === 0)
-      throw {
-        statusCode: 400,
-        message: "jobIdd cannot be an empty string or just spaces",
-      };
-    if (!ObjectId.isValid(jobId))
-      throw { statusCode: 400, message: "invalid object ID for job" };
-    nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
-    if (typeof nannyId == "undefined")
-      throw { statusCode: 400, message: "nannyId parameter not provided" };
-    if (typeof nannyId !== "string")
-      throw { statusCode: 400, message: "nannyId must be a string" };
-    if (nannyId.trim().length === 0)
-      throw {
-        statusCode: 400,
-        message: "nannyId cannot be an empty string or just spaces",
-      };
-    if (!ObjectId.isValid(nannyId))
-      throw { statusCode: 400, message: "invalid object ID for Nanny" };
-    //Validations Done
-    const jobCollection = await jobs();
-    let jobUpdated = await jobCollection.updateOne(
-      { _id: ObjectId(jobId) },
-      { $set: { nannyId: ObjectId(nannyId) } }
-    );
-    if (!jobUpdated.acknowledged || jobUpdated.modifiedCount == 0)
-      throw {
-        statusCode: 500,
-        message: `Could not update and set nanny to Job with jobId of ${jobId} and nannyId of ${nannyId}`,
-      };
-    const job = await getJobById(jobId);
-    job["_id"] = job["_id"].toString();
-    return job;
-  };
-  //////////////////////////////////////////////////////
-  const getAllJobs = async (pageNum) => {
-    if (pageNum) {
-      if (isNaN(pageNum)) {
-        throw { statusCode: 400, message: "Invalid page number argument" };
-      }
-      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
-    } else {
-      pageNum = 1;
+  jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
+  if (typeof jobId == "undefined")
+    throw { statusCode: 400, message: "jobId parameter not provided" };
+  if (typeof jobId !== "string")
+    throw { statusCode: 400, message: "jobId must be a string" };
+  if (jobId.trim().length === 0)
+    throw {
+      statusCode: 400,
+      message: "jobIdd cannot be an empty string or just spaces",
+    };
+  if (!ObjectId.isValid(jobId))
+    throw { statusCode: 400, message: "invalid object ID for job" };
+  nannyId = await helpers.execValdnAndTrim(nannyId, "Job Id");
+  if (typeof nannyId == "undefined")
+    throw { statusCode: 400, message: "nannyId parameter not provided" };
+  if (typeof nannyId !== "string")
+    throw { statusCode: 400, message: "nannyId must be a string" };
+  if (nannyId.trim().length === 0)
+    throw {
+      statusCode: 400,
+      message: "nannyId cannot be an empty string or just spaces",
+    };
+  if (!ObjectId.isValid(nannyId))
+    throw { statusCode: 400, message: "invalid object ID for Nanny" };
+  //Validations Done
+  const jobCollection = await jobs();
+  let jobUpdated = await jobCollection.updateOne(
+    { _id: ObjectId(jobId) },
+    { $set: { nannyId: ObjectId(nannyId) } }
+  );
+  if (!jobUpdated.acknowledged || jobUpdated.modifiedCount == 0)
+    throw {
+      statusCode: 500,
+      message: `Could not update and set nanny to Job with jobId of ${jobId} and nannyId of ${nannyId}`,
+    };
+  const job = await getJobById(jobId);
+  job["_id"] = job["_id"].toString();
+  return job;
+};
+//////////////////////////////////////////////////////
+const getAllJobs = async (pageNum) => {
+  if (pageNum) {
+    if (isNaN(pageNum)) {
+      throw { statusCode: 400, message: "Invalid page number argument" };
     }
-    const jobCollection = await jobs();
-    let nanniesFound = await jobCollection
-      .find({nannyId:null}, { projection: { applications: 0 } })
-      .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
-      .limit(5)
-      .toArray();
-    if (nanniesFound === null)
-      throw { statusCode: 500, message: "No applications with that search term" };
-    return nanniesFound;
-  };
-  
-  const searchJobsBasedOnCity = async (searchTerm, pageNum) => {
-    if (pageNum) {
-      if (isNaN(pageNum)) {
-        throw { statusCode: 400, message: "Invalid page number argument" };
-      }
-      // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
-    } else {
-      pageNum = 1;
+    // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+  } else {
+    pageNum = 1;
+  }
+  const jobCollection = await jobs();
+  let nanniesFound = await jobCollection
+    .find({ nannyId: null }, { projection: { applications: 0 } })
+    .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
+    .limit(5)
+    .toArray();
+  if (nanniesFound === null)
+    throw { statusCode: 500, message: "No applications with that search term" };
+  return nanniesFound;
+};
+
+const searchJobsBasedOnCity = async (searchTerm, pageNum) => {
+  if (pageNum) {
+    if (isNaN(pageNum)) {
+      throw { statusCode: 400, message: "Invalid page number argument" };
     }
-    if (pageNum < 1) {
-      throw { statusCode: 400, message: "Invalid negative page number argument" };
-    }
-    const jobCollection = await jobs();
-    let nanniesFound = await jobCollection
-      .find(
-        { city: { $regex: searchTerm, $options: "i" } },
-        { projection: { applications: 0 } }
-      )
-      .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
-      .limit(5)
-      .toArray();
-    if (nanniesFound === null)
-      throw { statusCode: 500, message: "No applications with that search term" };
-    return nanniesFound;
-  };
+    // pageNo = parseInt(req.query.page)/////Check if it works with convrt to int,if yes then do it
+  } else {
+    pageNum = 1;
+  }
+  if (pageNum < 1) {
+    throw { statusCode: 400, message: "Invalid negative page number argument" };
+  }
+  const jobCollection = await jobs();
+  let nanniesFound = await jobCollection
+    .find(
+      { city: { $regex: searchTerm, $options: "i" } },
+      { projection: { applications: 0 } }
+    )
+    .skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
+    .limit(5)
+    .toArray();
+  if (nanniesFound === null)
+    throw { statusCode: 500, message: "No applications with that search term" };
+  return nanniesFound;
+};
 
 const findMyAppliedJobs = async (nannyId) => {
   const jobCollection = await jobs();
@@ -522,18 +521,30 @@ const getJobByChildId = async (childId) => {
     throw { statusCode: 400, message: "invalid object ID for Child" };
   const jobCollection = await jobs();
   let jobFound = await jobCollection.findOne({ childId: ObjectId(childId) });
-  let nannyId = jobFound.nannyId.toString();
-  let nannyFromApplicants = null;
-  let applicantData = jobFound.applications;
-  for (let i in applicantData) {
-    if (applicantData[i].nannyId.toString() == nannyId) {
-      nannyFromApplicants = applicantData[i];
+  if (jobFound !== null) {
+    // VALIDATE IF JOB EXISTS IT IS WORKING - SWARAJ
+    let nannyId = jobFound.nannyId !== null ? jobFound.nannyId.toString() : null;
+    if (nannyId !== null) {
+
+      let nannyFromApplicants = null;
+      let applicantData = jobFound.applications;
+      for (let i in applicantData) {
+        if (applicantData[i].nannyId.toString() == nannyId) {
+          nannyFromApplicants = applicantData[i];
+        }
+      }
+      if (nannyFromApplicants === null) {
+        throw { statusCode: 400, message: "No job found with that id" };
+      }
+      nannyFromApplicants["_id"] = nannyFromApplicants["_id"].toString();
+      return nannyFromAppliants;
+    } else {
+      return jobFound;
     }
+  } else {
+    // handling no jobs here
+    return {};
   }
-  if (nannyFromApplicants === null)
-    throw { statusCode: 400, message: "No job found with that id" };
-  nannyFromApplicants["_id"] = nannyFromApplicants["_id"].toString();
-  return nannyFromApplicants;
 };
 
 const removeNannyFromJob = async (nannyId) => {

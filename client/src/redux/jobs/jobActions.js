@@ -188,17 +188,16 @@ export const applyToJobFailure = (error) => {
 };
 
 export const fireNannySuccess = (data) => {
-  console.log(data, 'this is payload data')
   return {
-      type: FIRE_NANNY_SUCCESS,
-      payload: data,
+    type: FIRE_NANNY_SUCCESS,
+    payload: data,
   };
 };
 
 export const fireNannyFailure = (error) => {
   return {
-      type: FIRE_NANNY_FAILURE,
-      payload: error,
+    type: FIRE_NANNY_FAILURE,
+    payload: error,
   };
 };
 
@@ -342,12 +341,12 @@ export const exitJobAPICall = (jobId) => {
 
 export const fireNannyAPICall = (childId, nannyId) => {
   return async (dispatch) => {
-      try {
-          let { data } = await axios.delete('http://localhost:3000/job/fireNanny/' + childId, { data: {nannyId} });
+    try {
+      let { data } = await axios.delete('http://localhost:3000/job/fireNanny/' + childId, { data: { nannyId } });
 
-          dispatch(fireNannySuccess(data));
-      } catch (error) {
-          dispatch(fireNannyFailure(error));
-      }
+      dispatch(fireNannySuccess(data));
+    } catch (error) {
+      dispatch(fireNannyFailure(error));
+    }
   };
 };

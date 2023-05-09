@@ -20,6 +20,8 @@ const profiles = [
 ];
 
 const Register = ({ userData, userRegistrationAPICall }) => {
+    // NO CONSOLE ERRORS
+    // LOADING MISSING
     const { currentUser } = useContext(AuthContext);
 
     const [firstName, setFirstName] = useState("");
@@ -40,7 +42,6 @@ const Register = ({ userData, userRegistrationAPICall }) => {
     const [serverError, setServerError] = useState(false);
     const [errorText, setErrorText] = useState("");
     const [success, setSuccess] = useState(false);
-    let items;
 
     useEffect(() => {
         setSuccess(false);
@@ -51,7 +52,6 @@ const Register = ({ userData, userRegistrationAPICall }) => {
                 doSignOut(userData?.error);
             } else {
                 if (Object.keys(userData?.data).length !== 0) {
-                    items = JSON.parse(localStorage.getItem("userData"));
                     setSuccess(true);
                 }
             }

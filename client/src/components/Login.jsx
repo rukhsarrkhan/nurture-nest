@@ -10,6 +10,8 @@ import SocialSignIn from "./SocialSignIn";
 import helpers from "../helpers";
 
 const Login = ({ userData, userLoginAPICall }) => {
+    // NO CONSOLE ERRORS
+    // LOADING MISSING
     const { currentUser } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -18,7 +20,6 @@ const Login = ({ userData, userLoginAPICall }) => {
     const [serverError, setServerError] = useState(false);
     const [errorText, setErrorText] = useState("");
     const [success, setSuccess] = useState(false);
-    let items;
 
     useEffect(() => {
         setSuccess(false);
@@ -29,7 +30,6 @@ const Login = ({ userData, userLoginAPICall }) => {
                 doSignOut(userData?.error);
             } else {
                 if (Object.keys(userData?.data).length !== 0) {
-                    items = JSON.parse(localStorage.getItem("userData"));
                     setSuccess(true);
                 }
             }

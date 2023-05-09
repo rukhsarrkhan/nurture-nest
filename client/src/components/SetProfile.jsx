@@ -34,15 +34,15 @@ const SetProfile = ({ updateUserAPICall, userData }) => {
     const [error, setError] = useState(false);
     const [errorCode, setErrorCode] = useState("");
     useEffect(() => {
-        if (userData?.userProfile !== null && userData?.userProfile !== undefined) {
-            setuserObjData(userData?.userProfile);
+        if (userData?.data !== null && userData?.data !== undefined) {
+            setuserObjData(userData?.data);
             setLoading(false);
         }
     }, [userData]);
 
     useEffect(() => {
         if (userObjData) {
-            if (userObjData?.profile !== null && userObjData?.profile !== undefined && userObjData?.profile !== "") {
+            if (userObjData?.data !== null && userObjData?.data !== undefined && userObjData?.data !== "") {
                 setProileSelected(true);
             }
         }

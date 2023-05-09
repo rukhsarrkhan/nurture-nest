@@ -1,12 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import "../App.css";
 import { AuthContext } from "../firebase/Auth";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const Landing = () => {
     const { currentUser } = useContext(AuthContext);
     if (currentUser) {
-        const items = JSON.parse(localStorage.getItem("userData"));
         return <Navigate to="/home" />;
     }
     return (

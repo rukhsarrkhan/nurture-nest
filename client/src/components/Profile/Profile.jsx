@@ -58,7 +58,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const [errorText, setErrorText] = useState("");
     const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
-    let userId = userData?.userProfile?._id;
+    let userId = userData?.data?._id;
     const formatDate = (showdate) => {
         if (showdate) {
             var year = showdate.substring(0, 4);
@@ -132,9 +132,9 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                 setErrorText(error.message ? error.message : error);
             }
         }
-        if (userId && userId !== undefined && userData.userProfile === null) fetchData();
-        if (userData.userProfile) {
-            setuserObjData(userData.userProfile);
+        if (userId && userId !== undefined && userData.data === null) fetchData();
+        if (userData.data) {
+            setuserObjData(userData.data);
             setLoading(false);
         }
     }, [userId, userData, setUserProfileAPICall]);

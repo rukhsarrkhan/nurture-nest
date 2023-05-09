@@ -23,14 +23,12 @@ import { AuthContext } from '../firebase/Auth';
 import { Navigate } from "react-router-dom";
 import ErrorPage from '../components/ErrorPage';
 
-const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall }) => {
-    let navigate = useNavigate();
-    let items = JSON.parse(localStorage.getItem("userData"));
-    let profile = items?.profile;
+const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVaccineAPICall, userData }) => {
+    // NO CONSOLE ERRORS
+    // LOADING MISSING
+    // ERRORS MISSING
+    // REMOVE PARAMS
     const { currentUser } = useContext(AuthContext);
-    let card = null;
-    let { childId } = useParams();
-
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -40,6 +38,15 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
     const [errorCode, setErrorCode] = useState("");
 
 
+    let card = null;
+    let { childId } = useParams();
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        getVaccineAPICall(childId);
+        setLoading(false);
+    }, [childId]);
+
     const handleOpen = () => { setOpen(true); };
     const handleClose = () => setOpen(false);
 
@@ -47,6 +54,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
         setDeleteId(id);
         setOpen2(true);
     };
+
     const handleClose2 = () => setOpen2(false);
 
     useEffect(() => {
@@ -59,16 +67,11 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
         }
     }, [vaccineData]);
 
-    useEffect(() => {
-        getVaccineAPICall(childId);
-        setLoading(false);
-    }, [childId]);
 
     const addVaccine = async (obj) => {
         await vaccineSetAPICall(obj, childId);
         handleClose();
     };
-
 
     const deleteVaccine = async (vaccineId) => {
         await delVaccineAPICall(vaccineId);
@@ -101,8 +104,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         image={image}
                     />
                     <CardActions disableSpacing>
-
-                        {profile === "PARENT" ? (
+                        {userData?.data?.profile === "PARENT" ? (
                             <IconButton onClick={() => handleOpen2(vaccines && vaccines?._id)} color='textSecondary' aria-label="Delete Vaccine">
                                 <DeleteIcon />
                             </IconButton>
@@ -113,7 +115,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
 
         );
     };
-
 
     card =
         vaccineData &&
@@ -147,7 +148,7 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
             <div>
                 <div>
                     <br />
-                    {profile === "PARENT" ? (
+                    {userData?.data?.profile === "PARENT" ? (
                         <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>
                             Add Vaccine
                         </Button>
@@ -167,7 +168,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                         }}
                     >
                         {card}
-
                     </Grid>
 
                     {open2 && <DeleteModal
@@ -190,7 +190,6 @@ const VaccineList = ({ getVaccineAPICall, vaccineSetAPICall, vaccineData, delVac
                 <br />
                 <br />
             </div>
-
         );
     }
 };

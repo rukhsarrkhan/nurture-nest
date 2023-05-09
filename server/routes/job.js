@@ -191,7 +191,7 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
     await helpers.isNameValid(nannyName, "Nanny Name");
     contact = await helpers.execValdnAndTrim(contact, "Phone Number");
     await helpers.validatePhoneNumber(contact, "Phone Number");
-    nannyAddress = await helpers.execValdnAndTrim(nannyAddress,"Nanny Address");
+    nannyAddress = await helpers.execValdnAndTrim(nannyAddress, "Nanny Address");
     await helpers.isAddressParentValid(nannyAddress, "Nanny Address");
     city = await helpers.execValdnAndTrim(city, "City");
     await helpers.isCityParentValid(city, "City");
@@ -276,7 +276,6 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
     }
     return res.json(allApplicants);
   } catch (e) {
-    console.log("e",e)
     // throw e;
     return res.status(400).json({ error: e });
   }
@@ -411,56 +410,55 @@ router
     }
   });
 
-    router
-    .route('/findjob/:childId')
-    .get(async (req, res) => {
-        let childId = req.params.childId;
-        try {
-            const jobWithChildId = await jobCollection.getJobByChildId(childId);
-            if (!jobWithChildId) { throw "Couldn't get jobId"; }
-            return res.json(jobWithChildId);
-        } catch (e) {
-            return res.status(400).json({ error: e });
-        }
-    });
-
-    router.route('/fireNanny/:childId').delete(async (req, res) => {
-      const childId = req.params.childId;
-      const nannyId = req.body.nannyId;
-  
-      try {
-          await helpers.execValdnAndTrim(childId, "Child Id");
-          if (!ObjectId.isValid(childId)) {
-              throw { statusCode: 400, message: "Child Id is not valid" };
-          }
-          await helpers.execValdnAndTrim(nannyId, "Nanny Id");
-          if (!ObjectId.isValid(nannyId)) {
-              throw { statusCode: 400, message: "Nanny Id is not valid" };
-          }
-      } catch (e) {
-          return res.status(400).json({ error: e });
-      }
-      try {
-          const removeNannyFrmUser = await jobCollection.removeNannyFromUser(nannyId, childId.toString())
-          const removeNannyFrmJob = await jobCollection.removeNannyFromJob(nannyId);
-          if (!removeNannyFrmJob.acknowledged || removeNannyFrmJob.modifiedCount == 0)
-              throw {
-                  statusCode: 400,
-                  message: "Couldn't set nanny id null from job collection",
-              };
-  
-              if (!removeNannyFrmUser.acknowledged || removeNannyFrmUser.modifiedCount == 0)
-              throw {
-                  statusCode: 400,
-                  message: "Couldn't update nanny child from user collection",
-              };
-          return res.status(200).json(removeNannyFrmJob);
-      } catch (e) {
-        console.log(e,'e')
-          return res.status(500).json({ error: e });
-      }
-  
+router
+  .route('/findjob/:childId')
+  .get(async (req, res) => {
+    let childId = req.params.childId;
+    try {
+      const jobWithChildId = await jobCollection.getJobByChildId(childId);
+      if (!jobWithChildId) { throw "Couldn't get jobId"; }
+      return res.json(jobWithChildId);
+    } catch (e) {
+      return res.status(400).json({ error: e });
+    }
   });
+
+router.route('/fireNanny/:childId').delete(async (req, res) => {
+  const childId = req.params.childId;
+  const nannyId = req.body.nannyId;
+
+  try {
+    await helpers.execValdnAndTrim(childId, "Child Id");
+    if (!ObjectId.isValid(childId)) {
+      throw { statusCode: 400, message: "Child Id is not valid" };
+    }
+    await helpers.execValdnAndTrim(nannyId, "Nanny Id");
+    if (!ObjectId.isValid(nannyId)) {
+      throw { statusCode: 400, message: "Nanny Id is not valid" };
+    }
+  } catch (e) {
+    return res.status(400).json({ error: e });
+  }
+  try {
+    const removeNannyFrmUser = await jobCollection.removeNannyFromUser(nannyId, childId.toString());
+    const removeNannyFrmJob = await jobCollection.removeNannyFromJob(nannyId);
+    if (!removeNannyFrmJob.acknowledged || removeNannyFrmJob.modifiedCount == 0)
+      throw {
+        statusCode: 400,
+        message: "Couldn't set nanny id null from job collection",
+      };
+
+    if (!removeNannyFrmUser.acknowledged || removeNannyFrmUser.modifiedCount == 0)
+      throw {
+        statusCode: 400,
+        message: "Couldn't update nanny child from user collection",
+      };
+    return res.status(200).json(removeNannyFrmJob);
+  } catch (e) {
+    return res.status(500).json({ error: e });
+  }
+
+});
 
 
 module.exports = router;

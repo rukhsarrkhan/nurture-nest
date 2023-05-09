@@ -30,11 +30,7 @@ const socket = socketIO.connect("http://localhost:3000");
 
 const Main = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
-    let items = JSON.parse(localStorage.getItem("userData"));
-    console.log("items", items);
-    localStorage.setItem("userName", items?.firstName);
-
-    socket.emit("newUser", { userName: items?.firstName, socketID: socket?.id });
+    socket.emit("newUser", { userName: userData?.data?.firstName, socketID: socket?.id });
 
     return (
         <div className="App">
@@ -57,8 +53,8 @@ const Main = ({ userData }) => {
                     <Route path="/vaccine/:childId" element={<VaccineList />} />
                     <Route path="/appointment/:childId" element={<AppointmentList />} />
                     <Route path="/chat" element={<ChatPage socket={socket} />} />
-                    <Route path="/job/allApplicantions/:pageNum" element={<AllApplicants />} />
-                    <Route path="/job/applications/viewApplication" element={<Applicant />} />
+                    <Route path="/job/allApplicantions/:pageNum" element={<AllApplicants />} /> // can this not be /allApplicantions - SWARAJ
+                    <Route path="/job/applications/viewApplication" element={<Applicant />} /> // can this not be /viewApplication - SWARAJ
                     <Route path="/createJob" element={<CreateJob />} />
                     <Route path="/myJob" element={<MyJob />} />
                     <Route path="/job/viewAllJobs/:pageNum" element={<ViewAllJobs />} />

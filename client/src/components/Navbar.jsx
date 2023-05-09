@@ -4,9 +4,8 @@ import { AuthContext } from "../firebase/Auth";
 import { doSignOut } from "../firebase/FirebaseFunctions";
 import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from "./NavbarElements";
 
-const Navbar = () => {
+const Navbar = ({ userData }) => {
     const { currentUser } = useContext(AuthContext);
-    let items = JSON.parse(localStorage.getItem("userData"));
     const profileLink = `/profile`;
     const loginLink = `/login`;
     const registerLink = `/register`;
@@ -18,8 +17,8 @@ const Navbar = () => {
                 <NavMenu>
                     {currentUser && <NavLink to="/home">Home</NavLink>}
                     {currentUser && <NavLink to="/chat">Inbox</NavLink>}
-                    {currentUser && items?.profile === "NANNY" && (
-                        <NavLink to="/job/viewAllJobs/1" id={items?._id}>
+                    {currentUser && userData?.data?.profile === "NANNY" && (
+                        <NavLink to="/job/viewAllJobs/1" >
                             Careers
                         </NavLink>
                     )}{" "}

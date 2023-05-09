@@ -101,6 +101,11 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             setDisableSave(false);
         } catch (error) {
             console.error(error);
+            if (userData?.error !== "") {
+                setErrorPage(true);
+                setErrorText(userData?.error);
+                setErrorCode(userData?.code);
+            }
             setDisableSave(false);
         }
     };

@@ -92,7 +92,7 @@ const removeChild = async (childId) => {
     if (deletedChild.value == null) {
         throw { statusCode: 500, message: `Could not delete child with id of ${childId}` };
     }
-    return deletedChild.value._id.toString();
+    return deletedChild?.value?._id.toString();
 };
 
 const removeChildFromUser = async (parentId, childId) => {

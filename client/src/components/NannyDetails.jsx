@@ -4,19 +4,11 @@ import { connect } from "react-redux";
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../firebase/Auth";
 import Loading from "./Loading";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import FireNannyModal from "./modals/FireNannyModal";
 import { fireNannyAPICall } from "../redux/jobs/jobActions";
 
-import {
-  Card,
-  CardMedia,
-  Grid,
-  CardActionArea,
-  CardContent,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Card, CardMedia, Grid, CardActionArea, CardContent, Typography, Button } from "@mui/material";
 import { getNannyDetailsAPICall } from "../redux/nannyDetails/nannyDetailsActions";
 
 const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPICall }) => {
@@ -30,7 +22,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const [deleteId, setDeleteId] = useState('');
+  const [deleteId, setDeleteId] = useState("");
   const [applicationdtls, setApplicationDtls] = useState(false);
 
   let { nannyId } = useParams();
@@ -41,11 +33,17 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
 
   useEffect(() => {
     if (jobData) {
-      const applyDetails = jobData?.data?.applications?.find(obj => obj.nannyId === nannyId);
+      let applyDetails;
+      if (jobData?.data?.applications) {
+        // rukhsar
+        applyDetails = jobData?.data?.applications?.find(obj => obj.nannyId === nannyId);
+      } else {
+        // pratik
+        applyDetails = jobData?.applicantsData?.find((obj) => obj.nannyId === nannyId);
+      }
       setApplicationDtls(applyDetails);
     }
   }, [jobData]);
-
 
   useEffect(() => {
     async function fetchData() {
@@ -121,7 +119,7 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
                 onClick={() => handleOpen2(childData)}
                 variant="contained"
                 color="error"
-                sx={{ marginTop: "2rem", marginRight: "auto", marginLeft: '0.5rem' }}
+                sx={{ marginTop: "2rem", marginRight: "auto", marginLeft: "0.5rem" }}
               >
                 Fire Nanny
               </Button>
@@ -129,23 +127,10 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
 
             <br></br>
             <Grid container spacing={2} justifyContent="center">
-              <Grid
-                item
-                xs={12}
-                sm={7}
-                md={5}
-                lg={4}
-                xl={6}
-                key={nannyData?.firstName?.toString()}
-              >
+              <Grid item xs={12} sm={7} md={5} lg={4} xl={6} key={nannyData?.firstName?.toString()}>
                 <Card sx={{ maxWidth: 600, borderRadius: 16 }}>
                   <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      height="200"
-                      alt=""
-                      image={nannyData?.photoUrl}
-                    />
+                    <CardMedia component="img" height="200" alt="" image={nannyData?.photoUrl} />
                     <CardContent>
                       <Typography
                         gutterBottom
@@ -216,14 +201,16 @@ const NannyDetails = ({ getNannyDetailsAPICall, nannyData, jobData, fireNannyAPI
           // THIS CAN BE HANDLED AS AN ERROR
           <p>No details for this nanny </p>
         )}
-        {open2 && <FireNannyModal
-          open={open2}
-          onClose={handleClose2}
-          _id={deleteId}
-          fireNanny={fireNanny}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        />}
+        {open2 && (
+          <FireNannyModal
+            open={open2}
+            onClose={handleClose2}
+            _id={deleteId}
+            fireNanny={fireNanny}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          />
+        )}
       </div>
     );
   }
@@ -234,16 +221,13 @@ const mapStateToProps = (state) => {
     nannyData: state?.nanny?.data,
     dashboardData: state?.dashboard,
     jobData: state.jobs,
-
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getNannyDetailsAPICall: (nannyId, childId) =>
-      dispatch(getNannyDetailsAPICall(nannyId, childId)),
-    fireNannyAPICall: (childId, obj) => dispatch(fireNannyAPICall(childId, obj))
-
+    getNannyDetailsAPICall: (nannyId, childId) => dispatch(getNannyDetailsAPICall(nannyId, childId)),
+    fireNannyAPICall: (childId, obj) => dispatch(fireNannyAPICall(childId, obj)),
   };
 };
 

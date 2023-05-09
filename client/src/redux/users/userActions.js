@@ -1,5 +1,5 @@
 import axios from "axios";
-import socketIO from 'socket.io-client';
+import socketIO from "socket.io-client";
 
 import {
     USER_LOGOUT,
@@ -10,10 +10,9 @@ import {
     SET_PROFILE_FAILURE,
     SET_PROFILE_SUCCESS,
     USER_ID_STORE,
-    USER_INITIATE
+    USER_INITIATE,
 } from "./userActionTypes";
-const socket = socketIO.connect('http://localhost:3000');
-
+// const socket = socketIO.connect('http://localhost:3000');
 
 export const userInitiate = () => {
     return {
@@ -74,7 +73,6 @@ export const userIdStore = (id) => {
     };
 };
 
-
 export const userRegistrationAPICall = (obj) => {
     return async (dispatch) => {
         try {
@@ -95,12 +93,13 @@ export const userLoginAPICall = (uuId, email, firstName, lastName) => {
         try {
             dispatch(userInitiate());
             let obj = {
-                email: email, firstName: firstName, lastName: lastName
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
             };
             let resp = await axios.post(`http://localhost:3000/users/signin/${uuId}`, obj);
             dispatch(userLoginSuccess(resp?.data));
             dispatch(setProfileSuccess(resp?.data));
-
         } catch (error) {
             dispatch(userLoginFailure(error));
         }

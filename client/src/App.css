@@ -1,6 +1,6 @@
 .hero {
 	height: 500px;
-	background-image: url('img/hero.jpeg');
+	background-image: url('img/nurture.jpg');
 	background-position: center;
 	background-size: cover;
 	display: flex;
@@ -10,20 +10,18 @@
 	padding-left: 20px;
 	padding-left: 100px;
 	text-shadow: 6px 6px 14px #000000;
-
 }
-
 
 .hero h1 {
 	font-size: 68px;
 	font-weight: bold;
 	text-align: center;
-	color: #998fb6;
+	color: #716298;
 	overflow: hidden;
 	white-space: nowrap;
 	margin: 0 auto;
 	padding-bottom: 20px;
-	border-right: .1em solid orange;
+	border-right: .1em solid #ffffff;
 	animation:
 		typing 3.5s steps(40, end),
 		blink-caret .75s step-end infinite;
@@ -31,11 +29,11 @@
 
 @keyframes typing {
 	from {
-		width: 0
+		width: 0;
 	}
 
 	to {
-		width: 80%
+		width: 80%;
 	}
 }
 
@@ -43,7 +41,7 @@
 
 	from,
 	to {
-		border-color: transparent
+		border-color: transparent;
 	}
 
 	50% {
@@ -52,7 +50,7 @@
 }
 
 .hero blockquote {
-	color: white;
+	color: #594489;
 	font-size: 24px;
 	margin: 0 auto;
 	overflow: hidden;
@@ -76,7 +74,6 @@
 .App {
 	text-align: center;
 }
-
 
 .center {
 	display: block;
@@ -112,20 +109,20 @@ body {
 }
 
 .toolBar {
-	height: '10vh';
-	display: 'flex';
-	justify-content: 'space-between';
-	padding: '20px';
-	background-color: 'white';
+	height: 10vh;
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	background-color: white;
 }
 
 .logo {
-	color: 'blue';
-	cursor: 'pointer';
+	color: blue;
+	cursor: pointer;
 }
 
 .menuIcon {
-	color: '#000';
+	color: #000;
 }
 
 .formField {
@@ -414,7 +411,7 @@ button:hover {
 hr {
 	width: 60%;
 	height: 3px;
-	background-color: #f1c40f;
+	background-color: #8f7300;
 	border: none;
 	margin: 20px auto;
 }
@@ -446,7 +443,7 @@ footer {
 
 .vaccine-image {
 	width: 160px;
-	height: 160
+	height: 160px;
 }
 
 .appointment-form {
@@ -504,11 +501,11 @@ footer {
 	width: 100%;
 	display: flex;
 	padding: 10px;
-	background-color: #807658; 
+	background-color: #807658;
 	height: 10vh;
 	align-items: center;
 	justify-content: center;
-  }
+}
 
 .form_chat {
 	width: 100%;
@@ -579,6 +576,6 @@ footer {
 }
 
 .errorText {
-	color: red;
+	color: #a50000;
 	font-weight: bold;
 }

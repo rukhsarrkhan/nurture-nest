@@ -41,7 +41,7 @@ export const NavLink = styled(Link)`
     color: #f1c40f;
   }
   &.active {
-    color: #f1c40f;
+    color: #fffefd;
     font-weight: bold;
   }
 `;
@@ -91,7 +91,7 @@ export const ProfileBtn = styled.button`
   position: relative;
   &:hover {
     transition: all 0.2s ease-in-out;
-    background: #2c3e50;
+    background: #8f7300;
     color: #fffefd;
   }
   @media screen and (max-width: 768px) {

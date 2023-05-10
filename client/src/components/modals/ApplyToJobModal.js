@@ -74,7 +74,7 @@ const ApplyToJobModal = (props) => {
 
         let nannyNameChec = await validation(nannyName, helpers.isNameValid(nannyName, "Nanny Name"));
         if (nannyNameChec !== "") {
-            setNannyName(true);
+            setnannyNameError(true);
             setErrorText(nannyNameChec);
             return;
         }
@@ -165,34 +165,38 @@ const ApplyToJobModal = (props) => {
         }
     };
 
-    return (
-        <React.Fragment>
-            <div className="container" sx={{ display: "flex", flexWrap: "wrap" }}>
-                <Modal
-                    sx={{ overflow: "scroll" }}
-                    open={props.open}
-                    onClose={props.onClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            width: 670,
-                            bgcolor: "background.paper",
-                            border: "2px solid #000",
-                            boxShadow: 24,
-                            p: 4,
-                            borderRadius: "100px",
-                        }}
-                    >
-                        <form autoComplete="off" onSubmit={handleSubmit} className="sign-form">
-                            <Typography id="modal-modal-title" variant="h1" color="secondary">
-                                Apply
-                            </Typography>
+  return (
+    <React.Fragment>
+      <div className="container"  sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Modal
+          sx={{ overflow: "scroll" }}
+          open={props.open}
+          onClose={props.onClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 670,
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+              borderRadius: '100px',
+            }}
+          >
+            <form
+              autoComplete="off"
+              onSubmit={handleSubmit}
+              className="sign-form"
+            >
+              <Typography id="modal-modal-title" component="h1" variant="h3" color="secondary">
+                Apply
+              </Typography>
 
                             {/* {checkboxErrorText && <Typography variant="subtitle1">Select atleast 1 day for shifts</Typography>} */}
 

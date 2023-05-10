@@ -249,6 +249,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                                             marginLeft: "auto",
                                             marginRight: "auto",
                                             borderRadius: 5,
+                                            border: '1px solid #080a33',
                                             boxShadow: "none",
                                         }}
                                         gutterBottom
@@ -374,11 +375,11 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         </Grid>
                     )}
                 </Grid>
-                {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && (
+                {/* {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && (
                     <Button variant="contained" color="primary" onClick={handleOpenCreateJob}>
                         Create Job
                     </Button>
-                )}
+                )} */}
                 {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
                     <CreateJobModal
                         open={openCreateJobModal}
@@ -390,7 +391,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         aria-describedby="modal-modal-description"
                     />
                 ) : null}
-                {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
+                {/* {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
                     <Button
                         variant="contained"
                         color="primary"
@@ -402,7 +403,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                     >
                         View My Job
                     </Button>
-                )}
+                )} */}
             </div>
         );
     }

@@ -375,11 +375,11 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         </Grid>
                     )}
                 </Grid>
-                {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && (
+                {/* {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && (
                     <Button variant="contained" color="primary" onClick={handleOpenCreateJob}>
                         Create Job
                     </Button>
-                )}
+                )} */}
                 {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
                     <CreateJobModal
                         open={openCreateJobModal}

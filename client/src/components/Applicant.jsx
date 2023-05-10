@@ -14,7 +14,7 @@ import { selectNannyAPICall } from "../redux/jobs/jobActions";
 import Loading from "./Loading";
 import ErrorPage from "../components/ErrorPage";
 
-const Application = ({ job, selectNannyAPICall }) => {
+const Applicant = ({ job, selectNannyAPICall }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showData, setShowData] = useState(undefined);
@@ -24,8 +24,8 @@ const Application = ({ job, selectNannyAPICall }) => {
     const [errorCode, setErrorCode] = useState("");
 
     const { currentUser } = useContext(AuthContext);
-    let application = location.state.application;
-    let jobId = location.state.jobId;
+    let application = location?.state?.application || null;
+    let jobId = location?.state?.jobId;
 
     const [selectNannyModal, setSelectNannyModal] = React.useState(false);
     const handleOpenSelectNanny = () => setSelectNannyModal(true);
@@ -33,12 +33,13 @@ const Application = ({ job, selectNannyAPICall }) => {
 
     const selectNanny = async (jobId, nannyId) => {
         selectNannyAPICall(jobId, nannyId);
+        setLoading(true);
         setSelectNannyModal(false);
         navigate(-2);
     };
 
     useEffect(() => {
-        if (application) {
+        if (application !== null) {
             setShowData(application);
             setLoading(false);
             setError(false);
@@ -46,7 +47,7 @@ const Application = ({ job, selectNannyAPICall }) => {
             setError(true);
             setLoading(false);
         }
-    }, []);
+    }, [application]);
 
     useEffect(() => {
         if (job !== undefined) {
@@ -205,6 +206,6 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Application);
+export default connect(mapStateToProps, mapDispatchToProps)(Applicant);
 
 // export default Application;

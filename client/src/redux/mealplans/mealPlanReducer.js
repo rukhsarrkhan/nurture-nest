@@ -25,6 +25,9 @@ export const mealPlanReducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: [],
+                error: "",
+                status: "",
+                code: "",
             };
         case GET_MEALPLAN_SUCCESS:
             return {
@@ -32,6 +35,7 @@ export const mealPlanReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                code: "",
             };
         case GET_MEALPLAN_FAILURE:
             return {
@@ -45,6 +49,8 @@ export const mealPlanReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                code: "",
+
             };
         case SET_MEALPLAN_FAILURE:
             return {
@@ -58,6 +64,8 @@ export const mealPlanReducer = (state = initialState, action) => {
                 deleteSuccess: payload,
                 error: "",
                 status: "OK",
+                code: "",
+
             };
         case MEAL_DELETE_FAILURE:
             return {

@@ -2,6 +2,8 @@ import React from 'react';
 import '../App.css';
 
 const ErrorPage = ({ error, code }) => {
+    // EVERYTHING DONE
+
     return (
         <div>
             <br />

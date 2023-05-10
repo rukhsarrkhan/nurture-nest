@@ -5,6 +5,8 @@ import { doSignOut } from "../firebase/FirebaseFunctions";
 import { Nav, NavLink, Bars, NavMenu, NavBtn, ProfileBtn } from "./NavbarElements";
 
 const Navbar = ({ userData }) => {
+    // EVERYTHING DONE
+
     const { currentUser } = useContext(AuthContext);
     const profileLink = `/profile`;
     const loginLink = `/login`;

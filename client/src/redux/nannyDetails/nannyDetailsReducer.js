@@ -18,6 +18,7 @@ export const nannyDetailsReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                code: "",
             };
         case GET_NANNYDETAILS_FAILURE:
             return {

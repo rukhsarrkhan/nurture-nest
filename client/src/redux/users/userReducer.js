@@ -39,6 +39,7 @@ export const userReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                code: "",
             };
         case USER_LOGIN_FALIURE:
             doSignOut(payload?.response?.data?.message);
@@ -57,6 +58,9 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 userId: payload,
+                error: "",
+                status: "OK",
+                code: "",
             };
         case USER_REGISTER_SUCCESS:
             return {
@@ -64,6 +68,7 @@ export const userReducer = (state = initialState, action) => {
                 data: payload,
                 error: "",
                 status: "OK",
+                code: "",
             };
         case USER_REGISTER_FALIURE:
             return {
@@ -75,11 +80,17 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: payload,
+                error: "",
+                status: "OK",
+                code: "",
             };
         case SET_PROFILE_SUCCESS:
             return {
                 ...state,
                 data: payload,
+                error: "",
+                status: "OK",
+                code: "",
             };
         case SET_PROFILE_FAILURE:
             return {

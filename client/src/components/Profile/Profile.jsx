@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useContext } from "react";
-
+import { Navigate } from "react-router-dom";
 import "../../App.css";
 import { Typography, Avatar, Grid, Paper, Button, TextField, Box, MenuItem } from "@mui/material";
 import helpers from "../../helpers";
@@ -7,8 +7,7 @@ import { connect } from "react-redux";
 import { setUserProfileAPICall, updateProfileImageAPICall, updateUserAPICall } from "../../redux/users/userActions";
 import Loading from "../Loading";
 import ErrorPage from "../../components/ErrorPage";
-import { Navigate } from "react-router-dom";
-import { AuthContext } from "../../firebase/Auth";
+import { AuthContext } from '../../firebase/Auth';
 
 const sexes = [
     {
@@ -34,6 +33,9 @@ const sexes = [
 ];
 
 const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updateProfileImageAPICall }) => {
+    // EVERYTHING DONE
+    // CHECK QUESTION MARKS
+    const { currentUser } = useContext(AuthContext);
     const [userObjData, setuserObjData] = useState(userData?.data);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
@@ -63,7 +65,6 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     const validSexArr = ["Male", "Female", "Non-Binary", "Transgender", "Other"];
 
     let userId = userData?.data?._id;
-    const { currentUser } = useContext(AuthContext);
 
     const handleImageChange = (event) => {
         const file = event?.target?.files[0];
@@ -89,28 +90,19 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     const handleImageSubmit = async () => {
-        try {
-            setDisableSave(true);
-            if (!imageFile) {
-                setImageError("No image available");
-                setImagePreview(null);
-                return;
-            }
-            const formData = new FormData();
-            formData.append("image", imageFile);
-
-            await updateProfileImageAPICall(userId, formData);
-            // const response = await axios.put("http://localhost:3000/users/image", formData);
-            setDisableSave(false);
-        } catch (error) {
-            console.error(error);
-            if (userData?.error !== "") {
-                setErrorPage(true);
-                setErrorText(userData?.error);
-                setErrorCode(userData?.code);
-            }
-            setDisableSave(false);
+        setDisableSave(true);
+        if (!imageFile) {
+            setImageError("No image available");
+            setImagePreview(null);
+            return;
         }
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        await updateProfileImageAPICall(userId, formData);
+        setLoading(true);
+        // const response = await axios.put("http://localhost:3000/users/image", formData);
+        setDisableSave(false);
     };
 
     const validation = async (field, valFunc) => {
@@ -130,21 +122,28 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
 
     const setUserProfileAPICallMemo = useMemo(() => {
         return () => {
-            try {
-                if (currentUser && userId) setUserProfileAPICall(userId);
-            } catch (error) {
-                setuserObjData(undefined);
-                setLoading(false);
-                setErrorText(error.message ? error.message : error);
+            if (currentUser && userId) {
+                setUserProfileAPICall(userId);
+                setLoading(true);
             }
         };
     }, [userId, setUserProfileAPICall, currentUser]);
 
     useEffect(() => {
-        setUserProfileAPICallMemo();
+        if (currentUser) {
+            setUserProfileAPICallMemo();
+        }
     }, [setUserProfileAPICallMemo]);
 
     useEffect(() => {
+        setErrorPage(false);
+        if (userData !== undefined) {
+            if (userData?.error !== "") {
+                setErrorPage(true);
+                setErrorText(userData?.error);
+                setErrorCode(userData?.code);
+            }
+        }
         if (userData?.data) {
             setuserObjData(userData?.data);
         }
@@ -246,25 +245,21 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
             }
 
             if (errorText === "") {
-                try {
-                    let newObj = {};
-                    if (userObjData.firstName !== firstName) newObj.firstName = firstName;
-                    if (userObjData.lastName !== lastName) newObj.lastName = lastName;
-                    if (userObjData.age !== age) newObj.age = age;
-                    if (userObjData.address !== address) newObj.address = address;
+                let newObj = {};
+                if (userObjData.firstName !== firstName) newObj.firstName = firstName;
+                if (userObjData.lastName !== lastName) newObj.lastName = lastName;
+                if (userObjData.age !== age) newObj.age = age;
+                if (userObjData.address !== address) newObj.address = address;
 
-                    if (userObjData.phone !== phone) newObj.phone = phone;
-                    if (userObjData.sex !== sex) newObj.sex = sex;
+                if (userObjData.phone !== phone) newObj.phone = phone;
+                if (userObjData.sex !== sex) newObj.sex = sex;
 
-                    if (Object.keys(newObj).length > 0) {
-                        await updateUserAPICall(userId, newObj);
-                        setDisableSave(false);
-                    } else {
-                        alert("No fields were changed to save");
-                        setDisableSave(false);
-                    }
-                } catch (error) {
-                    alert(error);
+                if (Object.keys(newObj).length > 0) {
+                    await updateUserAPICall(userId, newObj);
+                    setLoading(true);
+                    setDisableSave(false);
+                } else {
+                    alert("No fields were changed to save");
                     setDisableSave(false);
                 }
             }
@@ -273,7 +268,7 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
     };
 
     if (!currentUser) {
-        return <Navigate to="/" />;
+        return <Navigate to='/' />;
     }
 
     if (loading) {

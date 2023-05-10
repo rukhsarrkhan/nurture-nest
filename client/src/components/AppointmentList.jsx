@@ -24,8 +24,7 @@ import { AuthContext } from '../firebase/Auth';
 import ErrorPage from '../components/ErrorPage';
 
 const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appointmentData, delAppointmentAPICall, userData }) => {
-    // NO CONSOLE ERRORS
-    // LOADING MISSING
+    // EVERYTHING DONE
     // REMOVE PARAMS
 
     const { currentUser } = useContext(AuthContext);
@@ -42,29 +41,39 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     let navigate = useNavigate();
 
     useEffect(() => {
+        if (currentUser) {
+            setErrorPage(false);
+            getAppointmentAPICall(childId);
+            setLoading(true);
+        }
+    }, [childId]);
+
+    useEffect(() => {
         if (appointmentData !== undefined) {
+            setLoading(false);
             if (appointmentData?.error !== "") {
                 setErrorPage(true);
                 setErrorText(appointmentData?.error);
                 setErrorCode(appointmentData?.code);
+            } else {
+                setErrorPage(false);
             }
         }
     }, [appointmentData]);
 
-    useEffect(() => {
-        getAppointmentAPICall(childId);
-        setLoading(false);
-    }, [childId]);
-
     const handleOpen = () => { setOpen(true); };
-    const handleClose = () => setOpen(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const handleOpen2 = (id) => {
         setDeleteId(id);
         setOpen2(true);
     };
-    const handleClose2 = () => setOpen2(false);
 
+    const handleClose2 = async () => {
+        setOpen2(false);
+    };
 
     const addAppointment = async (obj) => {
         await appointmentSetAPICall(obj, childId);
@@ -74,7 +83,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
     const deleteAppointment = async (appointmentId) => {
         await delAppointmentAPICall(appointmentId);
         setOpen2(false);
-        await getAppointmentAPICall(childId);
+        getAppointmentAPICall(childId);
     };
 
     const buildCard = (appointments) => {
@@ -135,6 +144,7 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
             </div>
         );
     } else if (errorPage) {
+        console.log("errorPage", errorPage);
         return (
             <div>
                 <ErrorPage error={errorText} code={errorCode} />
@@ -194,7 +204,6 @@ const mapStateToProps = state => {
     return {
         userData: state?.users,
         appointmentData: state?.appointments,
-        userData: state?.users,
     };
 };
 

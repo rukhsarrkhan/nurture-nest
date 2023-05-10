@@ -26,6 +26,8 @@ import Button from '@mui/material/Button';
 import AddMealModal from './modals/AddMealModal';
 import DeleteMealModal from './modals/DeleteMealModal';
 import Collapse from '@mui/material/Collapse';
+import ErrorPage from '../components/ErrorPage';
+
 
 const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPICall, userData }) => {
   // NO CONSOLE ERRORS
@@ -41,13 +43,31 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
   const [open2, setOpen2] = useState(false);
   const [deleteId, setDeleteId] = useState('');
   const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(false);
+  const [errorPage, setErrorPage] = useState(false);
+  const [errorText, setErrorText] = useState("");
+  const [errorCode, setErrorCode] = useState("");
   const [expanded, setExpanded] = useState({});
 
   useEffect(() => {
-    getMealPlanAPICall(childId);
-    setLoading(false);
+    if (currentUser) {
+      setErrorPage(false);
+      getMealPlanAPICall(childId);
+      setLoading(false);
+    }
   }, [childId]);
+
+  useEffect(() => {
+    if (mealData !== undefined) {
+      setLoading(false);
+      if (mealData?.error !== "") {
+        setErrorPage(true);
+        setErrorText(mealData?.error);
+        setErrorCode(mealData?.code);
+      } else {
+        setErrorPage(false);
+      }
+    }
+  }, [mealData]);
 
   const handleOpen = () => { setOpen(true); };
   const handleClose = () => setOpen(false);
@@ -151,11 +171,12 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
         <Loading />
       </div>
     );
-    // } else if (error) {
-    //   return (<div>
-    //     Error here
-    //   </div>
-    //   );
+  } else if (errorPage) {
+    return (
+      <div>
+        <ErrorPage error={errorText} code={errorCode} />
+      </div>
+    );
   } else {
     return (
       <div>

@@ -391,7 +391,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         aria-describedby="modal-modal-description"
                     />
                 ) : null}
-                {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
+                {/* {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
                     <Button
                         variant="contained"
                         color="primary"
@@ -403,7 +403,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                     >
                         View My Job
                     </Button>
-                )}
+                )} */}
             </div>
         );
     }

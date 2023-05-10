@@ -223,12 +223,12 @@ const AllApplicants = ({
   if (searchTerm) {
     card =
       searchData &&
-      searchData.map((show) => {
+      searchData?.map((show) => {
         return buildCard(show);
       });
   } else {
     card = showsData &&
-      showsData.map((show) => {
+      showsData?.map((show) => {
         return buildCard(show);
       });
   }

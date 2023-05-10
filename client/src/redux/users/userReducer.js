@@ -58,6 +58,9 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 userId: payload,
+                error: "",
+                status: "OK",
+                code: "",
             };
         case USER_REGISTER_SUCCESS:
             return {
@@ -77,6 +80,9 @@ export const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 data: payload,
+                error: "",
+                status: "OK",
+                code: "",
             };
         case SET_PROFILE_SUCCESS:
             return {

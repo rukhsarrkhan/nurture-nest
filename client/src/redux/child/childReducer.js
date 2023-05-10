@@ -25,11 +25,16 @@ export const childReducer = (state = initialState, action) => {
                 ...state,
                 data: payload,
                 status: "OK",
+                error: "",
+                code: "",
             };
         case ADD_CHILD_SUCCESS:
             return {
                 ...state,
                 childObjs: [...state.childObjs, payload],
+                status: "OK",
+                error: "",
+                code: "",
             };
         case ADD_CHILD_FAILURE:
             return {
@@ -41,6 +46,9 @@ export const childReducer = (state = initialState, action) => {
             return {
                 ...state,
                 childObjs: payload,
+                status: "OK",
+                error: "",
+                code: "",
             };
         case FETCH_CHILDREN_FAILURE:
             return {
@@ -52,6 +60,9 @@ export const childReducer = (state = initialState, action) => {
             return {
                 ...state,
                 childObjs: state.childObjs.filter((child) => child._id !== payload._id),
+                status: "OK",
+                error: "",
+                code: "",
             };
         case DELETE_CHILD_FAILURE:
             return {

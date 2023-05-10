@@ -171,6 +171,9 @@ export const jobReducer = (state = initialState, action) => {
       return {
         ...state,
         applicantsData: [],
+        error: "",
+        status: "OK",
+        code: "",
       };
     case VIEW_ALL_MY_APPLIED_JOBS_SUCCESS:
       console.log("payload", payload);

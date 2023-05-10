@@ -22,6 +22,7 @@ export const dashboardReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
 
     case GET_DASHBOARD_FAILURE:
@@ -36,6 +37,7 @@ export const dashboardReducer = (state = initialState, action) => {
         data: payload,
         error: "",
         status: "OK",
+        code: "",
       };
     case SET_DASHBOARD_FAILURE:
       return {

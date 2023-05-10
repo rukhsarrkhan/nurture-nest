@@ -292,6 +292,7 @@ router
         childId = req.params.childId;
         const postAppointment = req.body;
         try {
+
             childId = await helper.execValdnAndTrim(childId, "Child Id");
             if (!ObjectId.isValid(childId)) {
                 throw { statusCode: 400, message: "Child Id is not valid" };

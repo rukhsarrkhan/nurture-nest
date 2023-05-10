@@ -1,38 +1,40 @@
-import React from 'react';
-import TextField from '@mui/material/TextField';
+import React from "react";
+import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { purple } from "@mui/material/colors";
 
 const SearchApplicants = (props) => {
-  const [searchInput, setSearchInput] = React.useState("");
+    const [searchInput, setSearchInput] = React.useState("");
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log(searchInput, "will search for this");
-    props.searchValue(searchInput);
-  };
+    const handleSearch = (e) => {
+        e.preventDefault();
 
-  const handleChange = (e) => {
-    setSearchInput(e.target.value);
-  };
+        props.searchValue(searchInput);
+    };
 
-  return (
-    <form method='POST ' onSubmit={handleSearch} name='formName' >
-      <label>
-        <TextField
-          className="formField"
-          label="Search Nannies"
-          onChange={handleChange}
-          variant="filled"
-          color="secondary"
-          sx={{ mb: 3 }}
-          fullWidth
-          value={searchInput}
-        />
-        <Button variant="contained" sx={{ bgcolor: purple[700] }} type="submit">Search</Button>
-      </label>
-    </form>
-  );
+    const handleChange = (e) => {
+        setSearchInput(e.target.value);
+    };
+
+    return (
+        <form method="POST " onSubmit={handleSearch} name="formName">
+            <label>
+                <TextField
+                    className="formField"
+                    label="Search Nannies"
+                    onChange={handleChange}
+                    variant="filled"
+                    color="secondary"
+                    sx={{ mb: 3 }}
+                    fullWidth
+                    value={searchInput}
+                />
+                <Button variant="contained" sx={{ bgcolor: purple[700] }} type="submit">
+                    Search
+                </Button>
+            </label>
+        </form>
+    );
 };
 
 export default SearchApplicants;

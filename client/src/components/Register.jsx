@@ -30,7 +30,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [profile, setProfile] = useState("");
-    const [age, setAge] = useState(1);
+    const [age, setAge] = useState("1");
 
     const [firstNameError, setFirstNameError] = useState(false);
     const [lastNameError, setLastNameError] = useState(false);
@@ -141,7 +141,7 @@ const Register = ({ userData, userRegistrationAPICall }) => {
             return;
         }
 
-        if (firstName?.trim() && lastName?.trim() && email?.trim() && password?.trim() && errorText === "") {
+        if (firstName?.trim() && lastName?.trim() && email?.trim() && password?.trim() && age?.trim() && errorText === "") {
             let uuid;
 
             const { uid, error, code } = await doCreateUserWithEmailAndPassword(email?.trim(), password?.trim(), firstName?.trim());

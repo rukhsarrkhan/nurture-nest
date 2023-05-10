@@ -136,7 +136,6 @@ const AddChildModal = (props) => {
             try {
                 await props.addChild(formData);
             } catch (error) {
-                console.log(error);
                 setdisableBtn(false);
             }
             setdisableBtn(false);

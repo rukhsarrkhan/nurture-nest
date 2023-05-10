@@ -211,30 +211,11 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                 )}
                 <br />
                 <br />
-                {userObjData?.profile === "PARENT" ? (
-                    childObjArr.length === 0 ? (
-                        <Typography
-                            variant="p"
-                            component="p"
-                            sx={{
-                                backgroundColor: "#fcebeb",
-                                color: "#333",
-                                padding: "10px",
-                                borderRadius: "5px",
-                                boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.3)",
-                                marginBottom: "20px",
-                                fontWeight: "bold",
-                                textAlign: "center",
-                            }}
-                        >
-                            No child found for this parent
-                        </Typography>
-                    ) : (
-                        <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
-                            {card}
-                        </Grid>
-                    )
-                ) : userObjData?.profile === "NANNY" ? (
+                {childObjArr.length !== 0 ? (
+                    <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
+                        {card}
+                    </Grid>
+                ) : (
                     <Typography
                         variant="p"
                         component="p"
@@ -249,12 +230,12 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                             textAlign: "center",
                         }}
                     >
-                        No child has been assigned to this Nanny yet
+                        {userObjData?.profile === "PARENT"
+                            ? "No children found for this parent"
+                            : userObjData?.profile === "NANNY"
+                            ? "No child found for this nanny"
+                            : "No children found"}
                     </Typography>
-                ) : (
-                    <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
-                        {card}
-                    </Grid>
                 )}
                 {modalOpen && (
                     <AddChildModal

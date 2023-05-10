@@ -14,7 +14,7 @@ import { selectNannyAPICall } from "../redux/jobs/jobActions";
 import Loading from "./Loading";
 import ErrorPage from "../components/ErrorPage";
 
-const Application = ({ job, selectNannyAPICall }) => {
+const Applicant = ({ job, selectNannyAPICall }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [showData, setShowData] = useState(undefined);

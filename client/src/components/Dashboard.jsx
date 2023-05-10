@@ -249,7 +249,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                                             marginLeft: "auto",
                                             marginRight: "auto",
                                             borderRadius: 5,
-                                            border: '1px solid #080a33',
+                                            border: "1px solid #080a33",
                                             boxShadow: "none",
                                         }}
                                         gutterBottom
@@ -380,7 +380,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         Create Job
                     </Button>
                 )} */}
-                {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
+                {/* {userData?.data?.profile === "PARENT" && !selectedChild?.jobId && openCreateJobModal ? (
                     <CreateJobModal
                         open={openCreateJobModal}
                         onClose={handleCloseCreateJob}
@@ -390,7 +390,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     />
-                ) : null}
+                ) : null} */}
                 {/* {userData?.data?.profile === "PARENT" && selectedChild?.jobId && (
                     <Button
                         variant="contained"

@@ -107,13 +107,7 @@ const Application = ({ job, selectNannyAPICall }) => {
                         title={showData?.nannyName}
                         subheader={`Applied to job on ${getEDTTimeFromISOString(showData?.applyDate)}`}
                     />
-                    <CardMedia
-                        component="img"
-                        height="50%"
-                        width="50%"
-                        image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
-                        alt="Nanny Image"
-                    />
+                    <CardMedia component="img" height="50%" width="50%" image={showData.photoUrl} alt="Nanny Image" />
                     <CardContent></CardContent>
                     <CardContent>
                         <div style={{ display: "flex" }}>

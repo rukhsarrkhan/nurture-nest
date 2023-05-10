@@ -108,12 +108,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
                 <br />
                 <Card sx={{ maxWidth: "70%", marginLeft: "15%", marginRight: "15%" }}>
                     <CardHeader />
-                    <CardMedia
-                        component="img"
-                        height="50%"
-                        image="https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models_gw/2023/03_29_revuelto/gate_models_s_02_m.jpg"
-                        alt="Nanny Image"
-                    />
+                    <CardMedia component="img" height="50%" image={showData.photoUrl} alt="Nanny Image" />
                     <CardContent>
                         <div style={{ display: "flex" }}>
                             <Typography color="text.secondary" fontWeight="bold" paragraph>

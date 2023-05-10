@@ -1,20 +1,8 @@
 import React, { useState } from "react";
-import { TextField, FormControl, Button, MenuItem } from "@mui/material";
-import { connect } from "react-redux";
+import { TextField, Button, MenuItem } from "@mui/material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-// import { createJobAPICall } from "../redux/jobs/jobActions";
 import Modal from "@mui/material/Modal";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useDispatch, useSelector } from "react-redux";
-import { SingleInputTimeRangeField } from "@mui/x-date-pickers-pro/SingleInputTimeRangeField";
-import FormGroup from "@mui/material/FormGroup";
-import FormLabel from "@mui/material/FormLabel";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import { pink } from "@mui/material/colors";
 import helpers from "../../helpers";
 import allStates from "../../allStates";
 
@@ -46,7 +34,7 @@ const ApplyToJobModal = (props) => {
     const [coverLetterError, setCoverLetterError] = useState(false);
 
     const validation = async (field, valFunc) => {
-        let fieldVal = await helpers.execValdnAndTrim(field);
+        await helpers.execValdnAndTrim(field);
         let check = await valFunc;
         if (check && check.statusCode === 400) {
             return check.message;

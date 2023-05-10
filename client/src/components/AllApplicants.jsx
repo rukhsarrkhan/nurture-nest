@@ -67,8 +67,8 @@ const AllApplicants = ({
         setLoading(false);
         setError(false);
     } else {
-        setSearchData(job?.applicantsData.allApplications);
-        setShowsData(job?.applicantsData.allApplications);
+        setSearchData(job?.applicantsData?.allApplications);
+        setShowsData(job?.applicantsData?.allApplications);
         setLoading(false);
         setError(false);
   }}
@@ -133,7 +133,7 @@ const AllApplicants = ({
                 component="img"
                 height="100%"
                 width={100}
-                image={show.photoUrl}
+                image={show?.photoUrl}
                 alt="client\public\download.jpeg"
               />
             </Grid>
@@ -146,7 +146,7 @@ const AllApplicants = ({
                         {show?.nannyName[0]}
                       </Avatar>
                     }
-                    title={show.nannyName}
+                    title={show?.nannyName}
                     subheader={`Applied to job on ${getEDTTimeFromISOString(show?.applyDate)}`}
                   />
                 </div>
@@ -221,12 +221,12 @@ const AllApplicants = ({
   if (searchTerm) {
     card =
       searchData &&
-      searchData.map((show) => {
+      searchData?.map((show) => {
         return buildCard(show);
       });
   } else {
     card = showsData &&
-      showsData.map((show) => {
+      showsData?.map((show) => {
         return buildCard(show);
       });
   }

@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { TextField, FormControl, Button, MenuItem } from "@mui/material";
-import { connect } from "react-redux";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-// import { createJobAPICall } from "../redux/jobs/jobActions";
 import Modal from "@mui/material/Modal";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useDispatch, useSelector } from "react-redux";
 import { SingleInputTimeRangeField } from "@mui/x-date-pickers-pro/SingleInputTimeRangeField";
 import FormGroup from "@mui/material/FormGroup";
 import FormLabel from "@mui/material/FormLabel";
@@ -48,7 +45,7 @@ const CreateJobModal = (props) => {
   const [sunday, setSunday] = React.useState(false);
 
   const validation = async (field, valFunc) => {
-    let fieldVal = await helpers.execValdnAndTrim(field);
+    await helpers.execValdnAndTrim(field);
     let check = await valFunc;
     if (check && check.statusCode === 400) {
       return check.message;
@@ -61,13 +58,10 @@ const CreateJobModal = (props) => {
     event.preventDefault();
     let timeFrom = shift[0].toLocaleString();
     let timeTo = shift[1].toLocaleString();
-    const date = new Date(shift[0].toLocaleString());
-    const timeString = date.toLocaleString("en-US", {
-      timeZone: "America/New_York",
-      timeZoneName: "short",
-    });
-    const hours = date.getUTCHours(); // Returns the hours component of the timestamp (in UTC)
-    const mins = date.getUTCMinutes(); // Returns the minutes component of the timestamp (in UTC)
+    // const date = new Date(shift[0].toLocaleString());
+    // const timeString = date.toLocaleString("en-US", {timeZone: "America/New_York",timeZoneName: "short"});
+    // const hours = date.getUTCHours(); // Returns the hours component of the timestamp (in UTC)
+    // const mins = date.getUTCMinutes(); // Returns the minutes component of the timestamp (in UTC)
 
     setShiftError(false);
     setDaysError(false);
@@ -113,7 +107,7 @@ const CreateJobModal = (props) => {
     if (friday) days.push("Friday");
     if (saturday) days.push("Saturday");
     if (sunday) days.push("Sunday");
-    if (days.length == 0) {
+    if (days.length === 0) {
       setDaysError(true);
       setErrorText(`Atleast one day should be selected for nanny shifts.`);
       setCheckboxErrorText(

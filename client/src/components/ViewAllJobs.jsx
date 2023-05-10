@@ -50,12 +50,12 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                 setErrorCode(job?.code);
                 setLoading(false);
             } else if (searchTerm) {
-                setSearchData(job.jobsData.jobsFound);
+                setSearchData(job.jobsData?.jobsFound);
                 setLoading(false);
                 setError(false);
             } else {
-                setSearchData(job.jobsData.jobsFound);
-                setShowsData(job.jobsData.jobsFound);
+                setSearchData(job.jobsData?.jobsFound);
+                setShowsData(job.jobsData?.jobsFound);
                 setLoading(false);
                 setError(false);
             }
@@ -115,23 +115,23 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                             <CardContent>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                     <Typography variant="h1" color="text.secondary" paragraph>
-                                        {show.state + ", "}
+                                        {show?.state + ", "}
                                     </Typography>
                                     <Typography variant="h1" color="text.secondary" sx={{ paddingLeft: "10px" }}>
-                                        {show.zipCode}
+                                        {show?.zipCode}
                                     </Typography>
                                 </div>
                                 <div style={{ display: "flex" }}>
                                     <Typography variant="body2" color="text.secondary" fontWeight="bold" sx={{ paddingRight: "10px" }}>
                                         Child Name:
                                     </Typography>
-                                    <Typography color="text.secondary">{show.name}</Typography>
+                                    <Typography color="text.secondary">{show?.name}</Typography>
                                 </div>
                                 <div style={{ display: "flex" }}>
                                     <Typography variant="body1" color="text.secondary" fontWeight="bold" sx={{ paddingRight: "10px" }}>
                                         Age:
                                     </Typography>
-                                    <Typography color="text.secondary">{show.age}</Typography>
+                                    <Typography color="text.secondary">{show?.age}</Typography>
                                 </div>
                                 <div style={{ display: "flex", alignItems: "center" }}>
                                     <Typography variant="body2" color="text.secondary" fontWeight="bold" sx={{ paddingRight: "10px" }}>
@@ -167,7 +167,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                                         Salary:
                                     </Typography>
                                     <Typography color="text.secondary" paragraph>
-                                        {show.salary + " USD per hour"}
+                                        {show?.salary + " USD per hour"}
                                     </Typography>
                                 </div>
                             </CardContent>
@@ -192,13 +192,13 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
     if (searchTerm) {
         card =
             searchData &&
-            searchData.map((show) => {
+            searchData?.map((show) => {
                 return buildCard(show);
             });
     } else {
         card =
             showsData &&
-            showsData.map((show) => {
+            showsData?.map((show) => {
                 return buildCard(show);
             });
     }

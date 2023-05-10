@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Navigate, Link, useParams, useLocation, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardActions, CardMedia, Typography, CardHeader } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Card, CardContent, CardMedia, Typography, CardHeader } from "@mui/material";
 import { purple } from "@mui/material/colors";
-import SelectNanny from "./modals/SelectNanny";
-import { TextField, FormControl, Button, MenuItem } from "@mui/material";
+import { Button } from "@mui/material";
 import { connect } from "react-redux";
 import "../App.css";
 import Container from "@mui/material/Container";
-import Box, { BoxProps } from "@mui/material/Box";
 import { applyToJobAPICall } from "../redux/jobs/jobActions";
 import ApplyToJobModal from "./modals/ApplyToJobModal";
 import { AuthContext } from "../firebase/Auth";
@@ -56,7 +53,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
             setErrorMsg(e);
             setLoading(false);
         }
-    }, []);
+    }, [jobData]);
 
     useEffect(() => {
         if (job !== undefined) {
@@ -108,7 +105,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
                 <br />
                 <Card sx={{ maxWidth: "70%", marginLeft: "15%", marginRight: "15%" }}>
                     <CardHeader />
-                    <CardMedia component="img" height="50%" image={showData.photoUrl} alt="Nanny Image" />
+                    <CardMedia component="img" height="50%" image={showData?.photoUrl} alt="Nanny Image" />
                     <CardContent>
                         <div style={{ display: "flex" }}>
                             <Typography color="text.secondary" fontWeight="bold" paragraph>

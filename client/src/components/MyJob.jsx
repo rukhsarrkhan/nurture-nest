@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
-  Link,
-  useParams,
   useLocation,
   useNavigate,
   Navigate,
@@ -9,22 +7,13 @@ import {
 import {
   Card,
   CardContent,
-  CardActions,
-  CardMedia,
   Typography,
-  CardHeader,
   Divider,
-  IconButton,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { purple } from "@mui/material/colors";
-import SelectNanny from "./modals/SelectNanny";
-import { TextField, FormControl, Button, MenuItem } from "@mui/material";
+import {  Button } from "@mui/material";
 import { connect } from "react-redux";
 import "../App.css";
 import Container from "@mui/material/Container";
-import Box, { BoxProps } from "@mui/material/Box";
-import AddIcon from "@mui/icons-material/Add";
 import { getMyJobAPICall, fireNannyAPICall } from "../redux/jobs/jobActions";
 import { deleteJobAPICall } from "../redux/jobs/jobActions";
 import DeleteJobModal from "./modals/DeleteJobModal";
@@ -62,9 +51,8 @@ const MyJob = ({
   const handleClose2 = () => setOpen2(false);
 
 
-  let jobId = location.state.jobId;
-  let childId = location.state.childId;
-  let pageNum = 1;
+  let jobId = location?.state?.jobId;
+  let childId = location?.state?.childId;
 
   const deleteJob = async (jobId) => {
     deleteJobAPICall(jobId);
@@ -200,7 +188,7 @@ const MyJob = ({
               color="text.primary"
               sx={{ marginBottom: "1rem" }}
             >
-              {showData?.address}, {showData?.city}, {showData?.state}{" "}
+              {showData?.address}, {showData?.state}{" "}
               {showData?.zipCode}
             </Typography>
             <Divider sx={{ marginBottom: "1rem" }} />
@@ -241,7 +229,7 @@ const MyJob = ({
           </CardContent>
         </Card>
         <br />
-        {!showData.nannyId && (
+        {!showData?.nannyId && (
           <Button
             variant="contained"
             onClick={() => {
@@ -255,7 +243,7 @@ const MyJob = ({
             View Nanny Applications
           </Button>
         )}
-        {showData.nannyId && (
+        {showData?.nannyId && (
           <Button
             onClick={() => handleOpen2(childId)}
             variant="contained"

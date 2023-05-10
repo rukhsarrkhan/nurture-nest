@@ -1,6 +1,5 @@
 import axios from "axios";
 import {
-    CREATE_JOB,
     CREATE_JOB_SUCCESS,
     CREATE_JOB_FALIURE,
     DELETE_JOB_SUCCESS,

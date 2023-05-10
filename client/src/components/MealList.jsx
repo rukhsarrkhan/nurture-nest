@@ -63,6 +63,8 @@ const MealList = ({ getMealPlanAPICall, mealData, mealPlanSetAPICall, delMealAPI
         setErrorPage(true);
         setErrorText(mealData?.error);
         setErrorCode(mealData?.code);
+      } else {
+        setErrorPage(false);
       }
     }
   }, [mealData]);

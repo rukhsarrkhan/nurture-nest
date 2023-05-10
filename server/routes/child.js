@@ -264,6 +264,7 @@ router
 router
     .route("/appointment/:childId")
     .get(async (req, res) => {
+
         childId = req.params.childId;
         try {
             childId = await helper.execValdnAndTrim(childId, "Child Id");

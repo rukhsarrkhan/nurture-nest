@@ -55,6 +55,8 @@ const AppointmentList = ({ getAppointmentAPICall, appointmentSetAPICall, appoint
                 setErrorPage(true);
                 setErrorText(appointmentData?.error);
                 setErrorCode(appointmentData?.code);
+            } else {
+                setErrorPage(false);
             }
         }
     }, [appointmentData]);

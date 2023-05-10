@@ -9,8 +9,8 @@ import Loading from "./Loading";
 import helpers from "../helpers";
 // import ErrorPage from "../components/ErrorPage";
 
-const textColor = '#333333';
-const bgColor = '#f5f5f5';
+const textColor = "#333333";
+const bgColor = "#f5f5f5";
 
 const profiles = [
     {
@@ -28,7 +28,6 @@ const SetProfile = ({ updateUserAPICall, userData, setUserProfileAPICall }) => {
     const [loading, setLoading] = useState(true);
     const [disableBtn, setdisableBtn] = useState(false);
     const { currentUser } = useContext(AuthContext);
-    console.log(userData, " Current UserData");
 
     const [profile, setProfile] = useState("");
 

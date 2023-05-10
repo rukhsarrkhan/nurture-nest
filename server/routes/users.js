@@ -47,7 +47,11 @@ router.route("/signup").post(async (req, res) => {
         await helper.isAgeValid(parseInt(age), "Age");
         uuid = await helper.execValdnAndTrim(uuid, "Uuid");
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
     try {
         const userCreated = await userData.createUser(xss(firstName), xss(lastName), xss(email), xss(profile), xss(age), xss(uuid));
@@ -56,12 +60,15 @@ router.route("/signup").post(async (req, res) => {
         }
         return res.json(userCreated);
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
 router.route("/signin/:uuId").post(async (req, res) => {
-
     let uuId = req.params.uuId;
     let { email, firstName, lastName } = req.body;
     try {
@@ -78,9 +85,12 @@ router.route("/signin/:uuId").post(async (req, res) => {
             email = await helper.execValdnAndTrim(email, "Email");
             await helper.isEmailValid(email, "Email");
         }
-
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
     try {
         const userFetched = await userData.getUserByFirebaseId(uuId, firstName, lastName, email);
@@ -89,7 +99,11 @@ router.route("/signin/:uuId").post(async (req, res) => {
         }
         return res.json(userFetched);
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 router.route("/image/:userId").put(parseForm.single("image"), async (req, res) => {
@@ -133,7 +147,11 @@ router.route("/image/:userId").put(parseForm.single("image"), async (req, res) =
                 }
             });
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 router
@@ -149,7 +167,11 @@ router
             if (!userObj || userObj === null || userObj === undefined) throw { statusCode: 404, message: `No user exists with that id` };
             return res.json(userObj);
         } catch (e) {
-            return res.status(404).json({ error: e });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     })
     .put(async (req, res) => {
@@ -161,7 +183,11 @@ router
             }
             res.json(updatedUser);
         } catch (e) {
-            return res.status(400).json({ error: e });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     })
     .patch(async (req, res) => {
@@ -266,7 +292,11 @@ router
                 throw { statusCode: 500, message: `Internal error occured` };
             return res.json(updatedUserObj);
         } catch (e) {
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     })
     .delete(async (req, res) => {
@@ -274,7 +304,11 @@ router
             const userDeleted = await userData.removeUser(req.params.userId);
             res.json({ Awesome: `user with id: ${req.params.userId} deleted successfully` });
         } catch (e) {
-            return res.status(404).json({ error: e });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     });
 
@@ -306,7 +340,11 @@ router.route("/children/:userId").get(async (req, res) => {
         //no need to handle. If empty then return empty array
         return res.json(childrenObjArr);
     } catch (e) {
-        return res.status(404).json({ error: e });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 

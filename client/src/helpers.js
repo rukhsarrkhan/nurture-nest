@@ -224,18 +224,15 @@ const isShiftLimitValid = async (start, end, daysNum) => {
     }
     return "";
 };
-const isChildAgeValid = (age) => {
+const isChildAgeValid = (age, parentAge) => {
     if (isNaN(age)) {
         return { statusCode: 400, message: `Age should be a number` };
     }
     if (parseInt(age) > 12) return { statusCode: 400, message: "child cannnot be more than 12 years old" };
+    if (parseInt(parentAge) - parseInt(age) < 16) {
+        return { statusCode: 400, message: "There should be a difference of minimum of 16 years between parent and child" };
+    }
 };
-
-// const isIdValid = (id,fieldName) => {
-//     if(!ObjectId.isValid(id))
-//     return {statusCode : 400, message: 'invalid object id'}
-//     // return /^[a-zA-Z ]*$/.test(str);
-// };
 
 module.exports = {
     description: "This is the helper function",

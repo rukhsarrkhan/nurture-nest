@@ -23,7 +23,7 @@ import {
   EXIT_JOB_SUCCESS,
   EXIT_JOB_FAILURE,
   FIRE_NANNY_SUCCESS,
-  FIRE_NANNY_FAILURE
+  FIRE_NANNY_FAILURE,
 } from "./jobActionTypes";
 
 const initialState = {

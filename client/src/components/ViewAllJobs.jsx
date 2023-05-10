@@ -1,13 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import SearchApplicants from "./SearchApplicants";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, CardMedia, Grid, Typography } from "@mui/material";
 import { connect } from "react-redux";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
@@ -15,9 +9,9 @@ import { purple } from "@mui/material/colors";
 import { useNavigate, Navigate } from "react-router-dom";
 import "../App.css";
 import Loading from "./Loading";
-import ErrorPage from '../components/ErrorPage';
+import ErrorPage from "../components/ErrorPage";
 import { getallJobsAPICall, searchJobsAPICall } from "../redux/jobs/jobActions";
-import { AuthContext } from '../firebase/Auth';
+import { AuthContext } from "../firebase/Auth";
 
 let noImage = "noImage";
 
@@ -75,6 +69,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
     async function fetchData() {
       if (pageNum) {
         searchJobsAPICall(userData?.data?._id, searchTerm, searchPage);
+        ;
       }
     }
     if (searchTerm) {
@@ -83,9 +78,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
   }, [searchTerm]);
 
   const searchValue = async (value) => {
-    console.log("helooo", value);
     setSearchTerm(value);
-    console.log(searchTerm, "searchterm heree");
   };
 
   const getEDTTimeFromISOString = (dateString) => {
@@ -211,12 +204,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                   </Typography>
                 </div> */}
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    fontWeight="bold"
-                    sx={{ paddingRight: "10px" }}
-                  >
+                  <Typography variant="body2" color="text.secondary" fontWeight="bold" sx={{ paddingRight: "10px" }}>
                     Salary:
                   </Typography>
                   <Typography color="text.secondary" paragraph>
@@ -224,10 +212,7 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                   </Typography>
                 </div>
               </CardContent>
-              <CardActions
-                disableSpacing
-                style={{ position: "absolute", bottom: 0, right: 0 }}
-              >
+              <CardActions disableSpacing style={{ position: "absolute", bottom: 0, right: 0 }}>
                 <Button
                   variant="contained"
                   onClick={() => {

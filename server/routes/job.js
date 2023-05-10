@@ -43,7 +43,11 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
         await helpers.isSalaryParentValid(salary, "Salary");
     } catch (e) {
         // throw e.message
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
     try {
         const jobCreated = await jobCollection.createJob(
@@ -63,8 +67,11 @@ router.route("/createJob/:parentId/:childId").post(async (req, res) => {
         const updateChild = await jobCollection.assignJobToChild(childId, jobCreated._id.toString());
         return res.json(jobCreated);
     } catch (e) {
-        // throw e.message
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 router
@@ -81,19 +88,22 @@ router
             }
             return res.json(jobFound);
         } catch (e) {
-            // throw e
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     })
     .delete(async (req, res) => {
         // Parent deleting a job
         let jobId = req.params.jobId;
-        try {console.log(jobId)
+        try {
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
             if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
             if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
             if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
-            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job111111",jobId:jobId };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job111111", jobId: jobId };
             jobId = jobId.trim();
             const deletedJob = await jobCollection.removeJob(jobId);
             if (!deletedJob) {
@@ -102,9 +112,11 @@ router
             const updateChild = await jobCollection.removeJobFromChild(deletedJob.childId.toString());
             return res.json(deletedJob);
         } catch (e) {
-            console.log(e);
-            // throw e
-            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     });
 
@@ -174,8 +186,11 @@ router.route("/apply/:jobId/:nannyId").put(async (req, res) => {
         }
         return res.json(applicationCreated);
     } catch (e) {
-        // throw e.message
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -186,7 +201,11 @@ router.route("/searchApplicants/:jobId/:searchTerm/:pageNum").get(async (req, re
         const searchedApplicants = await jobCollection.searchApplications(jobId, searchTerm, pageNum);
         return res.json(searchedApplicants);
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -197,23 +216,30 @@ router.route("/allApplicants/:jobId/:pageNum").get(async (req, res) => {
         jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
         if (typeof jobId == "undefined") throw { statusCode: 400, message: "jobId parameter not provided" };
         if (typeof jobId !== "string") throw { statusCode: 400, message: "jobId must be a string" };
-        if (jobId.trim().length === 0)
-            throw {statusCode: 400,message: "jobIdd cannot be an empty string or just spaces"};
+        if (jobId.trim().length === 0) throw { statusCode: 400, message: "jobIdd cannot be an empty string or just spaces" };
         if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for job" };
         if (pageNum) {
             if (isNaN(pageNum)) {
                 throw { statusCode: 400, message: "Invalid page number argument" };
-            }} else {pageNum = 1}
-        if (pageNum < 1) { throw {statusCode: 400,message: "Invalid negative page number argument"};
+            }
+        } else {
+            pageNum = 1;
+        }
+        if (pageNum < 1) {
+            throw { statusCode: 400, message: "Invalid negative page number argument" };
         }
         const allApplicants = await jobCollection.getAllApplicants(jobId, pageNum);
-        console.log(allApplicants)
-        if (allApplicants==null) {
+
+        if (allApplicants == null) {
             throw { statusCode: 200, message: "No Nanny for this Job Applications yet" };
         }
         return res.json(allApplicants);
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -253,8 +279,11 @@ router.route("/setNanny/:jobId/:nannyId").post(async (req, res) => {
         const setChildToNanny = await userCollection.addChildToUser(xss(nannyId), xss(nannyJobSet.childId.toString()), xss(child.name));
         return res.json(nannyJobSet);
     } catch (e) {
-        // throw e.message
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -270,7 +299,6 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
                 statusCode: 400,
                 message: "nannyId cannot be an empty string or just spaces",
             };
-            console.log("hereeee",nannyId)
         if (!ObjectId.isValid(nannyId)) throw { statusCode: 400, message: "invalid object ID for Nanny" };
         if (pageNum) {
             if (isNaN(pageNum)) {
@@ -289,9 +317,11 @@ router.route("/getJobs/AllJobs/:nannyId/:pageNum").get(async (req, res) => {
         const foundJobs = await jobCollection.getAllJobs(nannyId, pageNum);
         return res.json(foundJobs);
     } catch (e) {
-        console.log(e);
-        // throw e.message
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -329,7 +359,11 @@ router.route("/searchJobs/:nannyId/:searchTerm/:pageNum").get(async (req, res) =
 
         return res.json(searchedApplicants);
     } catch (e) {
-        return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -343,8 +377,11 @@ router.route("/applications/myApplications/appliedJobs/:nannyId").get(async (req
         }
         return res.json(searchedApplicants);
     } catch (e) {
-        // throw e.message
-        return res.status(400).json({ error: e });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -357,7 +394,11 @@ router.route("/findjob/:childId").get(async (req, res) => {
         }
         return res.json(jobWithChildId);
     } catch (e) {
-        return res.status(400).json({ error: e });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 
@@ -375,7 +416,11 @@ router.route("/fireNanny/:childId").delete(async (req, res) => {
             throw { statusCode: 400, message: "Nanny Id is not valid" };
         }
     } catch (e) {
-        return res.status(400).json({ error: e });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
     try {
         const removeNannyFrmUser = await jobCollection.removeNannyFromUser(nannyId, childId.toString());
@@ -393,7 +438,11 @@ router.route("/fireNanny/:childId").delete(async (req, res) => {
             };
         return res.status(200).json(removeNannyFrmJob);
     } catch (e) {
-        return res.status(500).json({ error: e });
+        if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+            return res.status(e.statusCode).json({ title: "Error", message: e.message });
+        } else {
+            return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+        }
     }
 });
 

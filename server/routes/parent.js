@@ -19,11 +19,15 @@ router
             const parentObj = await parentData.getParentById(parentId);
             if (!parentObj) throw { statusCode: 404, message: "parentId is not valid" };
             return res.json(parentObj);
-        } catch (error) {
-            return res.status(error.statusCode).json({ message: error.message });
+        } catch (e) {
+            if (e.statusCode !== "" && e.statusCode !== undefined && e.statusCode !== null) {
+                return res.status(e.statusCode).json({ title: "Error", message: e.message });
+            } else {
+                return res.status(500).json({ title: "Error", message: "Some Error Occured" });
+            }
         }
     })
-    .put(async (req, res) => { })
-    .delete(async (req, res) => { });
+    .put(async (req, res) => {})
+    .delete(async (req, res) => {});
 
 module.exports = router;

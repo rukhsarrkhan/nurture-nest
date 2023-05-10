@@ -106,7 +106,7 @@ const AddChildModal = (props) => {
             return;
         }
 
-        let ageCheck = await validation(age, helpers.isChildAgeValid(age));
+        let ageCheck = await validation(age, helpers.isChildAgeValid(age, props.parentAge));
         if (ageCheck !== "") {
             setAgeError(true);
             setErrorText(ageCheck);
@@ -136,7 +136,6 @@ const AddChildModal = (props) => {
             try {
                 await props.addChild(formData);
             } catch (error) {
-                console.log(error);
                 setdisableBtn(false);
             }
             setdisableBtn(false);

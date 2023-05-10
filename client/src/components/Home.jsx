@@ -64,6 +64,7 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
             fetchChildrenAPICall(userData?.data?._id);
         }
     }, [userData, fetchChildrenAPICall, currentUser]);
+
     useEffect(() => {
         if (userObjData) {
             if (userObjData?.profile === undefined || userObjData?.profile === null || userObjData?.profile === "") {
@@ -233,8 +234,8 @@ const Home = ({ userData, childData, setUserProfileAPICall, createChildAPICall, 
                         {userObjData?.profile === "PARENT"
                             ? "No children found for this parent"
                             : userObjData?.profile === "NANNY"
-                            ? "No child found for this nanny"
-                            : "No children found"}
+                                ? "No child found for this nanny"
+                                : "No children found"}
                     </Typography>
                 )}
                 {modalOpen && (

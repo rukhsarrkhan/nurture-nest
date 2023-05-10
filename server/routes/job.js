@@ -81,7 +81,7 @@ router
         try {
             let jobId = req.params.jobId;
             jobId = await helpers.execValdnAndTrim(jobId, "Job Id");
-            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for Job hai idhar" };
+            if (!ObjectId.isValid(jobId)) throw { statusCode: 400, message: "invalid object ID for " };
             const jobFound = await jobCollection.getMyJob(jobId);
             if (!jobFound) {
                 throw "Couldn't find Job with that id";

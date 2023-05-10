@@ -19,7 +19,7 @@ import {
   Box,
 } from "@mui/material";
 import { getDashboardAPICall } from "../redux/dashboard/dashboardActions";
-import { getMyJobAPICall } from "../redux/jobs/jobActions";
+import { getMyJobAPICall, initiateTriggerAPIcall } from "../redux/jobs/jobActions";
 import mealPlanImage from "../img/MealPlan.jpg";
 import vaccineImage from "../img/vaccineimage.png";
 import nannyImage from "../img/nanny.png";
@@ -35,7 +35,7 @@ const Dashboard = ({
   childData,
   jobData,
   getMyJobAPICall,
-  fetchChildrenAPICall
+  initiateTriggerAPIcall
 }) => {
   // NO CONSOLE ERRORS
   // LOADING MISSING
@@ -56,19 +56,33 @@ const Dashboard = ({
   let navigate = useNavigate();
 
   useEffect(() => {
-    ;
+    setErrorPage(false);
+    console.log("hie");
+
     if (childData?.childObjs) {
+      console.log("hie", childData?.childObjs);
+
       const childSelected = childData?.childObjs.find(
         (obj) => obj._id === childId
       );
+      console.log("hie childSelected", childSelected);
+      console.log("hie jobData?.data", jobData?.data);
+
       setSelectedChild(childSelected);
-      if (childSelected?.jobId && childSelected?.jobId === null && childSelected?.jobId === "") {
+      if (childSelected?.jobId && childSelected?.jobId !== null && childSelected?.jobId !== "" && !jobData?.data?._id) {
+        console.log("hie childSelected call", childSelected);
+
         getMyJobAPICall(childSelected?.jobId);
+      } else {
+        console.log("HERE");
+        setErrorPage(false);
+        // initiateTriggerAPIcall();
       }
     }
   }, [childData, jobData]);
 
   useEffect(() => {
+    setErrorPage(false);
     if (userData !== undefined) {
       if (userData?.error !== "" && userData?.error !== undefined) {
         setErrorPage(true);
@@ -95,6 +109,8 @@ const Dashboard = ({
         setErrorPage(true);
         setErrorText(jobData?.error);
         setErrorCode(jobData?.code);
+        // initiateTriggerAPIcall();
+
       }
     }
   }, [userData, dashboardData, childData, jobData]);
@@ -105,7 +121,7 @@ const Dashboard = ({
   const createJob = async (data, parentId, childId) => {
     await createJobAPICall(data, parentId, childId);
     handleCloseCreateJob();
-    getMyJobAPICall(selectedChild?.jobId);
+    // getMyJobAPICall(selectedChild?.jobId);
 
     navigate("/myJob", {
       state: { jobId: selectedChild?.jobId, childId: selectedChild?._id },
@@ -492,6 +508,7 @@ const mapDispatchToProps = (dispatch) => {
     createJobAPICall: (data, parentId, childId) =>
       dispatch(createJobAPICall(data, parentId, childId)),
     getMyJobAPICall: (jobId) => dispatch(getMyJobAPICall(jobId)),
+    initiateTriggerAPIcall: () => dispatch(initiateTriggerAPIcall()),
   };
 };
 

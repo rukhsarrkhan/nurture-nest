@@ -24,6 +24,7 @@ import {
   EXIT_JOB_FAILURE,
   FIRE_NANNY_SUCCESS,
   FIRE_NANNY_FAILURE,
+  INITIAL_STATE,
 } from "./jobActionTypes";
 
 const initialState = {
@@ -41,6 +42,19 @@ export const jobReducer = (state = initialState, action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case INITIAL_STATE:
+      console.log("bjhfb");
+      return {
+        ...initialState,
+        loading: false,
+        data: {},
+        applicantsData: {},
+        jobsData: {},
+        myAppliedJobs: [],
+        error: "",
+        code: "",
+        status: "",
+      };
     case CREATE_JOB_SUCCESS:
       return {
         ...state,
@@ -56,6 +70,7 @@ export const jobReducer = (state = initialState, action) => {
         code: payload?.response?.status,
       };
     case DELETE_JOB_SUCCESS:
+      console.log("payload", payload);
       return {
         ...state,
         status: payload,

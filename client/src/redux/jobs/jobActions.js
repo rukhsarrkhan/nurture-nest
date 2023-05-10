@@ -26,6 +26,7 @@ import {
     EXIT_JOB_FAILURE,
     FIRE_NANNY_SUCCESS,
     FIRE_NANNY_FAILURE,
+    INITIAL_STATE,
 } from "./jobActionTypes";
 
 export const searchInitiate = () => {
@@ -332,5 +333,18 @@ export const fireNannyAPICall = (childId, nannyId) => {
         } catch (error) {
             dispatch(fireNannyFailure(error));
         }
+    };
+};
+
+export const initiateTrigger = () => {
+    console.log("woe");
+    return {
+        type: INITIAL_STATE,
+    };
+};
+
+export const initiateTriggerAPIcall = () => {
+    return async (dispatch) => {
+        dispatch(initiateTrigger());
     };
 };

@@ -43,7 +43,7 @@ const MyJob = ({
   const location = useLocation();
   const [showData, setShowData] = useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const { currentUser } = useContext(AuthContext);
   const [errorCode, setErrorCode] = useState("");
@@ -87,7 +87,7 @@ const MyJob = ({
         //   alert("Failed to assign nanny to job. Please try again");
         // }
         getMyJobAPICall(jobId);
-        setError(false);
+        // setError(false);
       }
     } catch (e) {
       setError(true);

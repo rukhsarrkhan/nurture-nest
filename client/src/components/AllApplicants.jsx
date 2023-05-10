@@ -48,42 +48,44 @@ const AllApplicants = ({
 
   //View Applicants useEffect for apiCall
   useEffect(() => {
-      if (pageNum) {
-        setLoading(true);
-        showAllApplicantsAPICall(jobId, pageNum);
-      }
+    if (pageNum) {
+      setLoading(true);
+      showAllApplicantsAPICall(jobId, pageNum);
+    }
   }, [pageNum]);
 
   useEffect(() => {
     if (job !== undefined) {
       if (job?.error !== "") {
-          setError(true);
-          setErrorMsg(job?.error);
-          setErrorCode(job?.code);
-          setLoading(false)
-      }else{
-      if (searchTerm) {
-        setSearchData(job?.applicantsData?.allApplications);
-        setLoading(false);
-        setError(false);
-    } else {
-        setSearchData(job?.applicantsData.allApplications);
-        setShowsData(job?.applicantsData.allApplications);
-        setLoading(false);
-        setError(false);
-  }}
-  }
-}, [job]);
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false)
+      } else {
+        if (searchTerm) {
+          setSearchData(job?.applicantsData?.allApplications);
+          setLoading(false);
+          setError(false);
+        } else {
+          setSearchData(job?.applicantsData.allApplications);
+          setShowsData(job?.applicantsData.allApplications);
+          setLoading(false);
+          setError(false);
+        }
+      }
+    }
+  }, [job]);
 
   useEffect(() => {
     if (job !== undefined) {
-    if (job?.error !== "") {
-      setError(true);
-      setErrorMsg(job?.error);
-      setErrorCode(job?.code);
-      setLoading(false)
-  }else if (searchTerm) {searchApplicantsAPICall(jobId, searchTerm, pageNum)}
-  }}, [searchTerm]);
+      if (job?.error !== "") {
+        setError(true);
+        setErrorMsg(job?.error);
+        setErrorCode(job?.code);
+        setLoading(false)
+      } else if (searchTerm) { searchApplicantsAPICall(jobId, searchTerm, pageNum) }
+    }
+  }, [searchTerm]);
 
   const searchValue = async (value) => {
     setSearchTerm(value);
@@ -119,12 +121,12 @@ const AllApplicants = ({
         <Card
           sx={{
             maxWidth: "100%",
-            maxHeight: "100%",
+            maxHeight: "350px",
             paddingRight: 0,
             marginLeft: "15px",
             marginRight: "15px",
             position: "relative",
-      
+            borderRadius: "20px"
           }}
         >
           <Grid container spacing={0}>
@@ -134,7 +136,7 @@ const AllApplicants = ({
                 height="100%"
                 width={100}
                 image={show.photoUrl}
-                alt="client\public\download.jpeg"
+                alt="Nanny Image"
               />
             </Grid>
             <Grid item xs={12} sm={8} sx={{ paddingLeft: "10px" }}>
@@ -249,7 +251,7 @@ const AllApplicants = ({
     return (
       <div>
         <SearchApplicants searchValue={searchValue} />
-        <br/>
+        <br />
         <Button
           onClick={() => {
             navigate(-1);
@@ -259,7 +261,7 @@ const AllApplicants = ({
         >
           Back
         </Button>
-        <br/><br/>
+        <br /><br />
         <Grid container spacing={2} sx={{ flexGrow: 1, flexDirection: "row" }}>
           {card}
         </Grid>
@@ -271,9 +273,9 @@ const AllApplicants = ({
           >
             Previous
           </Link>
-        )}<br/>
+        )}<br />
         {nextButton && (
-          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum)+1}`}>
+          <Link className="showlink" to={`/job/allApplicantions/${parseInt(pageNum) + 1}`}>
             Next
           </Link>
         )}
@@ -288,7 +290,7 @@ const AllApplicants = ({
 const mapStateToProps = (state) => {
   return {
     job: state.jobs,
-    users:state.users
+    users: state.users
   };
 };
 

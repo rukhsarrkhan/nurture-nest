@@ -249,6 +249,7 @@ const Dashboard = ({ getDashboardAPICall, createJobAPICall, dashboardData, userD
                                             marginLeft: "auto",
                                             marginRight: "auto",
                                             borderRadius: 5,
+                                            border: '1px solid #080a33',
                                             boxShadow: "none",
                                         }}
                                         gutterBottom

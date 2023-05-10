@@ -74,7 +74,7 @@ const ApplyToJobModal = (props) => {
 
         let nannyNameChec = await validation(nannyName, helpers.isNameValid(nannyName, "Nanny Name"));
         if (nannyNameChec !== "") {
-            setNannyName(true);
+            setnannyNameError(true);
             setErrorText(nannyNameChec);
             return;
         }

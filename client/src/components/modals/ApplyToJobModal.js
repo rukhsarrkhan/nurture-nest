@@ -223,7 +223,7 @@ const ApplyToJobModal = (props) => {
               onSubmit={handleSubmit}
               className="sign-form"
             >
-              <Typography id="modal-modal-title" variant="h1" color="secondary">
+              <Typography id="modal-modal-title" component="h1" variant="h3" color="secondary">
                 Apply
               </Typography>
 

@@ -100,7 +100,7 @@ const MyJob = ({
     if (job !== undefined) {
       if (job?.error !== "") {
         // conditional rendering here
-        alert("Failed to assign nanny to job. Please try again");
+        // alert("Failed to assign nanny to job. Please try again");
         setError(true);
         setErrorMsg(job?.error);
         setErrorCode(job?.code);

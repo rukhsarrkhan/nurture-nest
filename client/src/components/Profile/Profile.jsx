@@ -433,10 +433,10 @@ const Profile = ({ userData, setUserProfileAPICall, updateUserAPICall, updatePro
                     </Box>
 
                     <Grid item xs={12} md={8}>
-                        <Typography variant="h1" sx={{ mt: 2 }}>
+                        <Typography component="h1" variant="h3" sx={{ mt: 2 }}>
                             {firstName + " " + lastName}
                         </Typography>
-                        <Typography variant="h2" sx={{ mt: 1 }}>
+                        <Typography component="h1" variant="h4" sx={{ mt: 1 }}>
                             {profile}
                         </Typography>
 

@@ -100,11 +100,12 @@ const ViewAllJobs = ({ job, getallJobsAPICall, searchJobsAPICall, userData }) =>
                 <Card
                     sx={{
                         maxWidth: "70%",
-                        maxHeight: 300,
+                        maxHeight: "350px",
                         paddingRight: 0,
                         marginLeft: "15%",
                         marginRight: "15%",
                         position: "relative",
+                        borderRadius: "20px"
                     }}
                 >
                     <Grid container spacing={0}>

@@ -86,6 +86,7 @@ const Application = ({ job, selectNannyAPICall }) => {
         }
         return (
             <Container sx={{ justifyContent: "center" }}>
+                <br/>
                 <Button
                     onClick={() => {
                         navigate(-1);
@@ -97,7 +98,7 @@ const Application = ({ job, selectNannyAPICall }) => {
                 </Button>{" "}
                 <br />
                 <br />
-                <Card sx={{ maxWidth: "50%", marginLeft: "25%", marginRight: "25%" }}>
+                <Card sx={{ maxWidth: "50%", marginLeft: "25%", marginRight: "25%", borderRadius: "25px"}}>
                     <CardHeader
                         avatar={
                             <Avatar sx={{ bgcolor: purple[500] }} aria-label="recipe">

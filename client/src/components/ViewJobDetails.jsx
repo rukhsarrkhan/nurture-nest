@@ -95,6 +95,7 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
         // const formattedDate = date.toLocaleString("en-US", {year: "numeric",month: "long",day: "numeric",hour: "numeric",minute: "numeric",second: "numeric",hour12: false});
         return (
             <Container sx={{ justifyContent: "center" }}>
+                <br />
                 <Button
                     onClick={() => {
                         navigate(-1);
@@ -106,7 +107,12 @@ const JobDetails = ({ job, applyToJobAPICall }) => {
                 </Button>{" "}
                 <br />
                 <br />
-                <Card sx={{ maxWidth: "70%", marginLeft: "15%", marginRight: "15%" }}>
+                <Card sx={{ 
+                    maxWidth: "70%", 
+                    marginLeft: "15%", 
+                    marginRight: "15%",
+                    borderRadius: "20px"
+                     }}>
                     <CardHeader />
                     <CardMedia component="img" height="50%" image={showData.photoUrl} alt="Nanny Image" />
                     <CardContent>
